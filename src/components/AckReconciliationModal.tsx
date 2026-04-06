@@ -159,8 +159,9 @@ const pairStatusBadge = (status: AckPair['status']) => {
 // ── Component ──────────────────────────────────────────────────
 
 export default function AckReconciliationModal({ isOpen, onClose, triggerToast }: AckReconciliationModalProps) {
-    const [step, setStep] = useState<ReconcileStep>('select');
-    const [selectedPair, setSelectedPair] = useState<AckPair | null>(null);
+    // Smart Comparator: skip select step, go directly to compare with first pair
+    const [step, setStep] = useState<ReconcileStep>('compare');
+    const [selectedPair, setSelectedPair] = useState<AckPair | null>(ACK_PAIRS[0]);
     const [scanProgress, setScanProgress] = useState(0);
     const [scanComplete, setScanComplete] = useState(false);
     const [discrepancyFixes, setDiscrepancyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
@@ -179,8 +180,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
     useEffect(() => {
         if (!isOpen) {
             const t = setTimeout(() => {
-                setStep('select');
-                setSelectedPair(null);
+                setStep('compare');
+                setSelectedPair(ACK_PAIRS[0]);
                 setScanProgress(0);
                 setScanComplete(false);
                 setDiscrepancyFixes({});
@@ -229,8 +230,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
     const handleComplete = () => {
         onClose();
         triggerToast(
-            'Reconciliation Complete',
-            `${selectedPair?.id} ↔ ${selectedPair?.poId} reconciled successfully`,
+            'Comparison Complete',
+            `${selectedPair?.id} ↔ ${selectedPair?.poId} compared successfully`,
             'success'
         );
     };
@@ -591,18 +592,27 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             })}
                                         </div>
 
-                                        <button
-                                            onClick={() => setStep('confirm')}
-                                            disabled={!allDecided}
-                                            className={`w-full mt-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
-                                                allDecided
-                                                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
-                                                    : 'bg-muted text-muted-foreground cursor-not-allowed'
-                                            }`}
-                                        >
-                                            Confirm Reconciliation
-                                            <ArrowRightIcon className="w-4 h-4" />
-                                        </button>
+                                        {/* Smart Comparator: Save as Draft + Resolve (per transcript) */}
+                                        <div className="flex gap-3 mt-5">
+                                            <button
+                                                onClick={() => { triggerToast('Draft Saved', 'Discrepancy resolution saved as draft', 'info'); onClose(); }}
+                                                className="flex-1 py-3 rounded-xl text-sm font-bold bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center justify-center gap-2"
+                                            >
+                                                Save as Draft
+                                            </button>
+                                            <button
+                                                onClick={() => setStep('confirm')}
+                                                disabled={!allDecided}
+                                                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                                                    allDecided
+                                                        ? 'bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 dark:hover:bg-brand-600/50 text-zinc-900 shadow-sm'
+                                                        : 'bg-muted text-muted-foreground cursor-not-allowed'
+                                                }`}
+                                            >
+                                                Resolve All
+                                                <ArrowRightIcon className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -618,7 +628,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             <CheckCircleIcon className="w-10 h-10 text-green-600 dark:text-green-400" />
                                         </div>
 
-                                        <h3 className="text-xl font-brand font-bold text-foreground mb-1">Reconciliation Complete</h3>
+                                        <h3 className="text-xl font-brand font-bold text-foreground mb-1">Comparison Complete</h3>
                                         <p className="text-sm text-muted-foreground mb-6">
                                             {selectedPair?.poId} and {selectedPair?.id} have been successfully reconciled
                                         </p>
@@ -672,7 +682,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             <span className="text-[11px] text-indigo-700 dark:text-indigo-300">
                                                 {isCleanPair
                                                     ? `All ${matchedCount} fields validated — PO and ACK fully aligned. No discrepancies detected. Status updated in eManage ecosystem.`
-                                                    : `${discrepancies.length} discrepancies resolved. ${acceptedCount} ACK values accepted, ${discrepancies.length - acceptedCount} PO values kept. Changes synced to eManage and vendor portal.`
+                                                    : `${discrepancies.length} discrepancies resolved. ${acceptedCount} ACK values accepted, ${discrepancies.length - acceptedCount} PO values kept. Changes saved to Strata. Pushing to OrderBahn....`
                                                 }
                                             </span>
                                         </div>
