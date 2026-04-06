@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
 import { Bell, FileText, ScanSearch, Moon, Sun, LogOut, User, ChevronDown } from 'lucide-react'
-// ActionCenter manages its own open/close state internally
+import ActionCenter from './notifications/ActionCenter'
 
 type NavTab = 'Transactions' | 'OCR'
 
@@ -123,7 +123,15 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                 </div>
             </nav>
 
-            {/* Action Center — TODO: integrate when adapted */}
+            {/* Action Center Overlay */}
+            {isActionCenterOpen && (
+                <>
+                    <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setIsActionCenterOpen(false)} />
+                    <div className="fixed top-20 right-4 z-50 w-[380px] max-h-[80vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-2xl">
+                        <ActionCenter />
+                    </div>
+                </>
+            )}
         </>
     )
 }

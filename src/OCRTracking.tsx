@@ -26,6 +26,8 @@ interface OCRTrackingProps {
 
 export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) {
     const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
+    const [showUpload, setShowUpload] = useState(false)
+    const [processingDoc, setProcessingDoc] = useState<string | null>(null)
 
     return (
         <div className="flex flex-col min-h-screen bg-background font-sans text-foreground">
@@ -39,11 +41,53 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                             <h1 className="text-2xl font-bold text-foreground">OCR Tracking</h1>
                             <p className="text-muted-foreground text-sm mt-1">Track document processing pipeline — upload, extract, validate, and process</p>
                         </div>
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg font-medium text-sm hover:bg-brand-400 dark:hover:bg-brand-600/50 transition-colors shadow-sm">
+                        <button
+                            onClick={() => setShowUpload(!showUpload)}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg font-medium text-sm hover:bg-brand-400 dark:hover:bg-brand-600/50 transition-colors shadow-sm"
+                        >
                             <Upload className="h-4 w-4" />
                             Upload Document
                         </button>
                     </div>
+
+                    {/* Upload Zone */}
+                    {showUpload && (
+                        <div className="mb-6 border-2 border-dashed border-ai/30 dark:border-ai/20 bg-ai-light/30 dark:bg-ai/5 rounded-2xl p-8 text-center transition-all">
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="w-14 h-14 rounded-2xl bg-ai/10 flex items-center justify-center">
+                                    <Upload className="h-7 w-7 text-ai" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-foreground">Drop your document here or click to browse</p>
+                                    <p className="text-xs text-muted-foreground mt-1">Supports PDF, CSV, Excel — PO, ACK, or Invoice documents</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        setShowUpload(false)
+                                        setProcessingDoc('OCR-NEW')
+                                        setTimeout(() => setProcessingDoc(null), 3000)
+                                    }}
+                                    className="mt-2 px-6 py-2.5 bg-ai text-white rounded-lg text-sm font-medium hover:bg-ai/90 transition-colors flex items-center gap-2"
+                                >
+                                    <Sparkles className="h-4 w-4" />
+                                    Simulate Upload & Process
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Processing Indicator */}
+                    {processingDoc && (
+                        <div className="mb-6 bg-ai-light dark:bg-ai/10 border border-ai/20 rounded-xl p-4 flex items-center gap-3 animate-pulse">
+                            <div className="w-8 h-8 rounded-lg bg-ai flex items-center justify-center">
+                                <ScanSearch className="h-4 w-4 text-white animate-spin" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-foreground">Processing document...</p>
+                                <p className="text-xs text-muted-foreground">OCR extraction in progress — extracting fields</p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Pipeline Kanban */}
                     <div className="grid grid-cols-4 gap-4">

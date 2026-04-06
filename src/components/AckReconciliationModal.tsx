@@ -209,11 +209,16 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
         return () => clearInterval(interval);
     }, [step]);
 
-    // Auto-advance for clean pairs (no discrepancies)
+    // Auto-advance: clean pairs → confirm, discrepancy pairs → review
     useEffect(() => {
-        if (step === 'compare' && scanComplete && isCleanPair) {
-            const t = setTimeout(() => setStep('confirm'), 1200);
-            return () => clearTimeout(t);
+        if (step === 'compare' && scanComplete) {
+            if (isCleanPair) {
+                const t = setTimeout(() => setStep('confirm'), 1200);
+                return () => clearTimeout(t);
+            } else {
+                const t = setTimeout(() => setStep('review'), 800);
+                return () => clearTimeout(t);
+            }
         }
     }, [step, scanComplete, isCleanPair]);
 
@@ -494,7 +499,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                         </div>
 
                                         {/* Discrepancy Cards */}
-                                        <div className="space-y-3 max-h-[380px] overflow-y-auto scrollbar-minimal pr-1">
+                                        <div className="space-y-3 max-h-[60vh] overflow-y-auto scrollbar-minimal pr-1">
                                             {discrepancies.map((disc, i) => {
                                                 const fixed = discrepancyFixes[i];
                                                 return (
