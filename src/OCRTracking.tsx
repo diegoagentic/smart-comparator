@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, X } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
+import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
 
 const OCR_DOCUMENTS = [
     { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
@@ -29,18 +30,25 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
     const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
     const [showUpload, setShowUpload] = useState(false)
     const [processingDoc, setProcessingDoc] = useState<string | null>(null)
+    const [resolveDoc, setResolveDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
+    const [documents, setDocuments] = useState(OCR_DOCUMENTS)
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
     const [searchQuery, setSearchQuery] = useState('')
     const [activeTab, setActiveTab] = useState<'all' | 'identified' | 'capturing' | 'discrepancies' | 'processed'>('all')
 
-    const filteredDocs = OCR_DOCUMENTS.filter(d => {
+    const handleResolve = (docId: string) => {
+        setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', discrepancyCount: 0, confidence: 99 } : d))
+        setResolveDoc(null)
+    }
+
+    const filteredDocs = documents.filter(d => {
         const matchesSearch = d.name.toLowerCase().includes(searchQuery.toLowerCase()) || d.vendor.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesTab = activeTab === 'all' || d.status === activeTab
         return matchesSearch && matchesTab
     })
 
     const counts = {
-        all: OCR_DOCUMENTS.length,
+        all: documents.length,
         identified: OCR_DOCUMENTS.filter(d => d.status === 'identified').length,
         capturing: OCR_DOCUMENTS.filter(d => d.status === 'capturing').length,
         discrepancies: OCR_DOCUMENTS.filter(d => d.status === 'discrepancies').length,
@@ -247,11 +255,18 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                         {selectedDoc === doc.id && (
                                                             <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border">
                                                                 <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
-                                                                    <Eye className="h-3.5 w-3.5" /> View Extracted Fields
+                                                                    <Eye className="h-3.5 w-3.5" /> Preview Document
                                                                 </button>
-                                                                {doc.status === 'discrepancies' && (
-                                                                    <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-warning-light dark:bg-warning/10 text-warning rounded-lg transition-colors hover:bg-warning/20">
-                                                                        <AlertTriangle className="h-3.5 w-3.5" /> Resolve Discrepancies
+                                                                <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
+                                                                    <FileText className="h-3.5 w-3.5" /> View Extracted Fields
+                                                                </button>
+                                                                {doc.status !== 'processed' && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
+                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
+                                                                    >
+                                                                        <AlertTriangle className="h-3.5 w-3.5" />
+                                                                        {doc.discrepancyCount > 0 ? `Resolve ${doc.discrepancyCount} Discrepancies` : 'Review & Process'}
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -333,6 +348,14 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                     </div>
                 </div>
             </div>
+
+            {/* Resolve Discrepancy Modal */}
+            <ResolveDiscrepancyModal
+                isOpen={!!resolveDoc}
+                onClose={() => setResolveDoc(null)}
+                document={resolveDoc}
+                onResolve={handleResolve}
+            />
         </div>
     )
 }
