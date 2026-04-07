@@ -1429,14 +1429,14 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         </button>
                                                     </>)}
                                                     {lifecycleTab === 'acknowledgments' && (<>
-                                                        <button onClick={() => openPEDPreview('acknowledgment')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
-                                                            <DocumentTextIcon className="w-5 h-5" />
-                                                        </button>
-                                                        <button onClick={() => triggerToast('Email Vendor', 'Drafting vendor communication with acknowledgement details.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Email Vendor" style={{display:"none"}}>
-                                                            <EnvelopeIcon className="w-5 h-5" />
-                                                        </button>
                                                         <button onClick={() => setIsBatchAckOpen(true)} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Batch Approve">
                                                             <CheckBadgeIcon className="w-5 h-5" />
+                                                        </button>
+                                                        <button onClick={() => openPEDPreview('acknowledgment')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                            <DocumentTextIcon className="w-5 h-5" />
+                                                        </button>
+                                                        <button onClick={() => handleExportSIF('ACK')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
+                                                            <ArrowDownTrayIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => setIsReconciliationOpen(true)} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Reconcile PO vs ACK">
                                                             <DocumentMagnifyingGlassIcon className="w-5 h-5" />
@@ -1472,7 +1472,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         <button onClick={() => triggerToast('Duplicate Order', 'Select an order to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate" style={{display:"none"}}>
                                                             <DocumentDuplicateIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
+                                                        <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => handleExportSIF('PO')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
