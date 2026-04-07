@@ -101,7 +101,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                             {/* Top Row: Title + Tabs */}
                             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2 whitespace-nowrap">
-                                    OCR Documents
+                                    Smart Comparator
                                 </h3>
                                 <div className="hidden sm:block w-px h-6 bg-border mx-2"></div>
                                 {/* Tabs — same style as Transactions */}
