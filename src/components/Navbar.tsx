@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
 import { Bell, ScanEye, FileText, Moon, Sun, LogOut, ChevronDown } from 'lucide-react'
 import ActionCenter from './notifications/ActionCenter'
+import logoLightBrand from '../assets/logo-light-brand.png'
+import logoDarkBrand from '../assets/logo-dark-brand.png'
 
 type NavTab = 'Transactions' | 'OCR'
 
@@ -36,9 +38,8 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                     {/* Left: Logo + Brand */}
                     <div className="flex items-center gap-1">
                         <div className="px-2 shrink-0">
-                            <img src="/strata.svg" alt="Strata" className="h-7 w-7" onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                            }} />
+                            <img src={logoLightBrand} alt="Strata" className="h-8 w-20 object-contain block dark:hidden" />
+                            <img src={logoDarkBrand} alt="Strata" className="h-8 w-20 object-contain hidden dark:block" />
                         </div>
                         <div className="w-px h-6 bg-border mx-1"></div>
                         <div className="hidden sm:block px-2">
