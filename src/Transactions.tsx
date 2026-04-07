@@ -2619,8 +2619,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
 
 
-                {/* Charts Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Charts Area — hidden in Smart Comparator */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{display:'none'}}>
                     <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
                         <h3 className="text-lg font-brand font-semibold text-foreground mb-4">Revenue Trend — {trendLabels[txTimePeriod]}</h3>
                         <div className="h-80 w-full">
