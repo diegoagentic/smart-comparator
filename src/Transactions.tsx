@@ -1014,7 +1014,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     </div>
                                     <div className="w-px h-12 bg-zinc-200 dark:bg-zinc-700 hidden xl:block mx-2"></div>
                                     <button
-                                        onClick={() => setShowMetrics(true)}
+                                        style={{display:'none'}} onClick={() => {}}
                                         className="flex flex-col items-center justify-center gap-1 group p-2 hover:bg-brand-300 dark:hover:bg-brand-600/50 rounded-lg transition-colors"
                                     >
                                         <ChevronDownIcon className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
@@ -1122,7 +1122,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     </div>
                                     <div className="w-px h-12 bg-zinc-200 dark:bg-zinc-700 hidden xl:block mx-2"></div>
                                     <button
-                                        onClick={() => setShowMetrics(true)}
+                                        style={{display:'none'}} onClick={() => {}}
                                         className="flex flex-col items-center justify-center gap-1 group p-2 hover:bg-brand-300 dark:hover:bg-brand-600/50 rounded-lg transition-colors"
                                     >
                                         <ChevronDownIcon className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
@@ -1256,7 +1256,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
                                 <div className="w-px h-12 bg-zinc-200 dark:bg-zinc-700 hidden xl:block mx-2"></div>
                                 <button
-                                    onClick={() => setShowMetrics(true)}
+                                    style={{display:'none'}} onClick={() => {}}
                                     className="flex flex-col items-center justify-center gap-1 group p-2 hover:bg-brand-300 dark:hover:bg-brand-600/50 rounded-lg transition-colors"
                                 >
                                     <div className="text-gray-500 dark:text-gray-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
@@ -2190,7 +2190,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                 )}
 
                                 {/* Metrics View special handling */}
-                                {activeTab === 'metrics' ? (
+                                {false && activeTab === 'metrics' ? (
                                     <div className="space-y-8">
                                         {/* Period Selector */}
                                         <div className="flex items-center justify-between">
