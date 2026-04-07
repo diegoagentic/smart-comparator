@@ -35,8 +35,7 @@ function App() {
   const handleConvertFromOCR = (doc: ConvertedDocument) => {
     setConvertedDoc(doc)
     setCurrentPage('transactions')
-    // Clear after animation time
-    setTimeout(() => setConvertedDoc(null), 5000)
+    // Don't clear the doc — it stays permanently. Highlight fades in Transactions.
   }
 
   if (initialLoading) {

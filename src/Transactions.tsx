@@ -703,13 +703,19 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
     const [lifecycleTab, setLifecycleTab] = useState<'orders' | 'acknowledgments'>('orders')
     const [highlightedSection, setHighlightedSection] = useState<string | null>(null);
     const [newConvertedCard, setNewConvertedCard] = useState<ConvertedDoc | null>(null);
+    const [convertedHighlight, setConvertedHighlight] = useState(false);
 
-    // Handle converted document from OCR — switch tab and show animated card
+    // Handle converted document from OCR — switch tab, add card permanently, highlight fades
     useEffect(() => {
         if (convertedDoc) {
             setLifecycleTab(convertedDoc.tab);
-            setNewConvertedCard(convertedDoc);
-            setTimeout(() => setNewConvertedCard(null), 4000);
+            // Delay card appearance slightly for smooth entrance
+            setTimeout(() => {
+                setNewConvertedCard(convertedDoc);
+                setConvertedHighlight(true);
+            }, 300);
+            // Fade highlight after 5 seconds but keep the card
+            setTimeout(() => setConvertedHighlight(false), 5500);
         }
     }, [convertedDoc]);
 
@@ -2474,7 +2480,29 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     <div className="bg-muted/30 rounded-2xl p-3 h-full min-h-[500px] border border-border/50 space-y-3">
                                                         {/* Animated converted card from OCR */}
                                                         {newConvertedCard && (stage === 'Order Received' || stage === 'Pending') && (
-                                                            <div className="group relative bg-card dark:bg-zinc-800 rounded-2xl border-2 border-brand-400 ring-2 ring-brand-400/30 shadow-xl shadow-brand-400/20 transition-all duration-700 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-4">
+                                                            <div
+                                                                className={cn(
+                                                                    "group relative bg-card dark:bg-zinc-800 rounded-2xl border-2 overflow-hidden flex flex-col",
+                                                                    "transition-all duration-1000 ease-out",
+                                                                    // Entrance animation
+                                                                    "animate-[slideInCard_0.8s_ease-out]",
+                                                                    // Highlight: glows when active, fades to normal
+                                                                    convertedHighlight
+                                                                        ? "border-brand-400 ring-2 ring-brand-400/30 shadow-xl shadow-brand-400/20 scale-[1.02]"
+                                                                        : "border-border shadow-sm scale-100"
+                                                                )}
+                                                                style={{
+                                                                    animation: 'slideInCard 0.8s ease-out',
+                                                                }}
+                                                            >
+                                                                <style>{`
+                                                                    @keyframes slideInCard {
+                                                                        0% { opacity: 0; transform: translateY(-30px) scale(0.95); }
+                                                                        40% { opacity: 0.7; transform: translateY(5px) scale(1.01); }
+                                                                        70% { opacity: 1; transform: translateY(-2px) scale(1.005); }
+                                                                        100% { opacity: 1; transform: translateY(0) scale(1); }
+                                                                    }
+                                                                `}</style>
                                                                 <div className="p-4">
                                                                     <div className="flex items-center justify-between mb-3">
                                                                         <div className="flex items-center gap-2">
@@ -2486,7 +2514,9 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                 <p className="text-[10px] text-muted-foreground font-mono">{newConvertedCard.id}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-brand-300 dark:bg-brand-500 text-zinc-900 animate-pulse">NEW</span>
+                                                                        {convertedHighlight && (
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-brand-300 dark:bg-brand-500 text-zinc-900 animate-pulse">NEW</span>
+                                                                        )}
                                                                     </div>
                                                                     <div className="space-y-2 mb-3">
                                                                         <div className="flex justify-between text-sm">
@@ -2499,7 +2529,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                         </div>
                                                                     </div>
                                                                     <div className="pt-3 border-t border-border flex items-center justify-between">
-                                                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20">Order Received</span>
+                                                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20">{stage}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
