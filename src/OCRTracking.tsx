@@ -148,18 +148,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                         <List className="h-4 w-4" />
                                     </button>
                                     <button onClick={() => setViewMode('kanban')} className={`p-2 transition-colors ${viewMode === 'kanban' ? 'bg-zinc-100 dark:bg-zinc-800 text-foreground' : 'text-muted-foreground hover:bg-muted'}`}>
-                                        <LayoutGrid className="h-4 w-4" />
-                                    </button>
-                                </div>
-                                <button className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors">
-                                    <Filter className="h-4 w-4" />
-                                </button>
-                                <div className="ml-auto">
-                                    <button
-                                        onClick={() => setShowUpload(!showUpload)}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:opacity-90 transition-colors"
-                                    >
-                                        <Upload className="h-4 w-4" /> +Upload Acknowledgement
+                                        <Filter className="h-4 w-4" />
                                     </button>
                                 </div>
                             </div>
