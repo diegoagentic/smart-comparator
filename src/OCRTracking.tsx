@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, X } from 'lucide-react'
+import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
 import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
@@ -242,14 +242,12 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                                         <span className="text-[10px] font-medium text-muted-foreground">{doc.type}</span>
                                                                     )}
                                                                 </div>
-                                                                <div className="flex items-center gap-1">
-                                                                    <button className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-primary transition-colors"><Download className="h-4 w-4" /></button>
-                                                                    <button
-                                                                        onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
-                                                                        className="px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-colors"
-                                                                    >Details</button>
-                                                                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                                                                </div>
+                                                                <button
+                                                                    onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
+                                                                    className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors"
+                                                                >
+                                                                    {selectedDoc === doc.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                                                </button>
                                                             </div>
                                                         </div>
 
@@ -345,9 +343,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                 <td className="px-4 py-3 text-xs text-muted-foreground">{doc.date}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex items-center justify-end gap-1">
-                                                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"><Download className="h-4 w-4" /></button>
-                                                        <button className="px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:opacity-90">Details</button>
-                                                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"><Eye className="h-4 w-4" /></button>
                                                     </div>
                                                 </td>
                                             </tr>
