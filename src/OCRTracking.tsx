@@ -164,13 +164,13 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                         <span className={`text-sm font-semibold ${column.color}`}>{column.label}</span>
                                         <span className="ml-auto text-xs font-bold bg-foreground/10 text-foreground px-1.5 py-0.5 rounded-md">{docs.length}</span>
                                     </div>
-                                    <div className="space-y-2 min-h-[200px]">
+                                    <div className="space-y-2 min-h-[100px]">
                                         {docs.map(doc => (
                                             <div
                                                 key={doc.id}
                                                 onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
-                                                className={`bg-card border rounded-xl p-3 cursor-pointer transition-all hover:shadow-md ${
-                                                    selectedDoc === doc.id ? 'border-ai shadow-md' : 'border-border hover:border-ai/30'
+                                                className={`bg-card border border-border rounded-2xl p-4 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+                                                    selectedDoc === doc.id ? 'border-ai shadow-md ring-1 ring-ai/20' : 'border-border hover:border-ai/30 hover:shadow-sm'
                                                 }`}
                                             >
                                                 <div className="flex items-start justify-between mb-2">
