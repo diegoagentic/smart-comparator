@@ -264,7 +264,7 @@ export default function ActionCenter() {
                             <div className="bg-zinc-100 dark:bg-zinc-900/85 backdrop-blur-xl border border-border shadow-2xl rounded-3xl overflow-hidden flex flex-col max-h-[80vh]">
 
                                 {currentView === 'chat' ? (
-                                    <ChatView onBack={() => setCurrentView('list')} />
+                                    <div className="p-6 text-center text-muted-foreground text-sm">Chat not available</div>
                                 ) : (
                                     <>
                                         {/* Header */}
@@ -283,7 +283,7 @@ export default function ActionCenter() {
 
                                             {/* Tabs */}
                                             <FilterTabs
-                                                tabs={tabs}
+                                                tabs={tabs.filter(t => !t.id.includes('_hidden'))}
                                                 activeTab={activeTab}
                                                 onTabChange={setActiveTab}
                                             />
