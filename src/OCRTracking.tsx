@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, X } from 'lucide-react'
+import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, X } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
 
@@ -169,8 +169,8 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                             <div
                                                 key={doc.id}
                                                 onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
-                                                className={`bg-card border border-border rounded-2xl p-4 shadow-sm cursor-pointer transition-all hover:shadow-md ${
-                                                    selectedDoc === doc.id ? 'border-ai shadow-md ring-1 ring-ai/20' : 'border-border hover:border-ai/30 hover:shadow-sm'
+                                                className={`bg-card dark:bg-zinc-800 border rounded-2xl p-4 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+                                                    selectedDoc === doc.id ? 'border-brand-400/50 ring-1 ring-brand-400/20 shadow-lg' : 'border-border hover:shadow-md'
                                                 }`}
                                             >
                                                 <div className="flex items-start justify-between mb-2">
@@ -197,8 +197,18 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                         <AlertTriangle className="h-3 w-3" />{doc.discrepancyCount} discrepancies found
                                                     </div>
                                                 )}
-                                                <div className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground">
-                                                    <Clock className="h-3 w-3" />{doc.date}
+                                                <div className="mt-3 flex items-center justify-between">
+                                                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                                        <Clock className="h-3 w-3" />{doc.date}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <button className="p-1 text-muted-foreground hover:text-foreground"><Download className="h-3.5 w-3.5" /></button>
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); setSelectedDoc(selectedDoc === doc.id ? null : doc.id); }}
+                                                            className="px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-colors"
+                                                        >Details</button>
+                                                        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                                                    </div>
                                                 </div>
                                                 {selectedDoc === doc.id && (
                                                     <div className="mt-3 pt-3 border-t border-border space-y-2">
