@@ -104,7 +104,7 @@ export default function ActionCenter() {
             filter: (n) => n.type === 'discrepancy'
         },
         {
-            id: 'payment',
+            id: 'payment_hidden',
             label: 'Payments',
             count: mockNotifications.filter(n => n.type === 'payment' && n.unread).length,
             icon: CreditCardIcon,
@@ -132,7 +132,7 @@ export default function ActionCenter() {
             filter: (n) => n.type === 'approval'
         },
         {
-            id: 'shipping',
+            id: 'shipping_hidden',
             label: 'Shipping',
             count: mockNotifications.filter(n => (n.type === 'shipment' || n.type === 'backorder') && n.unread).length,
             icon: TruckIcon,
@@ -160,7 +160,7 @@ export default function ActionCenter() {
             filter: (n) => n.type === 'announcement'
         },
         {
-            id: 'live_chat',
+            id: 'live_chat_hidden',
             label: 'Live Chat',
             count: mockNotifications.filter(n => n.type === 'live_chat' && n.unread).length,
             icon: ChatBubbleLeftRightIcon,
@@ -175,7 +175,7 @@ export default function ActionCenter() {
         },
         {
             id: 'quotes',
-            label: 'Quotes & POs',
+            label: 'POs & ACKs',
             count: mockNotifications.filter(n => (n.type === 'quote_update' || n.type === 'po_created' || n.type === 'ack_received') && n.unread).length,
             icon: DocumentTextIcon,
             colorTheme: {
@@ -188,7 +188,7 @@ export default function ActionCenter() {
             filter: (n) => n.type === 'quote_update' || n.type === 'po_created' || n.type === 'ack_received'
         },
         {
-            id: 'warranty_mac',
+            id: 'warranty_mac_hidden',
             label: 'Warranty & Service',
             count: mockNotifications.filter(n => (n.type === 'warranty' || n.type === 'mac') && n.unread).length,
             icon: ShieldCheckIcon,
@@ -220,7 +220,7 @@ export default function ActionCenter() {
     // Flow 1 tabs for step 1.10 — single tab since only 1 notification
     const flow1Tabs: NotificationTab[] = [
         { id: 'all', label: 'All', count: FLOW1_NOTIFICATIONS.length, icon: Squares2X2Icon, colorTheme: { activeBg: 'bg-gray-200 dark:bg-white/10', activeText: 'text-zinc-900 dark:text-white', activeBorder: 'border-gray-300 dark:border-white/10', badgeBg: 'bg-zinc-500/20 dark:bg-white/20', badgeText: 'text-zinc-900 dark:text-white' }, filter: () => true },
-        { id: 'quotes', label: 'Quotes & POs', count: FLOW1_NOTIFICATIONS.length, icon: DocumentTextIcon, colorTheme: { activeBg: 'bg-blue-500/15', activeText: 'text-blue-500', activeBorder: 'border-blue-500/20', badgeBg: 'bg-blue-500/20', badgeText: 'text-blue-500' }, filter: (n) => n.type === 'po_created' || n.type === 'quote_update' },
+        { id: 'quotes', label: 'POs & ACKs', count: FLOW1_NOTIFICATIONS.length, icon: DocumentTextIcon, colorTheme: { activeBg: 'bg-blue-500/15', activeText: 'text-blue-500', activeBorder: 'border-blue-500/20', badgeBg: 'bg-blue-500/20', badgeText: 'text-blue-500' }, filter: (n) => n.type === 'po_created' || n.type === 'quote_update' },
     ];
 
     // Flow 2 tabs for step 2.6

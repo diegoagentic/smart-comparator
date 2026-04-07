@@ -4,3 +4,5 @@ dist
 .env.local
 *.log
 !packages/strata-ds/dist/
+
+.vercel

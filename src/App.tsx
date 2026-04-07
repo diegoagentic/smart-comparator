@@ -11,9 +11,18 @@ import SessionExpiryModal from "./components/SessionExpiryModal"
 
 type Page = 'transactions' | 'ocr' | 'order-detail' | 'ack-detail'
 
+export interface ConvertedDocument {
+  id: string
+  vendor: string
+  name: string
+  type: 'po' | 'ack'
+  tab: 'orders' | 'acknowledgments'
+}
+
 function App() {
   const { user, initialLoading, signOut, showSessionWarning, refreshSession } = useAuth()
   const [currentPage, setCurrentPage] = useState<Page>('transactions')
+  const [convertedDoc, setConvertedDoc] = useState<ConvertedDocument | null>(null)
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page as Page)
@@ -21,6 +30,13 @@ function App() {
 
   const handleLogout = () => {
     signOut()
+  }
+
+  const handleConvertFromOCR = (doc: ConvertedDocument) => {
+    setConvertedDoc(doc)
+    setCurrentPage('transactions')
+    // Clear after animation time
+    setTimeout(() => setConvertedDoc(null), 5000)
   }
 
   if (initialLoading) {
@@ -47,6 +63,7 @@ function App() {
             onNavigateToWorkspace={() => setCurrentPage('transactions')}
             onNavigate={handleNavigate}
             onLogout={handleLogout}
+            convertedDoc={convertedDoc}
           />
         )
       case 'order-detail':
@@ -69,7 +86,11 @@ function App() {
         )
       case 'ocr':
         return (
-          <OCRTracking onLogout={handleLogout} onNavigate={handleNavigate} />
+          <OCRTracking
+            onLogout={handleLogout}
+            onNavigate={handleNavigate}
+            onConvertDocument={handleConvertFromOCR}
+          />
         )
       default:
         return null

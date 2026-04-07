@@ -355,14 +355,23 @@ const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
 
 import AcknowledgementUploadModal from './components/AcknowledgementUploadModal'
 
+interface ConvertedDoc {
+    id: string;
+    vendor: string;
+    name: string;
+    type: 'po' | 'ack';
+    tab: 'orders' | 'acknowledgments';
+}
+
 interface TransactionsProps {
     onLogout: () => void;
     onNavigateToDetail: (type: string) => void;
     onNavigateToWorkspace: () => void;
     onNavigate: (page: string) => void;
+    convertedDoc?: ConvertedDoc | null;
 }
 
-export default function Transactions({ onLogout, onNavigateToDetail, onNavigateToWorkspace, onNavigate }: TransactionsProps) {
+export default function Transactions({ onLogout, onNavigateToDetail, onNavigateToWorkspace, onNavigate, convertedDoc }: TransactionsProps) {
     const { currentStep, nextStep, isDemoActive, setLupaStep, procCompleteStep } = ({ isDemoActive: false, currentStep: null, isSidebarCollapsed: false } as any);
     const activeProfile: any = null
     const isContinua = false
@@ -693,6 +702,16 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
     const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active')
     const [lifecycleTab, setLifecycleTab] = useState<'orders' | 'acknowledgments'>('orders')
     const [highlightedSection, setHighlightedSection] = useState<string | null>(null);
+    const [newConvertedCard, setNewConvertedCard] = useState<ConvertedDoc | null>(null);
+
+    // Handle converted document from OCR — switch tab and show animated card
+    useEffect(() => {
+        if (convertedDoc) {
+            setLifecycleTab(convertedDoc.tab);
+            setNewConvertedCard(convertedDoc);
+            setTimeout(() => setNewConvertedCard(null), 4000);
+        }
+    }, [convertedDoc]);
 
     useEffect(() => {
         const handleHighlight = (e: CustomEvent) => {
@@ -2453,6 +2472,38 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     </div>
 
                                                     <div className="bg-muted/30 rounded-2xl p-3 h-full min-h-[500px] border border-border/50 space-y-3">
+                                                        {/* Animated converted card from OCR */}
+                                                        {newConvertedCard && stage === 'Order Received' && (
+                                                            <div className="group relative bg-card dark:bg-zinc-800 rounded-2xl border-2 border-brand-400 ring-2 ring-brand-400/30 shadow-xl shadow-brand-400/20 transition-all duration-700 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-4">
+                                                                <div className="p-4">
+                                                                    <div className="flex items-center justify-between mb-3">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-zinc-900 flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
+                                                                                {newConvertedCard.vendor.substring(0, 2).toUpperCase()}
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className="text-sm font-bold text-foreground">{newConvertedCard.vendor}</p>
+                                                                                <p className="text-[10px] text-muted-foreground font-mono">{newConvertedCard.id}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-brand-300 dark:bg-brand-500 text-zinc-900 animate-pulse">NEW</span>
+                                                                    </div>
+                                                                    <div className="space-y-2 mb-3">
+                                                                        <div className="flex justify-between text-sm">
+                                                                            <span className="text-muted-foreground">Source</span>
+                                                                            <span className="font-medium text-foreground truncate ml-2 max-w-[140px]">{newConvertedCard.name}</span>
+                                                                        </div>
+                                                                        <div className="flex justify-between text-sm">
+                                                                            <span className="text-muted-foreground">Type</span>
+                                                                            <span className="font-medium text-foreground">{newConvertedCard.type === 'po' ? 'Purchase Order' : 'Acknowledgment'}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="pt-3 border-t border-border flex items-center justify-between">
+                                                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20">Order Received</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                         {stageOrders.map(order => (
                                                             <div
                                                                 key={order.id}

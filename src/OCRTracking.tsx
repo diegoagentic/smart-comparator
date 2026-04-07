@@ -25,9 +25,10 @@ const COLUMNS = [
 interface OCRTrackingProps {
     onLogout: () => void;
     onNavigate: (page: string) => void;
+    onConvertDocument?: (doc: { id: string; vendor: string; name: string; type: 'po' | 'ack'; tab: 'orders' | 'acknowledgments' }) => void;
 }
 
-export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) {
+export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }: OCRTrackingProps) {
     const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
     const [showUpload, setShowUpload] = useState(false)
     const [processingDoc, setProcessingDoc] = useState<string | null>(null)
@@ -370,9 +371,22 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                 onClose={() => setConvertDoc(null)}
                 document={convertDoc}
                 onConvert={(docId, type) => {
+                    const doc = convertDoc
                     setConvertDoc(null)
-                    // Navigate to transactions with highlight
-                    onNavigate('transactions')
+                    if (onConvertDocument && doc) {
+                        const genId = type === 'po'
+                            ? `PO-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`
+                            : `ACK-${Math.floor(Math.random() * 9000) + 1000}`
+                        onConvertDocument({
+                            id: genId,
+                            vendor: doc.vendor,
+                            name: doc.name,
+                            type,
+                            tab: type === 'po' ? 'orders' : 'acknowledgments'
+                        })
+                    } else {
+                        onNavigate('transactions')
+                    }
                 }}
             />
         </div>
