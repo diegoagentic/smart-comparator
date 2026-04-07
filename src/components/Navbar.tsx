@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
-import { Bell, ScanEye, FileText, Moon, Sun, LogOut, ChevronDown } from 'lucide-react'
+import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown } from 'lucide-react'
 import ActionCenter from './notifications/ActionCenter'
 import logoLightBrand from '../assets/logo-light-brand.png'
 import logoDarkBrand from '../assets/logo-dark-brand.png'
@@ -18,7 +18,6 @@ interface NavbarProps {
 export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigate }: NavbarProps) {
     const { theme, toggleTheme } = useTheme()
     const { user } = useAuth()
-    const [isActionCenterOpen, setIsActionCenterOpen] = useState(false)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
     const tabs: { name: string; page: string; icon: any }[] = [
@@ -76,14 +75,8 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-1 shrink-0">
-                        {/* Notifications */}
-                        <button
-                            onClick={() => setIsActionCenterOpen(!isActionCenterOpen)}
-                            className="relative flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
-                        >
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-card" />
-                        </button>
+                        {/* Action Center (has its own bell trigger + popover) */}
+                        <ActionCenter />
 
                         {/* Theme Toggle */}
                         <button
@@ -144,15 +137,6 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                 </div>
             </div>
 
-            {/* Action Center Overlay */}
-            {isActionCenterOpen && (
-                <>
-                    <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setIsActionCenterOpen(false)} />
-                    <div className="fixed top-20 right-4 z-50 w-[380px] max-h-[80vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-2xl">
-                        <ActionCenter />
-                    </div>
-                </>
-            )}
         </>
     )
 }
