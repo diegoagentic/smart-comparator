@@ -15,6 +15,7 @@ import { useTheme, Table, TableHeader, TableBody, TableRow, TableHead, TableCell
 import { useTenant } from './TenantContext'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
+import { POInputsTab } from './components/InputsTab'
 
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs))
@@ -333,11 +334,6 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
     )
 }
 
-const collaborators = [
-    { name: "David Park", role: "Regional Sales Mgr", status: "online", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-    { name: "Mike Ross", role: "Warehouse Lead", status: "offline", avatar: "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-    { name: "AI Agent", role: "System Bot", status: "online", avatar: "AI" },
-]
 
 const documents = [
     { name: "Packing_Slip_2055.pdf", size: "245 KB", uploaded: "Jan 12, 2025" },
@@ -379,68 +375,6 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
 
     const currentItems = isFlow1Order ? flow1Items : (isDemoOrder ? demoItems : items);
     const orderId = isFlow1Order ? '#PO-1029' : (isDemoOrder ? '#ORD-7829' : '#ORD-2055');
-
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 1,
-            sender: "System",
-            avatar: "",
-            content: `Order ${orderId} placed — 8 line items, $25,398.72 total. Ship Via: Best Way.`,
-            time: "Just now",
-            type: "system",
-        },
-    ]);
-
-    // If it's the demo order, we might want cleaner messages
-    useEffect(() => {
-        if (isDemoOrder) {
-            setMessages([
-                {
-                    id: 1,
-                    sender: "System",
-                    avatar: "",
-                    content: `Order ${orderId} generated from Quote #QT-9921.`,
-                    time: "2 mins ago",
-                    type: "system",
-                },
-                {
-                    id: 2,
-                    sender: "AI Assistant",
-                    avatar: "AI",
-                    content: "I've verified the stock for replaced item 'Aeron Remastered'. 120 units available at NY-05 Distribution Center.",
-                    time: "1 min ago",
-                    type: "ai",
-                },
-                {
-                    id: 3,
-                    sender: "System",
-                    avatar: "",
-                    content: `Cost Center 'Marketing-101' applied successfully.`,
-                    time: "Just now",
-                    type: "system",
-                }
-            ]);
-        } else if (isFlow1Order) {
-            setMessages([
-                {
-                    id: 1,
-                    sender: "System",
-                    avatar: "",
-                    content: `Purchase Order ${orderId} auto-generated from approved Quote #QT-1025.`,
-                    time: "Just now",
-                    type: "system",
-                },
-                {
-                    id: 2,
-                    sender: "AI Assistant",
-                    avatar: "AI",
-                    content: "I've successfully received and allocated 125 units of Ergonomic Task Chairs for Apex Furniture. Total value confirmed at $43,750.",
-                    time: "Just now",
-                    type: "ai",
-                }
-            ]);
-        }
-    }, [isDemoOrder, isFlow1Order, orderId]);
 
     const [selectedItem, setSelectedItem] = useState(items[0])
     const [sections, setSections] = useState({
@@ -1009,7 +943,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                         )
                                     }
                                 >
-                                    Tracking & Activity
+                                    Inputs
                                 </Tab>
                             </TabList>
                         </div>
@@ -1445,214 +1379,8 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                     </Card>
                                 </div>
                             </TabPanel>
-                            <TabPanel className="flex focus:outline-none min-h-[800px]">
-                                <div className="flex flex-col min-w-0 bg-muted/10 w-full">
-                                    {/* Chat Header */}
-                                    <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-background">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="text-lg font-semibold text-foreground">Activity Stream</h3>
-                                                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">{orderId}</span>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground">Real-time updates and collaboration</p>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex -space-x-2">
-                                                {collaborators.map((c, i) => (
-                                                    <div key={i} className="relative inline-block h-8 w-8 rounded-full ring-2 ring-background">
-                                                        {c.avatar === 'AI' ? (
-                                                            <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-white">AI</div>
-                                                        ) : (
-                                                            <img className="h-full w-full rounded-full object-cover" src={c.avatar} alt={c.name} />
-                                                        )}
-                                                        <span className={cn(
-                                                            "absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-background",
-                                                            c.status === 'online' ? "bg-green-400" : "bg-zinc-300"
-                                                        )} />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <Button variant="ghost" className="h-8 w-8 p-0 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                                                <PlusIcon className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    {/* Messages Area */}
-                                    <div className="p-6 space-y-6">
-                                        {messages.map((msg) => (
-                                            <div key={msg.id} className={cn("flex gap-4 max-w-3xl", msg.type === 'user' ? "ml-auto flex-row-reverse" : "")}>
-                                                <div className="flex-shrink-0">
-                                                    {msg.type === 'action_processing' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
-                                                            <DocumentTextIcon className="h-5 w-5 text-zinc-900 dark:text-primary" />
-                                                        </div>
-                                                    ) : msg.type === 'action_success' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center border border-green-200 dark:border-green-800">
-                                                            <CheckCircleIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                                        </div>
-                                                    ) : msg.avatar === 'AI' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
-                                                            <SparklesIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                                                        </div>
-                                                    ) : msg.avatar ? (
-                                                        <img className="h-10 w-10 rounded-full object-cover" src={msg.avatar} alt={msg.sender} />
-                                                    ) : (
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                                                            <ExclamationTriangleIcon className="h-5 w-5 text-zinc-900 dark:text-primary" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 space-y-2">
-                                                    <div className="flex items-baseline justify-between">
-                                                        <span className="text-sm font-semibold text-foreground">{msg.sender}</span>
-                                                        <span className="text-xs text-muted-foreground">{msg.time}</span>
-                                                    </div>
-
-                                                    {msg.type === 'action_success' ? (
-                                                        <DiscrepancyActionCard msg={msg} />
-                                                    ) : (
-                                                        <div className={cn(
-                                                            "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
-                                                            msg.type === 'user'
-                                                                ? "bg-brand-400 text-primary-foreground rounded-tr-sm"
-                                                                : "bg-card border border-border rounded-tl-sm text-foreground"
-                                                        )}>
-                                                            {msg.content}
-                                                            {msg.type === 'action_processing' && (
-                                                                <div className="mt-3 flex items-center gap-2 text-zinc-900 dark:text-primary font-medium">
-                                                                    <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                                                    <span>Processing request...</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="sticky bottom-4 mx-4 p-4 bg-background border border-border rounded-2xl shadow-lg z-10 transition-all duration-200">
-                                        <div className="flex gap-4">
-                                            <div className="flex-1 relative">
-                                                <Input
-                                                    type="text"
-                                                    placeholder="Type a message or use @ to mention..."
-                                                    className="w-full pl-4 pr-12 py-3 bg-muted/50 border-0 rounded-xl text-foreground placeholder-muted-foreground focus:ring-primary transition-shadow shadow-none focus:shadow-md"
-                                                />
-                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                                    <Button variant="ghost" className="h-auto w-auto p-1.5 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted">
-                                                        <PaperClipIcon className="h-5 w-5" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                            <Button variant="primary" className="h-auto w-auto p-3 rounded-xl hover:opacity-90 transition-opacity shadow-sm bg-primary text-primary-foreground">
-                                                <PaperAirplaneIcon className="h-5 w-5" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Contextual Quick Actions Sidebar */}
-                                <div className="w-80 border-l border-border bg-muted/30 flex flex-col h-full animate-in slide-in-from-right duration-500">
-                                    <div className="p-5 border-b border-border bg-background/50">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Context</h3>
-                                            <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center border border-blue-200 dark:border-blue-500/30">
-                                                <CubeIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-foreground">Order Tracking</p>
-                                                <p className="text-xs text-muted-foreground">4 items backordered · $25,398.72</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex-1 p-5 space-y-6 overflow-y-auto">
-                                        <div>
-                                            <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">Suggested Actions</h4>
-                                            <div className="space-y-3">
-                                                <Button
-                                                    variant="ghost"
-                                                    className="w-full h-auto justify-start group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all text-left"
-                                                >
-                                                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-zinc-900 dark:text-primary">
-                                                        <ClipboardDocumentListIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-zinc-900 dark:group-hover:text-primary transition-colors">Track Shipment</p>
-                                                        <p className="text-[10px] text-muted-foreground font-normal normal-case">View carrier tracking & ETA</p>
-                                                    </div>
-                                                </Button>
-
-                                                <Button
-                                                    variant="ghost"
-                                                    className="w-full h-auto justify-start group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-amber-500/50 hover:shadow-md transition-all text-left"
-                                                >
-                                                    <div className="h-8 w-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors text-amber-600 dark:text-amber-400">
-                                                        <ExclamationTriangleIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Check Backorders</p>
-                                                        <p className="text-[10px] text-muted-foreground font-normal normal-case">4 items pending fulfillment</p>
-                                                    </div>
-                                                </Button>
-
-                                                <Button
-                                                    onClick={() => setIsDocumentModalOpen(true)}
-                                                    variant="ghost"
-                                                    className="w-full h-auto justify-start group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-indigo-500/50 hover:shadow-md transition-all text-left"
-                                                >
-                                                    <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-600 dark:text-indigo-400">
-                                                        <ArrowDownTrayIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Export PDF</p>
-                                                        <p className="text-[10px] text-muted-foreground font-normal normal-case">Download industry-format PDF</p>
-                                                    </div>
-                                                </Button>
-
-                                                <Button
-                                                    variant="ghost"
-                                                    className="w-full h-auto justify-start group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-green-500/50 hover:shadow-md transition-all text-left"
-                                                >
-                                                    <div className="h-8 w-8 rounded-lg bg-green-50 dark:bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors text-green-600 dark:text-green-400">
-                                                        <EnvelopeIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Contact Vendor</p>
-                                                        <p className="text-[10px] text-muted-foreground font-normal normal-case">Email AIS about backorders</p>
-                                                    </div>
-                                                </Button>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">Live Updates</h4>
-                                            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
-                                                <div className="flex gap-2">
-                                                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                                                        <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-primary opacity-75"></span>
-                                                        <div className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></div>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs font-medium text-zinc-900 dark:text-primary">BackorderAgent monitoring fulfillment...</p>
-                                                        <p className="text-[10px] text-zinc-700 dark:text-primary/80 mt-1">Tracking 4 backordered items across 2 lines</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-4 border-t border-border bg-muted/50">
-                                        <Button variant="ghost" className="w-full h-auto py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1">
-                                            View Activity Log <ArrowRightOnRectangleIcon className="h-3 w-3" />
-                                        </Button>
-                                    </div>
-                                </div>
+                            <TabPanel className="flex flex-col focus:outline-none">
+                                <POInputsTab />
                             </TabPanel>
                         </TabPanels>
                     </TabGroup>

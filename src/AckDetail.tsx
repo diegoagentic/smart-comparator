@@ -15,6 +15,7 @@ import { useTheme } from 'strata-design-system'
 import { useTenant } from './TenantContext'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
+import { ACKInputsTab } from './components/InputsTab'
 
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs))
@@ -478,11 +479,6 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
     )
 }
 
-const collaborators = [
-    { name: "David Park", role: "Regional Sales Mgr", status: "online", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-    { name: "Mike Ross", role: "Warehouse Lead", status: "offline", avatar: "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-    { name: "AI Agent", role: "System Bot", status: "online", avatar: "AI" },
-]
 
 const documents = [
     { name: "Packing_Slip_2055.pdf", size: "245 KB", uploaded: "Jan 12, 2025" },
@@ -504,39 +500,8 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
     const showAckSummary = isContinua && currentStep?.id === '2.3'
     const [activeTabIndex, setActiveTabIndex] = useState(initialTab || 0)
 
-    // Auto-switch to AI Assistant tab when entering step 2.4
-    useEffect(() => {
-        if (currentStep?.id === '2.4') {
-            setActiveTabIndex(1);
-        }
-    }, [currentStep?.id]);
 
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 1,
-            sender: "System",
-            avatar: "",
-            content: "AIS Sales Order 1151064-B received — Acknowledgement #ACK-3099 via EDI. 40 line items, Total Order: $127,880.17.",
-            time: "10 mins ago",
-            type: "system",
-        },
-        {
-            id: 2,
-            sender: "AI Assistant",
-            avatar: "AI",
-            content: "DiscrepancyResolverAgent compared Acknowledgement against PO #ORD-2055. Match rate: 95%. Found 2 exceptions — Item F-SSC346030C (finish backordered, substitution proposed) and X-LTD661218L (2 units backordered, ETA Nov 27).",
-            time: "10 mins ago",
-            type: "action_processing",
-        },
-        {
-            id: 3,
-            sender: "AI Assistant",
-            avatar: "AI",
-            content: <DiscrepancyResolutionFlow />,
-            time: "9 mins ago",
-            type: "ai",
-        }
-    ])
+
     const [selectedItem, setSelectedItem] = useState(items[0])
     const [sections, setSections] = useState({
         quickActions: true,
@@ -854,7 +819,7 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                                         )
                                     }
                                 >
-                                    AI Assistant
+                                    Inputs
                                 </Tab>
                             </TabList>
                         </div>
@@ -1280,204 +1245,9 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                                     </div>
                                 </div>
                             </TabPanel>
-                            <TabPanel className="flex focus:outline-none min-h-[800px]">
-                                <div className="flex flex-col min-w-0 bg-muted/10 w-full">
-                                    {/* Chat Header */}
-                                    <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-background">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="text-lg font-semibold text-foreground">Activity Stream</h3>
-                                                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">AIS SO 1151064-B</span>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground">Real-time updates and collaboration</p>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex -space-x-2">
-                                                {collaborators.map((c, i) => (
-                                                    <div key={i} className="relative inline-block h-8 w-8 rounded-full ring-2 ring-background">
-                                                        {c.avatar === 'AI' ? (
-                                                            <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-white">AI</div>
-                                                        ) : (
-                                                            <img className="h-full w-full rounded-full object-cover" src={c.avatar} alt={c.name} />
-                                                        )}
-                                                        <span className={cn(
-                                                            "absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-background",
-                                                            c.status === 'online' ? "bg-green-400" : "bg-zinc-300"
-                                                        )} />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <button className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                                                <PlusIcon className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Messages Area */}
-                                    <div className="p-6 space-y-6">
-                                        {messages.map((msg) => (
-                                            <div key={msg.id} className={cn("flex gap-4 max-w-3xl", msg.type === 'user' ? "ml-auto flex-row-reverse" : "")}>
-                                                <div className="flex-shrink-0">
-                                                    {msg.type === 'action_processing' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
-                                                            <DocumentTextIcon className="h-5 w-5 text-zinc-900 dark:text-primary" />
-                                                        </div>
-                                                    ) : msg.type === 'action_success' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center border border-green-200 dark:border-green-800">
-                                                            <CheckCircleIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                                        </div>
-                                                    ) : msg.avatar === 'AI' ? (
-                                                        <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
-                                                            <SparklesIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                                                        </div>
-                                                    ) : msg.avatar ? (
-                                                        <img className="h-10 w-10 rounded-full object-cover" src={msg.avatar} alt={msg.sender} />
-                                                    ) : (
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                                                            <ExclamationTriangleIcon className="h-5 w-5 text-zinc-900 dark:text-primary" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 space-y-2">
-                                                    <div className="flex items-baseline justify-between">
-                                                        <span className="text-sm font-semibold text-foreground">{msg.sender}</span>
-                                                        <span className="text-xs text-muted-foreground">{msg.time}</span>
-                                                    </div>
-
-                                                    {msg.type === 'action_success' ? (
-                                                        <DiscrepancyActionCard msg={msg} />
-                                                    ) : (
-                                                        <div
-                                                            id={msg.id === 3 ? "discrepancy-resolver" : undefined}
-                                                            className={cn(
-                                                                "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
-                                                                msg.type === 'user'
-                                                                    ? "bg-brand-400 text-primary-foreground rounded-tr-sm"
-                                                                    : "bg-card border border-border rounded-tl-sm text-foreground"
-                                                            )}>
-                                                            {msg.content}
-                                                            {msg.type === 'action_processing' && (
-                                                                <div className="mt-3 flex items-center gap-2 text-zinc-900 dark:text-primary font-medium">
-                                                                    <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                                                    <span>Processing request...</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="sticky bottom-4 mx-4 p-4 bg-background border border-border rounded-2xl shadow-lg z-10 transition-all duration-200">
-                                        <div className="flex gap-4">
-                                            <div className="flex-1 relative">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Type a message or use @ to mention..."
-                                                    className="w-full pl-4 pr-12 py-3 bg-muted/50 border-0 rounded-xl text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary transition-shadow"
-                                                />
-                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                                                    <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted">
-                                                        <PaperClipIcon className="h-5 w-5" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <button className="p-3 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity shadow-sm">
-                                                <PaperAirplaneIcon className="h-5 w-5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Contextual Quick Actions Sidebar */}
-                                <div className="w-80 border-l border-border bg-muted/30 flex flex-col h-full animate-in slide-in-from-right duration-500">
-                                    <div className="p-5 border-b border-border bg-background/50">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Context</h3>
-                                            <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center border border-amber-200 dark:border-amber-500/30">
-                                                <DocumentChartBarIcon className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-foreground">Acknowledgement Review</p>
-                                                <p className="text-xs text-muted-foreground">2 Exceptions Found · $127,880.17</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex-1 p-5 space-y-6 overflow-y-auto">
-                                        <div>
-                                            <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">Suggested Actions</h4>
-                                            <div className="space-y-3">
-                                                <button onClick={() => setIsDocumentModalOpen(true)} className="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all text-left">
-                                                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-zinc-900 dark:text-primary">
-                                                        <ClipboardDocumentListIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-zinc-900 dark:group-hover:text-primary transition-colors">Compare vs PO</p>
-                                                        <p className="text-[10px] text-muted-foreground">Side-by-side Acknowledgement vs original PO</p>
-                                                    </div>
-                                                </button>
-
-                                                <button className="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-amber-500/50 hover:shadow-md transition-all text-left">
-                                                    <div className="h-8 w-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors text-amber-600 dark:text-amber-400">
-                                                        <ExclamationTriangleIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Resolve Exceptions</p>
-                                                        <p className="text-[10px] text-muted-foreground">2 items need attention</p>
-                                                    </div>
-                                                </button>
-
-                                                <button className="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-green-500/50 hover:shadow-md transition-all text-left">
-                                                    <div className="h-8 w-8 rounded-lg bg-green-50 dark:bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors text-green-600 dark:text-green-400">
-                                                        <CheckIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Approve Acknowledgement</p>
-                                                        <p className="text-[10px] text-muted-foreground">Confirm & move to fulfillment</p>
-                                                    </div>
-                                                </button>
-
-                                                <button className="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-indigo-500/50 hover:shadow-md transition-all text-left">
-                                                    <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-600 dark:text-indigo-400">
-                                                        <ArrowDownTrayIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Export PDF</p>
-                                                        <p className="text-[10px] text-muted-foreground">Download industry-format PDF</p>
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">Live Updates</h4>
-                                            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
-                                                <div className="flex gap-2">
-                                                    <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                                                        <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-primary opacity-75"></span>
-                                                        <div className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></div>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs font-medium text-zinc-900 dark:text-primary">DiscrepancyResolverAgent analyzing exceptions...</p>
-                                                        <p className="text-[10px] text-zinc-700 dark:text-primary/80 mt-1">Comparing 40 line items against PO #ORD-2055</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-4 border-t border-border bg-muted/50">
-                                        <button className="w-full py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1">
-                                            View Activity Log <ArrowRightOnRectangleIcon className="h-3 w-3" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </TabPanel >
+                            <TabPanel className="flex flex-col focus:outline-none">
+                                <ACKInputsTab />
+                            </TabPanel>
                         </TabPanels >
                     </TabGroup >
                 </div >
