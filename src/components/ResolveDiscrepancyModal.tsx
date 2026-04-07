@@ -55,6 +55,7 @@ const MOCK_ITEMS = [
         poSpec: 'SKU: CL-100-CHR',
         ackStatus: 'SKU Missing',
         fields: [
+            { name: 'SKU', value: '', isMissing: true, aiSuggestion: 'CL-100-CHR' },
             { name: 'Quantity', value: '200', isMissing: false },
             { name: 'Unit Price', value: '4.25', isMissing: false },
         ],
