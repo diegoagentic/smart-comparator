@@ -3,6 +3,7 @@ import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
 import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
+import ConvertDocumentModal from './components/ConvertDocumentModal'
 
 const OCR_DOCUMENTS = [
     { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
@@ -31,6 +32,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
     const [showUpload, setShowUpload] = useState(false)
     const [processingDoc, setProcessingDoc] = useState<string | null>(null)
     const [resolveDoc, setResolveDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
+    const [convertDoc, setConvertDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [documents, setDocuments] = useState(OCR_DOCUMENTS)
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
     const [searchQuery, setSearchQuery] = useState('')
@@ -269,6 +271,15 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                                         {doc.discrepancyCount > 0 ? `Resolve ${doc.discrepancyCount} Discrepancies` : 'Review & Process'}
                                                                     </button>
                                                                 )}
+                                                                {doc.status === 'processed' && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); setConvertDoc(doc); }}
+                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
+                                                                    >
+                                                                        <Sparkles className="h-3.5 w-3.5" />
+                                                                        Convert to PO / Acknowledgment
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         )}
                                                     </div>
@@ -355,6 +366,18 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                 onClose={() => setResolveDoc(null)}
                 document={resolveDoc}
                 onResolve={handleResolve}
+            />
+
+            {/* Convert Document Modal */}
+            <ConvertDocumentModal
+                isOpen={!!convertDoc}
+                onClose={() => setConvertDoc(null)}
+                document={convertDoc}
+                onConvert={(docId, type) => {
+                    setConvertDoc(null)
+                    // Navigate to transactions with highlight
+                    onNavigate('transactions')
+                }}
             />
         </div>
     )
