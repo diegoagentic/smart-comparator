@@ -1093,8 +1093,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Quick Actions:</span>
                                     {[
                                         { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
-                                        { icon: <EnvelopeIcon className="w-5 h-5" />, label: "Email Vendor", action: () => triggerToast('Email Vendor', 'Drafting vendor communication with acknowledgement details.', 'info') },
+                                        
+                                        
                                         { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action ? action.action() : null} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
@@ -1136,7 +1136,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <div className="flex items-center gap-1 overflow-x-auto min-w-max pl-4 border-l border-zinc-200 dark:border-zinc-700 xl:border-none xl:pl-0">
                                         {[
                                             { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                            { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
+                                            
                                             { icon: <EnvelopeIcon className="w-5 h-5" />, label: "Email Vendor", action: () => triggerToast('Email Vendor', 'Drafting vendor communication.', 'info') },
                                             { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
                                         ].map((action, i) => (
@@ -1203,10 +1203,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                 <div className="flex items-center gap-4 mt-6 animate-in fade-in slide-in-from-top-2 duration-500">
                                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Quick Actions:</span>
                                     {[
-                                        { icon: <PlusIcon className="w-5 h-5" />, label: "New Order", action: () => setIsCreateOrderOpen(true) },
-                                        { icon: <DocumentDuplicateIcon className="w-5 h-5" />, label: "Duplicate", action: () => triggerToast('Duplicate Order', 'Select an order to duplicate from the list.', 'info') },
-                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('order') },
-                                        { icon: <EnvelopeIcon className="w-5 h-5" />, label: "Send Email", action: () => triggerToast('Send Email', 'Email drafted with order confirmation details.', 'info') },
+                                        { icon: <PlusIcon className="w-5 h-5" />, label: "Create PO", action: () => setIsCreateOrderOpen(true) },
+                                        { icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, label: "Compare PO vs ACK", action: () => { setLifecycleTab('acknowledgments'); triggerToast('Compare Mode', 'Select an Acknowledgement to compare against this PO', 'info'); } },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action && action.action()} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
                                             {action.icon}
@@ -1415,13 +1413,13 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                             {activeTab !== 'metrics' && (
                                                 <div className="flex items-center gap-1">
                                                     {false && (<>
-                                                        <button onClick={() => triggerToast('Duplicate Quote', 'Select a quote to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate">
+                                                        <button onClick={() => triggerToast('Duplicate Quote', 'Select a quote to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate" style={{display:"none"}}>
                                                             <DocumentDuplicateIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => openPEDPreview('quote')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                        <button onClick={() => openPEDPreview('quote')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => triggerToast('Send to Client', 'Email prepared with quote summary. Ready to review and send.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Send to Client">
+                                                        <button onClick={() => triggerToast('Send to Client', 'Email prepared with quote summary. Ready to review and send.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Send to Client" style={{display:"none"}}>
                                                             <EnvelopeIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => { setConversionMode('quote-to-order'); setIsConversionOpen(true); }} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Convert to Order">
@@ -1429,10 +1427,10 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         </button>
                                                     </>)}
                                                     {lifecycleTab === 'acknowledgments' && (<>
-                                                        <button onClick={() => openPEDPreview('acknowledgment')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                        <button onClick={() => openPEDPreview('acknowledgment')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => triggerToast('Email Vendor', 'Drafting vendor communication with acknowledgement details.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Email Vendor">
+                                                        <button onClick={() => triggerToast('Email Vendor', 'Drafting vendor communication with acknowledgement details.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Email Vendor" style={{display:"none"}}>
                                                             <EnvelopeIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => setIsBatchAckOpen(true)} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Batch Approve">
@@ -1469,10 +1467,10 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                 )}
                                                             </div>
                                                         )}
-                                                        <button onClick={() => triggerToast('Duplicate Order', 'Select an order to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate">
+                                                        <button onClick={() => triggerToast('Duplicate Order', 'Select an order to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate" style={{display:"none"}}>
                                                             <DocumentDuplicateIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                        <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => triggerToast('Send Email', 'Email drafted with order confirmation details.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Send Email">
