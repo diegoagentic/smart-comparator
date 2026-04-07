@@ -1093,9 +1093,9 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Quick Actions:</span>
                                     {[
                                         { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                        
-                                        
                                         { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
+                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
+                                        { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('ACK') },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action ? action.action() : null} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
                                             {action.icon}
@@ -1136,9 +1136,9 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <div className="flex items-center gap-1 overflow-x-auto min-w-max pl-4 border-l border-zinc-200 dark:border-zinc-700 xl:border-none xl:pl-0">
                                         {[
                                             { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                            
-                                            { icon: <EnvelopeIcon className="w-5 h-5" />, label: "Email Vendor", action: () => triggerToast('Email Vendor', 'Drafting vendor communication.', 'info') },
                                             { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
+                                            { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
+                                            { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('ACK') },
                                         ].map((action, i) => (
                                             <button key={i} onClick={() => action.action()} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors relative group" title={action.label}>
                                                 {action.icon}
@@ -1205,6 +1205,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     {[
                                         { icon: <PlusIcon className="w-5 h-5" />, label: "Create PO", action: () => setIsCreateOrderOpen(true) },
                                         { icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, label: "Compare PO vs ACK", action: () => { setLifecycleTab('acknowledgments'); triggerToast('Compare Mode', 'Select an Acknowledgement to compare against this PO', 'info'); } },
+                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('order') },
+                                        { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('PO') },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action && action.action()} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
                                             {action.icon}
@@ -1269,7 +1271,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                         { icon: <PlusIcon className="w-5 h-5" />, label: "New Order", action: () => setIsCreateOrderOpen(true) },
                                         { icon: <DocumentPlusIcon className="w-5 h-5" />, label: "New Quote", action: () => setIsQuoteWidgetOpen(true) },
                                         { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('order') },
-                                        { icon: <EnvelopeIcon className="w-5 h-5" />, label: "Send Email", action: () => triggerToast('Send Email', 'Email drafted with order details.', 'info') },
+                                        { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('PO') },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action()} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors relative group" title={action.label}>
                                             {action.icon}
@@ -1473,8 +1475,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF" style={{display:"none"}}>
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => triggerToast('Send Email', 'Email drafted with order confirmation details.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Send Email">
-                                                            <EnvelopeIcon className="w-5 h-5" />
+                                                        <button onClick={() => handleExportSIF('PO')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
+                                                            <ArrowDownTrayIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => { setConversionMode('order-to-ack'); setIsConversionOpen(true); }} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Convert to Acknowledgment">
                                                             <ArrowsRightLeftIcon className="w-5 h-5" />
