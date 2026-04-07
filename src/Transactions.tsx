@@ -905,7 +905,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                             Acknowledgements
                         </button>
                         <button
-                            onClick={() => setLifecycleTab('projects')}
+                            style={{display:'none'}} onClick={() => {}}
                             className={cn(
                                 "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
                                 lifecycleTab === 'projects'
@@ -2836,7 +2836,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
             </Transition>
 
             {/* ═══ PROJECTS TAB CONTENT ═══ */}
-            {lifecycleTab === 'projects' && (
+            {false && (
                 <div className="space-y-6">
                     {/* Project Summary Header */}
                     <div className="flex items-center justify-between">
