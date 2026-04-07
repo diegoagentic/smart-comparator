@@ -14,10 +14,10 @@ const OCR_DOCUMENTS = [
 ]
 
 const COLUMNS = [
-    { id: 'identified', label: 'Identified', icon: FileText, color: 'text-info', bgColor: 'bg-info-light dark:bg-info/10', borderColor: 'border-info/20' },
-    { id: 'capturing', label: 'Capturing', icon: ScanEye, color: 'text-ai', bgColor: 'bg-ai-light dark:bg-ai/10', borderColor: 'border-ai/20' },
-    { id: 'discrepancies', label: 'Discrepancies', icon: AlertTriangle, color: 'text-warning', bgColor: 'bg-warning-light dark:bg-warning/10', borderColor: 'border-warning/20' },
-    { id: 'processed', label: 'Processed', icon: CheckCircle2, color: 'text-success', bgColor: 'bg-success-light dark:bg-success/10', borderColor: 'border-success/20' },
+    { id: 'identified', label: 'Ingesting', icon: FileText, color: 'text-info', bgColor: 'bg-info-light dark:bg-info/10', borderColor: 'border-info/20' },
+    { id: 'capturing', label: 'Pending Review', icon: ScanEye, color: 'text-ai', bgColor: 'bg-ai-light dark:bg-ai/10', borderColor: 'border-ai/20' },
+    { id: 'discrepancies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-warning', bgColor: 'bg-warning-light dark:bg-warning/10', borderColor: 'border-warning/20' },
+    { id: 'processed', label: 'Reconciled', icon: CheckCircle2, color: 'text-success', bgColor: 'bg-success-light dark:bg-success/10', borderColor: 'border-success/20' },
 ]
 
 interface OCRTrackingProps {
@@ -54,7 +54,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                         onClick={() => setShowUpload(!showUpload)}
                         className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:opacity-90"
                     >
-                        <Upload className="h-4 w-4" /> Upload Document
+                        <Upload className="h-4 w-4" /> +Upload Acknowledgement
                     </button>
                 </div>
             </div>
@@ -102,10 +102,10 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                         <div className="flex items-center gap-1">
                             {[
                                 { id: 'all', label: 'All', count: OCR_DOCUMENTS.length },
-                                { id: 'identified', label: 'Identified', count: OCR_DOCUMENTS.filter(d => d.status === 'identified').length },
-                                { id: 'capturing', label: 'Capturing', count: OCR_DOCUMENTS.filter(d => d.status === 'capturing').length },
-                                { id: 'discrepancies', label: 'Discrepancies', count: OCR_DOCUMENTS.filter(d => d.status === 'discrepancies').length },
-                                { id: 'processed', label: 'Processed', count: OCR_DOCUMENTS.filter(d => d.status === 'processed').length },
+                                { id: 'identified', label: 'Ingesting', count: OCR_DOCUMENTS.filter(d => d.status === 'identified').length },
+                                { id: 'capturing', label: 'Pending Review', count: OCR_DOCUMENTS.filter(d => d.status === 'capturing').length },
+                                { id: 'discrepancies', label: 'Awaiting Expert', count: OCR_DOCUMENTS.filter(d => d.status === 'discrepancies').length },
+                                { id: 'processed', label: 'Reconciled', count: OCR_DOCUMENTS.filter(d => d.status === 'processed').length },
                             ].map(tab => (
                                 <button
                                     key={tab.id}
@@ -262,7 +262,7 @@ export default function OCRTracking({ onLogout, onNavigate }: OCRTrackingProps) 
                                                 doc.status === 'capturing' ? 'bg-ai-light text-ai' :
                                                 'bg-info-light text-info'
                                             }`}>
-                                                {doc.status === 'identified' ? 'Identified' : doc.status === 'capturing' ? 'Capturing' : doc.status === 'discrepancies' ? `${doc.discrepancyCount} Discrepancies` : 'Processed'}
+                                                {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Pending Review' : doc.status === 'discrepancies' ? 'Awaiting Expert' : 'Reconciled'}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">

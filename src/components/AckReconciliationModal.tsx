@@ -271,7 +271,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             <div>
                                                 <Dialog.Title as="h3" className="text-xl font-brand font-bold text-foreground mb-1 flex items-center gap-2.5">
                                                     <DocumentMagnifyingGlassIcon className="w-6 h-6 text-indigo-500" />
-                                                    PO vs Acknowledgment Reconciliation
+                                                    PO vs ACK Value Reconciliation
                                                 </Dialog.Title>
                                                 <p className="text-sm text-muted-foreground">
                                                     Select a PO–ACK pair to review. "Pending Review" pairs require full validation. "Matched" pairs are pre-verified.
@@ -360,7 +360,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                         Reconciling {selectedPair?.poId} ↔ {selectedPair?.id}
                                                     </h3>
                                                     <p className="text-[11px] text-muted-foreground">
-                                                        Comparing Purchase Order against vendor Acknowledgment — {selectedPair?.vendor}
+                                                        Comparing PO Spec against vendor ACK Value — {selectedPair?.vendor}
                                                     </p>
                                                 </div>
                                             </div>
@@ -536,13 +536,13 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                         {/* Values comparison */}
                                                         <div className="grid grid-cols-2 gap-3 mb-3">
                                                             <div className="p-2.5 rounded-lg bg-card border border-border">
-                                                                <span className="text-[9px] font-semibold text-muted-foreground uppercase block mb-1">Purchase Order</span>
+                                                                <span className="text-[9px] font-semibold text-muted-foreground uppercase block mb-1">PO Spec</span>
                                                                 <span className={`text-sm font-medium ${fixed === 'accept' ? 'text-foreground' : 'text-foreground'}`}>
                                                                     {disc.poValue}
                                                                 </span>
                                                             </div>
                                                             <div className="p-2.5 rounded-lg bg-card border border-border">
-                                                                <span className="text-[9px] font-semibold text-muted-foreground uppercase block mb-1">Acknowledgment</span>
+                                                                <span className="text-[9px] font-semibold text-muted-foreground uppercase block mb-1">ACK Value</span>
                                                                 <span className={`text-sm font-medium ${fixed === 'accept' ? 'text-green-600 dark:text-green-400 font-bold' : disc.status === 'mismatch' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>
                                                                     {disc.ackValue}
                                                                 </span>
@@ -565,20 +565,20 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-green-600 hover:bg-green-700 text-white transition-colors"
                                                                 >
                                                                     <CheckCircleIcon className="w-3.5 h-3.5" />
-                                                                    Accept ACK Value
+                                                                    Accept ACK
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setDiscrepancyFixes(prev => ({ ...prev, [i]: 'reject' }))}
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-muted hover:bg-muted/80 text-muted-foreground transition-colors"
                                                                 >
-                                                                    Keep PO Value
+                                                                    Keep PO
                                                                 </button>
                                                             </div>
                                                         )}
                                                         {fixed !== undefined && (
                                                             <div className="flex items-center gap-2">
                                                                 <span className={`text-[11px] font-semibold ${fixed === 'accept' ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
-                                                                    {fixed === 'accept' ? 'ACK value accepted' : 'PO value kept'}
+                                                                    {fixed === 'accept' ? 'ACK value accepted' : 'PO spec kept'}
                                                                 </span>
                                                                 <button
                                                                     onClick={() => setDiscrepancyFixes(prev => {
