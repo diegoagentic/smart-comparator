@@ -354,6 +354,7 @@ const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
 };
 
 import AcknowledgementUploadModal from './components/AcknowledgementUploadModal'
+import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
 
 interface ConvertedDoc {
     id: string;
@@ -761,6 +762,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
     const [trackingOrder, setTrackingOrder] = useState<any>(null)
+    const [resolveAckDoc, setResolveAckDoc] = useState<any>(null)
 
     const toggleExpand = (id: string) => {
         const newExpanded = new Set(expandedIds)
@@ -2401,9 +2403,16 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                             <DocumentTextIcon className="h-4 w-4" />
                                                                         </button>
                                                                         <button
-                                                                            onClick={(e) => { e.stopPropagation(); setTrackingOrder(order); }}
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                if (lifecycleTab === 'acknowledgments') {
+                                                                                    setResolveAckDoc({ id: order.id, name: order.id, vendor: order.vendor || order.client, discrepancyCount: 3 });
+                                                                                } else {
+                                                                                    setTrackingOrder(order);
+                                                                                }
+                                                                            }}
                                                                             className="p-1.5 rounded-lg text-muted-foreground hover:text-blue-500 hover:bg-blue-50/50 transition-colors"
-                                                                            title="Track Order"
+                                                                            title={lifecycleTab === 'acknowledgments' ? 'Resolve Discrepancy' : 'Track Order'}
                                                                         >
                                                                             <MapPinIcon className="h-4 w-4" />
                                                                         </button>
@@ -2660,7 +2669,14 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                     {lifecycleTab === 'quotes' ? 'View Quote Details' : lifecycleTab === 'acknowledgments' ? 'View PO Details' : 'View Full Order Details'}
                                                                                 </button>
                                                                                 <button
-                                                                                    onClick={(e) => { e.stopPropagation(); setTrackingOrder(order); }}
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation();
+                                                                                        if (lifecycleTab === 'acknowledgments') {
+                                                                                            setResolveAckDoc({ id: order.id, name: order.id, vendor: order.vendor || order.client, discrepancyCount: 3 });
+                                                                                        } else {
+                                                                                            setTrackingOrder(order);
+                                                                                        }
+                                                                                    }}
                                                                                     className="w-full py-3 text-sm font-bold text-zinc-950 bg-brand-400 hover:bg-brand-300 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2"
                                                                                 >
                                                                                     <MapPinIcon className="h-4 w-4" />
@@ -2813,39 +2829,6 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                 </p>
                                                 <button className="mt-auto w-full py-2 bg-brand-600 hover:bg-brand-700 text-white dark:text-brand-950 dark:bg-brand-400 dark:hover:bg-brand-300 rounded-lg text-sm font-medium transition-colors">
                                                     Apply Suggested Pricing
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : lifecycleTab === 'acknowledgments' ? (
-                                        /* Ack Details View */
-                                        <div className="space-y-6">
-                                            <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-lg p-4 flex gap-3">
-                                                <ExclamationTriangleIcon className="w-5 h-5 text-red-600 flex-shrink-0" />
-                                                <div>
-                                                    <h4 className="text-sm font-semibold text-red-700 dark:text-red-400">Price Discrepancy Detected</h4>
-                                                    <p className="text-sm text-red-600/90 dark:text-red-400/90 mt-1">Vendor acknowledgement is <span className="font-bold">$500 higher</span> than the Purchase Order.</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4 text-sm">
-                                                <div className="p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg">
-                                                    <span className="block text-xs uppercase text-muted-foreground mb-1">Your PO</span>
-                                                    <div className="font-semibold text-lg">$12,500.00</div>
-                                                    <div className="text-xs text-muted-foreground mt-2">Unit Price: $250.00</div>
-                                                </div>
-                                                <div className="p-4 border border-red-200 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/5 rounded-lg">
-                                                    <span className="block text-xs uppercase text-red-600 dark:text-red-400 mb-1">Vendor Acknowledgement</span>
-                                                    <div className="font-semibold text-lg text-red-700 dark:text-red-400">$13,000.00</div>
-                                                    <div className="text-xs text-red-600/80 mt-2">Unit Price: $260.00</div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex gap-3 justify-end pt-4 border-t border-border">
-                                                <button className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent">
-                                                    Contact Rep
-                                                </button>
-                                                <button className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90">
-                                                    Update PO to Match
                                                 </button>
                                             </div>
                                         </div>
@@ -3076,6 +3059,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
             <CreateOrderModal isOpen={isCreateOrderOpen} onClose={() => setIsCreateOrderOpen(false)} />
             <AcknowledgementUploadModal isOpen={isAckModalOpen} onClose={() => setIsAckModalOpen(false)} />
+            <ResolveDiscrepancyModal isOpen={!!resolveAckDoc} onClose={() => setResolveAckDoc(null)} document={resolveAckDoc} />
             <div />
             <div />
             
