@@ -8,8 +8,8 @@ import DocumentPreviewModal from './components/DocumentPreviewModal'
 
 const OCR_DOCUMENTS = [
     { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
-    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 78, discrepancyCount: 0 },
-    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'discrepancies', confidence: 92, discrepancyCount: 3 },
+    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 72, discrepancyCount: 0 },
+    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'discrepancies', confidence: 83, discrepancyCount: 3 },
     { id: 'OCR-004', name: 'INV-4521_HermanMiller.pdf', vendor: 'Herman Miller', type: 'Invoice', pages: 4, fields: 61, date: 'Yesterday', status: 'discrepancies', confidence: 88, discrepancyCount: 5 },
     { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, discrepancyCount: 0 },
     { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, discrepancyCount: 0 },
@@ -235,8 +235,8 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 <div className="flex items-center gap-2">
                                                                     {doc.confidence ? (
                                                                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                                                                            doc.confidence >= 95 ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-400/30' :
-                                                                            doc.confidence >= 85 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20 dark:ring-amber-400/30' :
+                                                                            doc.confidence > 90 ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-400/30' :
+                                                                            doc.confidence >= 75 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20 dark:ring-amber-400/30' :
                                                                             'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-400/30'
                                                                         }`}>
                                                                             <Sparkles className="h-3 w-3 inline mr-1" />{doc.confidence}%
@@ -257,12 +257,23 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                         {/* Expanded detail */}
                                                         {selectedDoc === doc.id && (
                                                             <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border">
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); setPreviewDoc(doc); }}
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors"
-                                                                >
-                                                                    <Eye className="h-3.5 w-3.5" /> Review Document & Fields
-                                                                </button>
+                                                                {doc.status === 'identified' ? (
+                                                                    <div className="space-y-2.5 py-1">
+                                                                        <span className="text-xs text-muted-foreground font-medium">Ingesting document...</span>
+                                                                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                                                                            <div className="h-full bg-info rounded-full animate-[ingestProgress_3s_ease-out_forwards]" />
+                                                                        </div>
+                                                                        <style>{`@keyframes ingestProgress { from { width: 5%; } to { width: 60%; } }`}</style>
+                                                                        <p className="text-[10px] text-muted-foreground">Scanning pages and extracting fields...</p>
+                                                                    </div>
+                                                                ) : (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); setPreviewDoc(doc); }}
+                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors"
+                                                                    >
+                                                                        <Eye className="h-3.5 w-3.5" /> Review Document & Fields
+                                                                    </button>
+                                                                )}
                                                                 {(doc.status === 'capturing' || doc.status === 'discrepancies') && (
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
@@ -338,7 +349,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     {doc.confidence ? (
-                                                        <span className={`text-sm font-medium flex items-center gap-1 ${doc.confidence >= 95 ? 'text-success' : doc.confidence >= 85 ? 'text-warning' : 'text-error'}`}>
+                                                        <span className={`text-sm font-medium flex items-center gap-1 ${doc.confidence > 90 ? 'text-success' : doc.confidence >= 75 ? 'text-warning' : 'text-error'}`}>
                                                             <Sparkles className="h-3 w-3" />{doc.confidence}%
                                                         </span>
                                                     ) : <span className="text-xs text-muted-foreground">—</span>}

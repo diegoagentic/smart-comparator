@@ -1067,19 +1067,9 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                                 <Button variant="ghost" onClick={() => setIsDocumentModalOpen(true)} className="h-auto p-1 text-muted-foreground hover:text-zinc-900 rounded hover:bg-primary transition-colors">
                                                     <PencilSquareIcon className="h-4 w-4" />
                                                 </Button>
-                                                <Button variant="ghost" className="h-auto p-1 text-muted-foreground hover:text-zinc-900 rounded hover:bg-primary transition-colors">
-                                                    <ArrowDownTrayIcon className="h-4 w-4" />
-                                                </Button>
-                                                <Button variant="ghost" className="h-auto p-1 text-muted-foreground hover:text-zinc-900 rounded hover:bg-primary transition-colors">
-                                                    <PaperAirplaneIcon className="h-4 w-4" />
-                                                </Button>
                                                 <Button variant="ghost" onClick={() => setIsAiDiagnosisOpen(true)} className="relative h-auto p-1 text-indigo-600 hover:text-zinc-900 rounded hover:bg-primary transition-colors">
                                                     <SparklesIcon className="h-4 w-4" />
                                                     <span className="absolute top-1 right-1 block h-1.5 w-1.5 rounded-full bg-indigo-500 ring-2 ring-white dark:ring-zinc-900" />
-                                                </Button>
-                                                <div className="w-px h-4 bg-border mx-1 self-center" />
-                                                <Button variant="ghost" className="h-auto p-1 text-muted-foreground hover:text-zinc-900 rounded hover:bg-primary transition-colors">
-                                                    <EllipsisHorizontalIcon className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </div>
@@ -1365,13 +1355,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                                         variant="primary"
                                                         className="w-full"
                                                     >
-                                                        Create Purchase Order
-                                                    </Button>
-                                                    <Button
-                                                        className="w-full"
-                                                        variant="outline"
-                                                    >
-                                                        Send Acknowledgement
+                                                        Update Purchase Order
                                                     </Button>
                                                 </div>
                                             </div>

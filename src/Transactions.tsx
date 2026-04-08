@@ -23,6 +23,7 @@ import CreateOrderModal from './components/CreateOrderModal'
 import Breadcrumbs from './components/Breadcrumbs'
 import DocumentConversionModal from './components/DocumentConversionModal'
 import AckReconciliationModal from './components/AckReconciliationModal'
+import DocumentPreviewModal from './components/DocumentPreviewModal'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 function cn(...inputs: (string | undefined | null | false)[]) {
@@ -646,6 +647,32 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
     const [isConversionOpen, setIsConversionOpen] = useState(false);
     const [conversionMode, setConversionMode] = useState<'quote-to-order' | 'order-to-ack'>('quote-to-order');
     const [isReconciliationOpen, setIsReconciliationOpen] = useState(false);
+    const [previewDoc, setPreviewDoc] = useState<any>(null);
+
+    // Multi-select export state
+    const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
+    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const [isExporting, setIsExporting] = useState(false);
+
+    const toggleItem = (id: string) => {
+        setSelectedItems(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    };
+
+    const handleBulkExport = () => {
+        setIsExporting(true);
+        const items = Array.from(selectedItems);
+        setTimeout(() => {
+            setIsExporting(false);
+            setIsMultiSelectMode(false);
+            setSelectedItems(new Set());
+            const fileList = items.map(id => `${id.replace('#', '')}.pdf`).join(', ');
+            triggerToast('Export Complete', `Downloaded ${items.length} file(s): ${fileList}`, 'success');
+        }, 2000);
+    };
 
     const openPEDPreview = (type: PEDDocumentType, id?: string) => {
         setPedData(getMockPEDData(type, id));
@@ -702,6 +729,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
     const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active')
     const [lifecycleTab, setLifecycleTab] = useState<'orders' | 'acknowledgments'>('orders')
+    // Clear multi-select on tab change
+    useEffect(() => { setIsMultiSelectMode(false); setSelectedItems(new Set()); }, [lifecycleTab]);
     const [highlightedSection, setHighlightedSection] = useState<string | null>(null);
     const [newConvertedCard, setNewConvertedCard] = useState<ConvertedDoc | null>(null);
     const [convertedHighlight, setConvertedHighlight] = useState(false);
@@ -1095,9 +1124,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Quick Actions:</span>
                                     {[
                                         { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                        { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
-                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
-                                        { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('ACK') },
+                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => setIsMultiSelectMode(!isMultiSelectMode) },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action ? action.action() : null} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
                                             {action.icon}
@@ -1138,9 +1165,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     <div className="flex items-center gap-1 overflow-x-auto min-w-max pl-4 border-l border-zinc-200 dark:border-zinc-700 xl:border-none xl:pl-0">
                                         {[
                                             { icon: <CloudArrowUpIcon className="w-5 h-5" />, label: "Upload Acknowledgement", action: () => setIsAckModalOpen(true) },
-                                            { icon: <CheckBadgeIcon className="w-5 h-5" />, label: "Batch Approve", action: () => setIsBatchAckOpen(true) },
-                                            { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('acknowledgment') },
-                                            { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('ACK') },
+                                            { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => setIsMultiSelectMode(!isMultiSelectMode) },
                                         ].map((action, i) => (
                                             <button key={i} onClick={() => action.action()} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors relative group" title={action.label}>
                                                 {action.icon}
@@ -1207,7 +1232,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     {[
                                         { icon: <PlusIcon className="w-5 h-5" />, label: "Create PO", action: () => setIsCreateOrderOpen(true) },
                                         { icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, label: "Compare PO vs ACK", action: () => { setLifecycleTab('acknowledgments'); triggerToast('Compare Mode', 'Select an Acknowledgement to compare against this PO', 'info'); } },
-                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('order') },
+                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => setIsMultiSelectMode(!isMultiSelectMode) },
                                         { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('PO') },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action && action.action()} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border hover:border-primary hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-all text-xs font-medium">
@@ -1272,7 +1297,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     {[
                                         { icon: <PlusIcon className="w-5 h-5" />, label: "New Order", action: () => setIsCreateOrderOpen(true) },
                                         { icon: <DocumentPlusIcon className="w-5 h-5" />, label: "New Quote", action: () => setIsQuoteWidgetOpen(true) },
-                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => openPEDPreview('order') },
+                                        { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Export PDF", action: () => setIsMultiSelectMode(!isMultiSelectMode) },
                                         { icon: <ArrowDownTrayIcon className="w-5 h-5" />, label: "Export SIF", action: () => handleExportSIF('PO') },
                                     ].map((action, i) => (
                                         <button key={i} onClick={() => action.action()} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors relative group" title={action.label}>
@@ -1423,14 +1448,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         </button>
                                                     </>)}
                                                     {lifecycleTab === 'acknowledgments' && (<>
-                                                        <button onClick={() => setIsBatchAckOpen(true)} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Batch Approve">
-                                                            <CheckBadgeIcon className="w-5 h-5" />
-                                                        </button>
-                                                        <button onClick={() => openPEDPreview('acknowledgment')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                        <button onClick={() => setIsMultiSelectMode(!isMultiSelectMode)} className={cn("p-2 rounded-lg transition-colors", isMultiSelectMode ? "bg-brand-300 dark:bg-brand-500 text-zinc-900" : "hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white")} title="Export PDF">
                                                             <DocumentTextIcon className="w-5 h-5" />
-                                                        </button>
-                                                        <button onClick={() => handleExportSIF('ACK')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
-                                                            <ArrowDownTrayIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => setIsReconciliationOpen(true)} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Reconcile PO vs ACK">
                                                             <DocumentMagnifyingGlassIcon className="w-5 h-5" />
@@ -1466,7 +1485,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         <button onClick={() => triggerToast('Duplicate Order', 'Select an order to duplicate from the list.', 'info')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Duplicate" style={{display:"none"}}>
                                                             <DocumentDuplicateIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => openPEDPreview('order')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export PDF">
+                                                        <button onClick={() => setIsMultiSelectMode(!isMultiSelectMode)} className={cn("p-2 rounded-lg transition-colors", isMultiSelectMode ? "bg-brand-300 dark:bg-brand-500 text-zinc-900" : "hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white")} title="Export PDF">
                                                             <DocumentTextIcon className="w-5 h-5" />
                                                         </button>
                                                         <button onClick={() => handleExportSIF('PO')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
@@ -2330,6 +2349,16 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                             >
                                                                 <td className="p-4">
                                                                     <div className="flex items-center gap-3">
+                                                                        {isMultiSelectMode && (
+                                                                            <button
+                                                                                onClick={(e) => { e.stopPropagation(); toggleItem(order.id); }}
+                                                                                className={cn("h-5 w-5 rounded border-2 flex items-center justify-center shrink-0 transition-all",
+                                                                                    selectedItems.has(order.id) ? "bg-primary border-primary" : "border-muted-foreground/30 hover:border-primary"
+                                                                                )}
+                                                                            >
+                                                                                {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
+                                                                            </button>
+                                                                        )}
                                                                         <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
                                                                             {order.initials}
                                                                         </div>
@@ -2527,6 +2556,16 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                 <div className="p-4">
                                                                     <div className="flex items-center justify-between mb-3">
                                                                         <div className="flex items-center gap-3">
+                                                                            {isMultiSelectMode && (
+                                                                                <button
+                                                                                    onClick={(e) => { e.stopPropagation(); toggleItem(order.id); }}
+                                                                                    className={cn("h-5 w-5 rounded border-2 flex items-center justify-center shrink-0 transition-all",
+                                                                                        selectedItems.has(order.id) ? "bg-primary border-primary" : "border-muted-foreground/30 hover:border-primary"
+                                                                                    )}
+                                                                                >
+                                                                                    {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
+                                                                                </button>
+                                                                            )}
                                                                             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
                                                                                 {order.initials}
                                                                             </div>
@@ -2623,11 +2662,21 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
                                                                             <div className="flex items-center gap-1">
                                                                                 <button
-                                                                                    onClick={(e) => { e.stopPropagation(); openPEDPreview(lifecycleTab === 'quotes' ? 'quote' : lifecycleTab === 'acknowledgments' ? 'acknowledgment' : 'order', order.id); }}
-                                                                                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
-                                                                                    title="Export PDF"
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation();
+                                                                                        setPreviewDoc({
+                                                                                            id: order.id,
+                                                                                            name: lifecycleTab === 'acknowledgments' ? `${order.id.replace('Acknowledgement-', 'ACK-')}_${(order as any).vendor}.pdf` : `${order.id.replace('#', '')}_PO.pdf`,
+                                                                                            vendor: (order as any).vendor || (order as any).customer,
+                                                                                            type: lifecycleTab === 'acknowledgments' ? 'Acknowledgment' : 'Purchase Order',
+                                                                                            fields: lifecycleTab === 'acknowledgments' ? 35 : 50,
+                                                                                            confidence: 96
+                                                                                        });
+                                                                                    }}
+                                                                                    className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all group relative"
+                                                                                    title="Preview Document"
                                                                                 >
-                                                                                    <ArrowDownTrayIcon className="h-4 w-4" />
+                                                                                    <DocumentTextIcon className="h-4 w-4" />
                                                                                 </button>
                                                                                 <button
                                                                                     onClick={(e) => { e.stopPropagation(); toggleExpand(order.id); }}
@@ -3066,6 +3115,43 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
             
             <DocumentConversionModal isOpen={isConversionOpen} onClose={() => setIsConversionOpen(false)} mode={conversionMode} triggerToast={triggerToast} />
             <AckReconciliationModal isOpen={isReconciliationOpen} onClose={() => setIsReconciliationOpen(false)} triggerToast={triggerToast} />
+            <DocumentPreviewModal isOpen={!!previewDoc} onClose={() => setPreviewDoc(null)} document={previewDoc} />
+
+            {/* Floating Export Bar */}
+            {isMultiSelectMode && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-4 fade-in duration-300">
+                    <div className="bg-card border border-border rounded-2xl shadow-2xl px-6 py-3 flex items-center gap-4">
+                        {isExporting ? (
+                            <div className="flex items-center gap-3">
+                                <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                <span className="text-sm font-medium text-foreground">Exporting {selectedItems.size} file(s)...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <span className="text-sm font-medium text-foreground">{selectedItems.size} selected</span>
+                                <button
+                                    onClick={handleBulkExport}
+                                    disabled={selectedItems.size === 0}
+                                    className={cn(
+                                        "px-4 py-2 rounded-lg text-sm font-semibold transition-colors",
+                                        selectedItems.size > 0
+                                            ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 hover:bg-brand-400"
+                                            : "bg-muted text-muted-foreground cursor-not-allowed"
+                                    )}
+                                >
+                                    Export {selectedItems.size > 0 ? `${selectedItems.size} items` : ''} as PDF
+                                </button>
+                                <button
+                                    onClick={() => { setIsMultiSelectMode(false); setSelectedItems(new Set()); }}
+                                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Toast Notification */}
             {showToast && (

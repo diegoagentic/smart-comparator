@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
-import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown } from 'lucide-react'
+import { useTenant } from '../TenantContext'
+import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown, Building2, Check } from 'lucide-react'
 import logoLightBrand from '../assets/logo-light-brand.png'
 import logoDarkBrand from '../assets/logo-dark-brand.png'
 
@@ -17,7 +18,20 @@ interface NavbarProps {
 export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigate }: NavbarProps) {
     const { theme, toggleTheme } = useTheme()
     const { user } = useAuth()
+    const { selectedTenants, tenants, toggleTenant, selectAll } = useTenant()
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+    const [isTenantOpen, setIsTenantOpen] = useState(false)
+    const tenantRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (tenantRef.current && !tenantRef.current.contains(e.target as Node)) {
+                setIsTenantOpen(false)
+            }
+        }
+        if (isTenantOpen) document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [isTenantOpen])
 
     const tabs: { name: string; page: string; icon: any }[] = [
         { name: 'OCR', page: 'ocr', icon: ScanEye },
@@ -33,16 +47,61 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 min-w-[60vw] max-w-fit lg:min-w-0 lg:max-w-7xl lg:w-[80vw]">
                 <div className="relative flex items-center lg:justify-between px-3 py-2 rounded-full gap-1 bg-card/80 backdrop-blur-xl border border-border shadow-lg dark:shadow-glow-md">
 
-                    {/* Left: Logo + Brand */}
+                    {/* Left: Logo + Brand + Tenant Selector */}
                     <div className="flex items-center gap-1">
                         <div className="px-2 shrink-0">
                             <img src={logoLightBrand} alt="Strata" className="h-8 w-20 object-contain block dark:hidden" />
                             <img src={logoDarkBrand} alt="Strata" className="h-8 w-20 object-contain hidden dark:block" />
                         </div>
                         <div className="w-px h-6 bg-border mx-1"></div>
-                        <div className="hidden sm:block px-2">
-                            <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none">SMART COMPARATOR</div>
-                            <div className="text-sm font-bold text-foreground leading-tight">Strata</div>
+                        <div className="hidden sm:flex items-center gap-1 px-2" ref={tenantRef}>
+                            <div>
+                                <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none">SMART COMPARATOR</div>
+                                <button
+                                    onClick={() => setIsTenantOpen(!isTenantOpen)}
+                                    className="flex items-center gap-1.5 text-sm font-bold text-foreground leading-tight hover:text-primary transition-colors"
+                                >
+                                    {selectedTenants.length === 1 ? selectedTenants[0] : `${selectedTenants.length} Tenants`}
+                                    <ChevronDown className={`h-3 w-3 text-muted-foreground transition-transform ${isTenantOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                            </div>
+
+                            {/* Tenant Dropdown */}
+                            {isTenantOpen && (
+                                <div className="absolute left-14 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-lg z-50 p-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="px-3 py-2 border-b border-border mb-1 flex items-center justify-between">
+                                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tenants</span>
+                                        <button
+                                            onClick={selectAll}
+                                            className="text-[10px] font-medium text-primary hover:underline"
+                                        >
+                                            Select All
+                                        </button>
+                                    </div>
+                                    {tenants.map(tenant => {
+                                        const isSelected = selectedTenants.includes(tenant)
+                                        return (
+                                            <button
+                                                key={tenant}
+                                                onClick={() => toggleTenant(tenant)}
+                                                className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-muted transition-colors"
+                                            >
+                                                <div className={`h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                                                    isSelected
+                                                        ? 'bg-primary border-primary'
+                                                        : 'border-border'
+                                                }`}>
+                                                    {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
+                                                </div>
+                                                <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                                                <span className={`text-left truncate ${isSelected ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                                                    {tenant}
+                                                </span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
 

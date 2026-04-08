@@ -158,6 +158,34 @@ const pairStatusBadge = (status: AckPair['status']) => {
 
 // ── Component ──────────────────────────────────────────────────
 
+// ── Aggregated discrepancies ──────────────────────────────────
+interface AggregatedDiscrepancy {
+    pairId: string;
+    poId: string;
+    vendor: string;
+    docType: 'ACK' | 'PO';
+    field: ComparisonField;
+    globalIdx: number;
+}
+
+const ALL_DISCREPANCIES: AggregatedDiscrepancy[] = (() => {
+    let idx = 0;
+    const result: AggregatedDiscrepancy[] = [];
+    const pairs: Array<{ pair: AckPair; data: ComparisonField[] }> = [
+        { pair: ACK_PAIRS[0], data: RECONCILIATION_COMPARISON_1 },
+        { pair: ACK_PAIRS[2], data: RECONCILIATION_COMPARISON_2 },
+        { pair: ACK_PAIRS[4], data: RECONCILIATION_COMPARISON_3 },
+    ];
+    for (const { pair, data } of pairs) {
+        for (const f of data) {
+            if (f.status !== 'match') {
+                result.push({ pairId: pair.id, poId: pair.poId, vendor: pair.vendor, docType: 'ACK', field: f, globalIdx: idx++ });
+            }
+        }
+    }
+    return result;
+})();
+
 export default function AckReconciliationModal({ isOpen, onClose, triggerToast }: AckReconciliationModalProps) {
     // Smart Comparator: skip select step, go directly to compare with first pair
     const [step, setStep] = useState<ReconcileStep>('compare');
@@ -165,6 +193,31 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
     const [scanProgress, setScanProgress] = useState(0);
     const [scanComplete, setScanComplete] = useState(false);
     const [discrepancyFixes, setDiscrepancyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
+
+    // All Discrepancies view
+    const [viewMode, setViewMode] = useState<'pair' | 'all'>('pair');
+    const [allFilter, setAllFilter] = useState<{ severity: string; category: string; search: string }>({ severity: 'all', category: 'all', search: '' });
+    const [allFixes, setAllFixes] = useState<Record<number, 'accept' | 'reject'>>({});
+
+    const filteredAllDiscrepancies = useMemo(() => {
+        return ALL_DISCREPANCIES.filter(d => {
+            if (allFilter.severity !== 'all' && d.field.severity !== allFilter.severity) return false;
+            if (allFilter.category !== 'all' && d.field.category !== allFilter.category) return false;
+            if (allFilter.search && !d.field.field.toLowerCase().includes(allFilter.search.toLowerCase()) && !d.vendor.toLowerCase().includes(allFilter.search.toLowerCase())) return false;
+            return true;
+        });
+    }, [allFilter]);
+
+    // Group discrepancies by document pair
+    const groupedDiscrepancies = useMemo(() => {
+        const groups: Record<string, { pairId: string; poId: string; vendor: string; docType: string; items: typeof ALL_DISCREPANCIES }> = {};
+        for (const d of filteredAllDiscrepancies) {
+            const key = d.pairId;
+            if (!groups[key]) groups[key] = { pairId: d.pairId, poId: d.poId, vendor: d.vendor, docType: d.docType, items: [] };
+            groups[key].items.push(d);
+        }
+        return Object.values(groups);
+    }, [filteredAllDiscrepancies]);
 
     const eligibleStatuses: AckPair['status'][] = ['Pending Review', 'Matched'];
 
@@ -185,6 +238,9 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                 setScanProgress(0);
                 setScanComplete(false);
                 setDiscrepancyFixes({});
+                setViewMode('pair');
+                setAllFilter({ severity: 'all', category: 'all', search: '' });
+                setAllFixes({});
             }, 300);
             return () => clearTimeout(t);
         }
@@ -264,6 +320,189 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-background text-left shadow-2xl transition-all border border-border w-full sm:max-w-4xl">
+                                {/* ──── All Discrepancies View ──── */}
+                                {(
+                                    <div className="p-6">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <Dialog.Title as="h3" className="text-xl font-brand font-bold text-foreground mb-1 flex items-center gap-2.5">
+                                                    <ExclamationTriangleIcon className="w-6 h-6 text-amber-500" />
+                                                    All Discrepancies
+                                                </Dialog.Title>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {filteredAllDiscrepancies.length} discrepancies across {new Set(ALL_DISCREPANCIES.map(d => d.pairId)).size} documents
+                                                </p>
+                                            </div>
+                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                                <XMarkIcon className="w-5 h-5" />
+                                            </button>
+                                        </div>
+
+                                        {/* Filters */}
+                                        <div className="flex items-center gap-2 mb-4 flex-wrap">
+                                            <input
+                                                type="text"
+                                                placeholder="Search fields or vendor..."
+                                                value={allFilter.search}
+                                                onChange={e => setAllFilter(f => ({ ...f, search: e.target.value }))}
+                                                className="px-3 py-1.5 text-xs bg-background border border-border rounded-lg w-48 focus:ring-1 ring-primary outline-none placeholder:text-muted-foreground"
+                                            />
+                                            <select
+                                                value={allFilter.severity}
+                                                onChange={e => setAllFilter(f => ({ ...f, severity: e.target.value }))}
+                                                className="px-3 py-1.5 text-xs bg-background border border-border rounded-lg focus:ring-1 ring-primary outline-none text-foreground"
+                                            >
+                                                <option value="all">All Severity</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                            </select>
+                                            <select
+                                                value={allFilter.category}
+                                                onChange={e => setAllFilter(f => ({ ...f, category: e.target.value }))}
+                                                className="px-3 py-1.5 text-xs bg-background border border-border rounded-lg focus:ring-1 ring-primary outline-none text-foreground"
+                                            >
+                                                <option value="all">All Categories</option>
+                                                <option value="line-item">Line Items</option>
+                                                <option value="pricing">Pricing</option>
+                                                <option value="logistics">Logistics</option>
+                                                <option value="terms">Terms</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Discrepancy List — Grouped by Document */}
+                                        <div className="space-y-5 max-h-[450px] overflow-y-auto scrollbar-minimal pr-1">
+                                            {groupedDiscrepancies.map(group => {
+                                                const resolvedInGroup = group.items.filter(d => allFixes[d.globalIdx]).length;
+                                                return (
+                                                    <div key={group.pairId} className="border border-border rounded-2xl overflow-hidden">
+                                                        {/* Document Group Header */}
+                                                        <div className="px-4 py-3 bg-muted/40 border-b border-border flex items-center justify-between">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                                                                    {group.vendor.substring(0, 2).toUpperCase()}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-sm font-bold text-foreground">{group.vendor}</span>
+                                                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400">
+                                                                            {group.items.length} discrepanc{group.items.length === 1 ? 'y' : 'ies'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-muted-foreground">
+                                                                        <DocumentTextIcon className="w-3 h-3" />
+                                                                        <span className="font-mono font-medium">{group.pairId}</span>
+                                                                        <span className="text-muted-foreground">↔</span>
+                                                                        <span className="font-mono font-medium">{group.poId}</span>
+                                                                        <span className="ml-1 px-1.5 py-0.5 rounded bg-muted text-[9px] font-bold uppercase">{group.docType}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">
+                                                                {resolvedInGroup}/{group.items.length} resolved
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Items in this group */}
+                                                        <div className="divide-y divide-border/50">
+                                                            {group.items.map(d => {
+                                                                const fix = allFixes[d.globalIdx];
+                                                                return (
+                                                                    <div key={d.globalIdx} className={`transition-all ${fix ? 'bg-green-50/30 dark:bg-green-500/5' : ''}`}>
+                                                                        <div className="px-4 py-3 flex items-center justify-between gap-3">
+                                                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                                                {statusIcon(d.field.status)}
+                                                                                <div className="min-w-0 flex-1">
+                                                                                    <div className="text-sm font-semibold text-foreground truncate">{d.field.field}</div>
+                                                                                    <span className="text-[10px] text-muted-foreground capitalize">{d.field.category.replace('-', ' ')}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="flex items-center gap-2 shrink-0">
+                                                                                {d.field.confidence && (
+                                                                                    <span className="text-[10px] font-semibold text-ai">{d.field.confidence}%</span>
+                                                                                )}
+                                                                                {severityBadge(d.field.severity)}
+                                                                            </div>
+                                                                        </div>
+
+                                                                        {/* PO vs ACK values */}
+                                                                        <div className="px-4 pb-2 grid grid-cols-2 gap-3">
+                                                                            <div className="bg-muted/40 rounded-lg px-3 py-2">
+                                                                                <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">PO Spec</div>
+                                                                                <div className="text-sm font-medium text-foreground">{d.field.poValue}</div>
+                                                                            </div>
+                                                                            <div className="bg-muted/40 rounded-lg px-3 py-2">
+                                                                                <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">ACK Value</div>
+                                                                                <div className={`text-sm font-medium ${d.field.status === 'mismatch' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>{d.field.ackValue}</div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        {/* AI Suggestion + Actions */}
+                                                                        {d.field.autoFixSuggestion && (
+                                                                            <div className="px-4 pb-3">
+                                                                                <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-ai/5 border border-ai/10">
+                                                                                    <SparklesIcon className="w-3.5 h-3.5 text-ai mt-0.5 shrink-0" />
+                                                                                    <p className="text-[11px] text-muted-foreground leading-relaxed">{d.field.autoFixSuggestion}</p>
+                                                                                </div>
+                                                                                {!fix && (
+                                                                                    <div className="flex gap-2 mt-2">
+                                                                                        <button
+                                                                                            onClick={() => setAllFixes(prev => ({ ...prev, [d.globalIdx]: 'accept' }))}
+                                                                                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                                                                                        >
+                                                                                            <CheckCircleIcon className="w-3.5 h-3.5" /> Accept ACK
+                                                                                        </button>
+                                                                                        <button
+                                                                                            onClick={() => setAllFixes(prev => ({ ...prev, [d.globalIdx]: 'reject' }))}
+                                                                                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-border hover:bg-muted text-foreground rounded-lg transition-colors"
+                                                                                        >
+                                                                                            Keep PO
+                                                                                        </button>
+                                                                                    </div>
+                                                                                )}
+                                                                                {fix && (
+                                                                                    <div className="mt-2 text-xs font-semibold text-green-600 dark:text-green-400 flex items-center gap-1">
+                                                                                        <CheckCircleIcon className="w-4 h-4" />
+                                                                                        {fix === 'accept' ? 'ACK value accepted' : 'PO value kept'}
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Footer */}
+                                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+                                            <span className="text-xs text-muted-foreground">
+                                                {Object.keys(allFixes).length} / {filteredAllDiscrepancies.length} resolved
+                                            </span>
+                                            <div className="flex gap-3">
+                                                <button onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-xl transition-colors">
+                                                    Save as Draft
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        onClose();
+                                                        triggerToast('Discrepancies Resolved', `${Object.keys(allFixes).length} discrepancies resolved across all documents`, 'success');
+                                                    }}
+                                                    disabled={Object.keys(allFixes).length === 0}
+                                                    className="px-4 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
+                                                >
+                                                    Resolve Discrepancies <ArrowRightIcon className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ──── Pair-by-Pair Views (hidden — All Discrepancies only) ──── */}
+                                {false && <>
                                 {/* ──── Step 1: Select PO/ACK Pair ──── */}
                                 {step === 'select' && (
                                     <div className="p-6 sm:p-8">
@@ -700,6 +939,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                         </button>
                                     </div>
                                 )}
+                                </>}
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>
