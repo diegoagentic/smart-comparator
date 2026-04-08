@@ -1372,14 +1372,6 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                 />
                                             </div>
 
-                                            {/* Location Filter */}
-                                            <div className="w-full sm:w-40">
-                                                <Select
-                                                    value={selectedLocation}
-                                                    onChange={setSelectedLocation}
-                                                    options={locations}
-                                                />
-                                            </div>
                                         </div>
 
                                         {/* Actions Group: View Mode + Create Button */}
