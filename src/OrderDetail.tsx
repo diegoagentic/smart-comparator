@@ -147,7 +147,7 @@ const DiscrepancyResolutionFlow = () => {
                         <p className="text-sm font-medium text-zinc-900 dark:text-white truncate">PO_Revised_Final.pdf</p>
                         <p className="text-xs text-zinc-500 dark:text-zinc-400">Updated just now</p>
                     </div>
-                    <button className="p-2 hover:bg-primary hover:text-zinc-900 dark:hover:bg-primary dark:hover:text-zinc-900 rounded-lg transition-colors group">
+                    <button className="p-2 hover:bg-primary hover:text-zinc-900 dark:hover:bg-primary dark:hover:text-zinc-900 rounded-lg transition-colors group" title="Download">
                         <ArrowDownTrayIcon className="h-5 w-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-900" />
                     </button>
                 </div>
@@ -208,7 +208,7 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
                         <p className="text-sm font-medium text-zinc-900 dark:text-white">PO_Revised_Final.pdf</p>
                         <p className="text-xs text-zinc-500">2.4 MB • Generated just now</p>
                     </div>
-                    <button className="p-2 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                    <button className="p-2 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors" title="Download">
                         <ArrowDownTrayIcon className="h-5 w-5" />
                     </button>
                 </div>
@@ -242,7 +242,7 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
                                 <p className="text-sm font-medium text-zinc-900 dark:text-white">PO_ORD-2055_Final.pdf</p>
                                 <p className="text-xs text-zinc-500">2.4 MB • Generated just now</p>
                             </div>
-                            <button className="p-2 hover:bg-primary hover:text-zinc-900 dark:hover:bg-primary dark:hover:text-zinc-900 rounded-lg text-zinc-400 transition-colors group">
+                            <button className="p-2 hover:bg-primary hover:text-zinc-900 dark:hover:bg-primary dark:hover:text-zinc-900 rounded-lg text-zinc-400 transition-colors group" title="Download">
                                 <ArrowDownTrayIcon className="h-5 w-5 group-hover:text-zinc-900" />
                             </button>
                         </div>

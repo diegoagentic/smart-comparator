@@ -576,7 +576,7 @@ export default function Login() {
                                                         <h4 className="text-base font-bold text-zinc-900 dark:text-white">List of compatible Apps</h4>
                                                         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">Click on the app you will be using. A barcode will be displayed on the next screen that you will use to complete the process.</p>
                                                     </div>
-                                                    <button onClick={() => setShowAppList(false)} className="p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors shrink-0 ml-2">
+                                                    <button onClick={() => setShowAppList(false)} className="p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors shrink-0 ml-2" title="Close">
                                                         <XMarkIcon className="w-5 h-5 text-zinc-400" />
                                                     </button>
                                                 </div>

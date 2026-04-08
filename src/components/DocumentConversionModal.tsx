@@ -267,7 +267,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                     Select a {config.sourceLabel.toLowerCase()} to convert. "Ready" documents convert directly. "Approved" documents require validation review.
                                                 </p>
                                             </div>
-                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
                                                 <XMarkIcon className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -344,7 +344,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                     <div className="p-6 sm:p-8">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex items-center gap-3">
-                                                <button onClick={() => setStep('select')} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                                <button onClick={() => setStep('select')} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Back">
                                                     <ArrowLeftIcon className="w-4 h-4" />
                                                 </button>
                                                 <div>
@@ -352,7 +352,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                     <p className="text-[11px] text-muted-foreground">Against manufacturer database & Avanto ecosystem</p>
                                                 </div>
                                             </div>
-                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
                                                 <XMarkIcon className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -451,7 +451,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                     <div className="p-6 sm:p-8">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex items-center gap-3">
-                                                <button onClick={() => setStep('compare')} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                                <button onClick={() => setStep('compare')} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Back">
                                                     <ArrowLeftIcon className="w-4 h-4" />
                                                 </button>
                                                 <div>
@@ -459,7 +459,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                     <p className="text-[11px] text-muted-foreground">{discrepancies.length} items require your decision</p>
                                                 </div>
                                             </div>
-                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                            <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
                                                 <XMarkIcon className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -603,7 +603,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                 {/* ──── Step 4: Confirmation ──── */}
                                 {step === 'confirm' && (
                                     <div className="p-6 sm:p-8 text-center">
-                                        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
                                             <XMarkIcon className="w-5 h-5" />
                                         </button>
 

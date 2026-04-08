@@ -97,7 +97,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                                 Review the issue and confirm the correct information
                                             </p>
                                         </div>
-                                        <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                        <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Close">
                                             <X className="h-5 w-5" />
                                         </button>
                                     </div>
@@ -114,7 +114,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                                 <p className="text-sm font-semibold text-red-700 dark:text-red-400">Warning</p>
                                                 <p className="text-xs text-red-600/70 dark:text-red-400/70">Our AI couldn't confidently extract all data for these items.</p>
                                             </div>
-                                            <button onClick={() => setShowWarning(false)} className="p-0.5 text-red-400 hover:text-red-600"><X className="h-4 w-4" /></button>
+                                            <button onClick={() => setShowWarning(false)} className="p-0.5 text-red-400 hover:text-red-600" title="Dismiss"><X className="h-4 w-4" /></button>
                                         </div>
                                     )}
 

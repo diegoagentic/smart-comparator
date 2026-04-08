@@ -128,7 +128,7 @@ export default function FieldReviewModal({ isOpen, onClose, document, onResolve 
                                                 Validate extracted fields for <span className="font-semibold text-zinc-700 dark:text-zinc-200">{document?.vendor}</span> — {document?.name}
                                             </p>
                                         </div>
-                                        <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                        <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Close">
                                             <X className="h-5 w-5" />
                                         </button>
                                     </div>

@@ -81,7 +81,7 @@ export default function ChangeStatusModal({ isOpen, onClose, selectedCount, onCo
                                     <ArrowPathIcon className="w-5 h-5 text-zinc-500" />
                                     Change Status
                                 </Dialog.Title>
-                                <button onClick={onClose} className="p-1 rounded-full hover:bg-muted text-zinc-500 transition-colors">
+                                <button onClick={onClose} className="p-1 rounded-full hover:bg-muted text-zinc-500 transition-colors" title="Close">
                                     <XMarkIcon className="w-5 h-5" />
                                 </button>
                             </div>

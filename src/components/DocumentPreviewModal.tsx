@@ -328,7 +328,7 @@ export default function DocumentPreviewModal({ isOpen, onClose, document }: Docu
                                             </div>
                                             <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{pct}%</span>
                                         </div>
-                                        <button onClick={onClose} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                        <button onClick={onClose} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Close">
                                             <X className="h-5 w-5" />
                                         </button>
                                     </div>

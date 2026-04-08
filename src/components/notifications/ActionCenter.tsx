@@ -272,10 +272,10 @@ export default function ActionCenter() {
                                             <div className="flex items-center justify-between mb-4">
                                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Action Center</h3>
                                                 <div className="flex items-center gap-2">
-                                                    <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                                    <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Search">
                                                         <MagnifyingGlassIcon className="w-5 h-5" />
                                                     </button>
-                                                    <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                                    <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Close">
                                                         <XMarkIcon className="w-5 h-5" />
                                                     </button>
                                                 </div>
@@ -345,10 +345,10 @@ export default function ActionCenter() {
                                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 font-bold">Flow 1</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Search">
                                     <MagnifyingGlassIcon className="w-5 h-5" />
                                 </button>
-                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Close">
                                     <XMarkIcon className="w-5 h-5" />
                                 </button>
                             </div>
@@ -396,10 +396,10 @@ export default function ActionCenter() {
                                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 font-bold">Flow 2</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Search">
                                     <MagnifyingGlassIcon className="w-5 h-5" />
                                 </button>
-                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors">
+                                <button className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors" title="Close">
                                     <XMarkIcon className="w-5 h-5" />
                                 </button>
                             </div>

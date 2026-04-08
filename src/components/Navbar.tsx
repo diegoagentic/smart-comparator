@@ -82,6 +82,7 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                         <button
                             onClick={toggleTheme}
                             className="flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+                            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
                         >
                             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </button>

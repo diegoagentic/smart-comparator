@@ -79,7 +79,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                 {/* Upload Zone (conditional) */}
                 {showUpload && (
                     <div className="border-2 border-dashed border-ai/30 dark:border-ai/20 bg-ai-light/30 dark:bg-ai/5 rounded-2xl p-8 text-center transition-all relative">
-                        <button onClick={() => setShowUpload(false)} className="absolute top-3 right-3 p-1 rounded-lg hover:bg-muted text-muted-foreground"><X className="h-4 w-4" /></button>
+                        <button onClick={() => setShowUpload(false)} className="absolute top-3 right-3 p-1 rounded-lg hover:bg-muted text-muted-foreground" title="Close"><X className="h-4 w-4" /></button>
                         <div className="flex flex-col items-center gap-3">
                             <div className="w-14 h-14 rounded-2xl bg-ai/10 flex items-center justify-center"><Upload className="h-7 w-7 text-ai" /></div>
                             <div>
@@ -182,7 +182,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                             <div className="flex items-center gap-2 mb-1">
                                                 <span className={`text-sm font-semibold ${column.color}`}>{column.label}</span>
                                                 <span className="text-xs font-bold bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md">{docs.length}</span>
-                                                <button className="ml-auto p-1 text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-4 w-4" /></button>
+                                                <button className="ml-auto p-1 text-muted-foreground hover:text-foreground" title="Column options"><MoreHorizontal className="h-4 w-4" /></button>
                                             </div>
                                             {/* Cards */}
                                             <div className="space-y-3">
@@ -346,7 +346,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 <td className="px-4 py-3 text-xs text-muted-foreground">{doc.date}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex items-center justify-end gap-1">
-                                                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"><Eye className="h-4 w-4" /></button>
+                                                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="Review Document"><Eye className="h-4 w-4" /></button>
                                                     </div>
                                                 </td>
                                             </tr>

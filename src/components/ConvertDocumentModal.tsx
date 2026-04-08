@@ -86,7 +86,7 @@ export default function ConvertDocumentModal({ isOpen, onClose, document, onConv
                                                 <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white">Move to Transactions</DialogTitle>
                                                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">This document will be created as a {typeLabel} in Transactions.</p>
                                             </div>
-                                            <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                                            <button onClick={onClose} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800" title="Close">
                                                 <X className="h-5 w-5" />
                                             </button>
                                         </div>
