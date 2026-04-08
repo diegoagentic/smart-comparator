@@ -2,24 +2,24 @@ import { useState } from 'react'
 import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
-import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
+import FieldReviewModal from './components/FieldReviewModal'
 import ConvertDocumentModal from './components/ConvertDocumentModal'
 
 const OCR_DOCUMENTS = [
-    { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
-    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 78, discrepancyCount: 0 },
-    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'discrepancies', confidence: 92, discrepancyCount: 3 },
-    { id: 'OCR-004', name: 'INV-4521_HermanMiller.pdf', vendor: 'Herman Miller', type: 'Invoice', pages: 4, fields: 61, date: 'Yesterday', status: 'discrepancies', confidence: 88, discrepancyCount: 5 },
-    { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, discrepancyCount: 0 },
-    { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, discrepancyCount: 0 },
-    { id: 'OCR-007', name: 'ACK-7831_9to5.pdf', vendor: '9to5 Seating', type: 'Acknowledgment', pages: 1, fields: 12, date: '3 days ago', status: 'processed', confidence: 100, discrepancyCount: 0 },
+    { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, inconsistencyCount: 0 },
+    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 78, inconsistencyCount: 0 },
+    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'discrepancies', confidence: 92, inconsistencyCount: 3 },
+    { id: 'OCR-004', name: 'INV-4521_HermanMiller.pdf', vendor: 'Herman Miller', type: 'Invoice', pages: 4, fields: 61, date: 'Yesterday', status: 'discrepancies', confidence: 88, inconsistencyCount: 5 },
+    { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, inconsistencyCount: 0 },
+    { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, inconsistencyCount: 0 },
+    { id: 'OCR-007', name: 'ACK-7831_9to5.pdf', vendor: '9to5 Seating', type: 'Acknowledgment', pages: 1, fields: 12, date: '3 days ago', status: 'processed', confidence: 100, inconsistencyCount: 0 },
 ]
 
 const COLUMNS = [
     { id: 'identified', label: 'Ingesting', icon: FileText, color: 'text-info', bg: 'bg-info-light dark:bg-info/10', border: 'border-info/20' },
     { id: 'capturing', label: 'Needs Attention', icon: ScanEye, color: 'text-ai', bg: 'bg-ai-light dark:bg-ai/10', border: 'border-ai/20' },
-    { id: 'discrepancies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
-    { id: 'processed', label: 'Reconciled', icon: CheckCircle2, color: 'text-success', bg: 'bg-success-light dark:bg-success/10', border: 'border-success/20' },
+    { id: 'discrepancies', label: 'Field Review', icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
+    { id: 'processed', label: 'Validated', icon: CheckCircle2, color: 'text-success', bg: 'bg-success-light dark:bg-success/10', border: 'border-success/20' },
 ]
 
 interface OCRTrackingProps {
@@ -40,7 +40,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [activeTab, setActiveTab] = useState<'all' | 'identified' | 'capturing' | 'discrepancies' | 'processed'>('all')
 
     const handleResolve = (docId: string) => {
-        setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', discrepancyCount: 0, confidence: 99 } : d))
+        setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', inconsistencyCount: 0, confidence: 99 } : d))
         setResolveDoc(null)
     }
 
@@ -121,8 +121,8 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                         { id: 'all', label: 'All', count: counts.all },
                                         { id: 'identified', label: 'Ingesting', count: counts.identified },
                                         { id: 'capturing', label: 'Needs Attention', count: counts.capturing },
-                                        { id: 'discrepancies', label: 'Awaiting Expert', count: counts.discrepancies },
-                                        { id: 'processed', label: 'Reconciled', count: counts.processed },
+                                        { id: 'discrepancies', label: 'Field Review', count: counts.discrepancies },
+                                        { id: 'processed', label: 'Validated', count: counts.processed },
                                     ].map(tab => (
                                         <button
                                             key={tab.id}
@@ -222,9 +222,9 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 </div>
                                                             </div>
 
-                                                            {doc.discrepancyCount > 0 && (
+                                                            {doc.inconsistencyCount > 0 && (
                                                                 <div className="flex items-center gap-1.5 text-xs text-error font-medium bg-error-light dark:bg-error/10 px-2 py-1 rounded-md mb-3">
-                                                                    <AlertTriangle className="h-3 w-3" />{doc.discrepancyCount} discrepancies
+                                                                    <AlertTriangle className="h-3 w-3" />{doc.inconsistencyCount} inconsistencies
                                                                 </div>
                                                             )}
 
@@ -278,7 +278,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
                                                                     >
                                                                         <AlertTriangle className="h-3.5 w-3.5" />
-                                                                        {doc.discrepancyCount > 0 ? `Resolve ${doc.discrepancyCount} Discrepancies` : 'Review & Process'}
+                                                                        {doc.inconsistencyCount > 0 ? `Review ${doc.inconsistencyCount} Inconsistencies` : 'Review Fields'}
                                                                     </button>
                                                                 )}
                                                                 {doc.status === 'processed' && (
@@ -342,7 +342,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                         doc.status === 'capturing' ? 'bg-ai-light text-ai' :
                                                         'bg-info-light text-info'
                                                     }`}>
-                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Awaiting Expert' : 'Reconciled'}
+                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Field Review' : 'Validated'}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
@@ -368,11 +368,11 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                 </div>
             </div>
 
-            {/* Resolve Discrepancy Modal */}
-            <ResolveDiscrepancyModal
+            {/* Field Review Modal */}
+            <FieldReviewModal
                 isOpen={!!resolveDoc}
                 onClose={() => setResolveDoc(null)}
-                document={resolveDoc}
+                document={resolveDoc ? { id: resolveDoc.id, name: resolveDoc.name, vendor: resolveDoc.vendor, inconsistencyCount: resolveDoc.inconsistencyCount } : null}
                 onResolve={handleResolve}
             />
 
