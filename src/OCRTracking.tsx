@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
 import FieldReviewModal from './components/FieldReviewModal'
 import ConvertDocumentModal from './components/ConvertDocumentModal'
+import DocumentPreviewModal from './components/DocumentPreviewModal'
 
 const OCR_DOCUMENTS = [
     { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, inconsistencyCount: 0 },
@@ -34,6 +35,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [processingDoc, setProcessingDoc] = useState<string | null>(null)
     const [resolveDoc, setResolveDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [convertDoc, setConvertDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
+    const [previewDoc, setPreviewDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [documents, setDocuments] = useState(OCR_DOCUMENTS)
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
     const [searchQuery, setSearchQuery] = useState('')
@@ -255,30 +257,19 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                         {/* Expanded detail */}
                                                         {selectedDoc === doc.id && (
                                                             <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border">
-                                                                <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
-                                                                    <Eye className="h-3.5 w-3.5" /> Preview Document
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); setPreviewDoc(doc); }}
+                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors"
+                                                                >
+                                                                    <Eye className="h-3.5 w-3.5" /> Review Document & Fields
                                                                 </button>
-                                                                {doc.status !== 'identified' && (
-                                                                    <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
-                                                                        <FileText className="h-3.5 w-3.5" /> View Extracted Fields
-                                                                    </button>
-                                                                )}
-                                                                {doc.status === 'capturing' && (
+                                                                {(doc.status === 'capturing' || doc.status === 'discrepancies') && (
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
                                                                         className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
                                                                     >
                                                                         <AlertTriangle className="h-3.5 w-3.5" />
-                                                                        Review Missing Fields
-                                                                    </button>
-                                                                )}
-                                                                {doc.status === 'discrepancies' && (
-                                                                    <button
-                                                                        onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
-                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
-                                                                    >
-                                                                        <AlertTriangle className="h-3.5 w-3.5" />
-                                                                        {doc.inconsistencyCount > 0 ? `Review ${doc.inconsistencyCount} Inconsistencies` : 'Review Fields'}
+                                                                        {doc.inconsistencyCount > 0 ? `Review ${doc.inconsistencyCount} Inconsistencies` : 'Review Missing Fields'}
                                                                     </button>
                                                                 )}
                                                                 {doc.status === 'processed' && (
@@ -367,6 +358,13 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                     </div>
                 </div>
             </div>
+
+            {/* Document Preview Modal */}
+            <DocumentPreviewModal
+                isOpen={!!previewDoc}
+                onClose={() => setPreviewDoc(null)}
+                document={previewDoc ? { id: previewDoc.id, name: previewDoc.name, vendor: previewDoc.vendor, type: previewDoc.type, fields: previewDoc.fields, confidence: previewDoc.confidence } : null}
+            />
 
             {/* Field Review Modal */}
             <FieldReviewModal
