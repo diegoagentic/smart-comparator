@@ -2647,8 +2647,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div className="flex flex-col gap-3 pt-2">
-                                                                                {lifecycleTab === 'acknowledgments' ? (
+                                                                            {lifecycleTab === 'acknowledgments' && (
+                                                                                <div className="pt-2">
                                                                                     <button
                                                                                         onClick={(e) => { e.stopPropagation(); setIsReconciliationOpen(true); }}
                                                                                         className="w-full py-3 text-sm font-bold text-zinc-950 bg-brand-400 hover:bg-brand-300 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2"
@@ -2656,21 +2656,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                         <DocumentMagnifyingGlassIcon className="h-4 w-4" />
                                                                                         Reconcile with PO
                                                                                     </button>
-                                                                                ) : (
-                                                                                    <>
-                                                                                        <button className="w-full py-2.5 text-xs font-bold text-foreground bg-card border border-border rounded-lg hover:bg-accent hover:text-foreground transition-colors shadow-sm">
-                                                                                            {lifecycleTab === 'quotes' ? 'View Quote Details' : 'View Full Order Details'}
-                                                                                        </button>
-                                                                                        <button
-                                                                                            onClick={(e) => { e.stopPropagation(); setTrackingOrder(order); }}
-                                                                                            className="w-full py-3 text-sm font-bold text-zinc-950 bg-brand-400 hover:bg-brand-300 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2"
-                                                                                        >
-                                                                                            <MapPinIcon className="h-4 w-4" />
-                                                                                            {lifecycleTab === 'quotes' ? 'Analyze Quote' : 'Track Shipment'}
-                                                                                        </button>
-                                                                                    </>
-                                                                                )}
-                                                                            </div>
+                                                                                </div>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                 )}
