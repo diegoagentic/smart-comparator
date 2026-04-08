@@ -226,15 +226,15 @@ const recentQuotes = [
 ]
 
 const recentAcknowledgments = [
-    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Confirmed", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", discrepancy: "None", initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
-    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "Discrepancy", date: "Jan 13, 2026", expShipDate: "Pending", discrepancy: "Price Mismatch ($500)", initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
-    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Partial", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", discrepancy: "Backordered Items", initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
+    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Matched", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", discrepancy: "None", initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
+    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "Missing Fields", date: "Jan 13, 2026", expShipDate: "Pending", discrepancy: "3 fields missing (Unit Price, SKU, Ship Date)", initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
+    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Price Mismatch", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", discrepancy: "PO $12,500 vs ACK $13,000 (+$500)", initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
 ]
 
 // Pipeline stages
 const pipelineStages = ['Order Received', 'In Production', 'Ready to Ship', 'In Transit', 'Delivered']
 const quoteStages = ['Draft', 'Sent', 'Negotiating', 'Approved', 'Lost']
-const ackStages = ['Pending', 'Discrepancy', 'Partial', 'Confirmed']
+const ackStages = ['Pending', 'Missing Fields', 'Price Mismatch', 'Matched']
 
 
 // Color Mapping for Status Icons
@@ -326,28 +326,28 @@ const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
     Day: {
         pending_acks: { label: 'Pending Acks', value: '2', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+1', trendUp: true },
         discrepancies: { label: 'Discrepancies', value: '1', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '0', trendUp: true },
-        confirmed: { label: 'Confirmed', value: '8', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+3', trendUp: true },
+        confirmed: { label: 'Matched', value: '8', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+3', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '3.8w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.4w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '96%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Week: {
         pending_acks: { label: 'Pending Acks', value: '5', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-1', trendUp: false },
         discrepancies: { label: 'Discrepancies', value: '2', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
-        confirmed: { label: 'Confirmed', value: '34', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+8', trendUp: true },
+        confirmed: { label: 'Matched', value: '34', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+8', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.0w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.2w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '95%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+1%', trendUp: true },
     },
     Month: {
         pending_acks: { label: 'Pending Acks', value: '8', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-2', trendUp: false },
         discrepancies: { label: 'Discrepancies', value: '3', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
-        confirmed: { label: 'Confirmed', value: '156', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+42', trendUp: true },
+        confirmed: { label: 'Matched', value: '156', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+42', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.2w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.1w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '94%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Quarter: {
         pending_acks: { label: 'Pending Acks', value: '18', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+6', trendUp: true },
         discrepancies: { label: 'Discrepancies', value: '9', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+4', trendUp: true },
-        confirmed: { label: 'Confirmed', value: '478', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+112', trendUp: true },
+        confirmed: { label: 'Matched', value: '478', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+112', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.5w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.3w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '91%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '-3%', trendUp: false },
     },
@@ -817,13 +817,13 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
         const activeCount = dataToAnalyze.filter(o => {
             // quotes removed; if (false).includes((o as any).status);
-            if (lifecycleTab === 'acknowledgments') return !['Confirmed'].includes((o as any).status);
+            if (lifecycleTab === 'acknowledgments') return !['Matched'].includes((o as any).status);
             return !['Delivered', 'Completed'].includes(o.status);
         }).length
 
         const completedCount = dataToAnalyze.filter(o => {
             // quotes removed; if (false) return ['Approved', 'Lost'].includes((o as any).status);
-            if (lifecycleTab === 'acknowledgments') return ['Confirmed'].includes((o as any).status);
+            if (lifecycleTab === 'acknowledgments') return ['Matched'].includes((o as any).status);
             return ['Delivered', 'Completed'].includes(o.status);
         }).length
 
@@ -854,9 +854,9 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
             let matchesTab = true;
             if (activeTab === 'active') {
-                matchesTab = !['Delivered', 'Completed', 'Closed', 'Combined', 'Confirmed'].includes(item.status)
+                matchesTab = !['Delivered', 'Completed', 'Closed', 'Combined', 'Matched'].includes(item.status)
             } else if (activeTab === 'completed') {
-                matchesTab = ['Delivered', 'Completed', 'Closed', 'Combined', 'Confirmed'].includes(item.status)
+                matchesTab = ['Delivered', 'Completed', 'Closed', 'Combined', 'Matched'].includes(item.status)
             } else if (activeTab === 'metrics') {
                 matchesTab = true // Metrics view handles its own data
             }
@@ -867,8 +867,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
     const counts = useMemo(() => {
         return {
-            active: currentDataSet.filter(item => !['Delivered', 'Completed', 'Closed', 'Combined', 'Confirmed'].includes(item.status)).length,
-            completed: currentDataSet.filter(item => ['Delivered', 'Completed', 'Closed', 'Combined', 'Confirmed'].includes(item.status)).length,
+            active: currentDataSet.filter(item => !['Delivered', 'Completed', 'Closed', 'Combined', 'Matched'].includes(item.status)).length,
+            completed: currentDataSet.filter(item => ['Delivered', 'Completed', 'Closed', 'Combined', 'Matched'].includes(item.status)).length,
             all: currentDataSet.length
         }
     }, [currentDataSet])
@@ -2332,7 +2332,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     <tr>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Vendor' : 'Details'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'PO & Location' : 'Project & Location'}</th>
-                                                        <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Discrepancy' : 'Amount'}</th>
+                                                        <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Issue' : 'Amount'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'quotes' ? 'Valid Until' : 'Date'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Actions</th>
@@ -2589,7 +2589,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                     <div className="space-y-2">
                                                                         <div className="flex justify-between items-center text-xs">
                                                                             <span className="text-muted-foreground">
-                                                                                {lifecycleTab === 'acknowledgments' ? 'Discrepancy' : 'Amount'}
+                                                                                {lifecycleTab === 'acknowledgments' ? 'Issue' : 'Amount'}
                                                                             </span>
                                                                             <span className={cn("font-semibold text-foreground", lifecycleTab === 'acknowledgments' && (order as any).discrepancy !== 'None' ? 'text-red-500' : '')}>
                                                                                 {lifecycleTab === 'acknowledgments' ? (order as any).discrepancy : (order as any).amount}
