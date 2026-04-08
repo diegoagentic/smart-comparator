@@ -12,7 +12,7 @@ interface FieldReviewModalProps {
         id: string
         name: string
         vendor: string
-        inconsistencyCount: number
+        discrepancyCount: number
     } | null
     onResolve?: (docId: string) => void
 }

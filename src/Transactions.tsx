@@ -1472,9 +1472,6 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         <button onClick={() => handleExportSIF('PO')} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Export SIF">
                                                             <ArrowDownTrayIcon className="w-5 h-5" />
                                                         </button>
-                                                        <button onClick={() => { setConversionMode('order-to-ack'); setIsConversionOpen(true); }} className="p-2 rounded-lg hover:bg-brand-300 dark:hover:bg-brand-600/50 text-muted-foreground hover:text-zinc-900 dark:hover:text-white transition-colors" title="Convert to Acknowledgment">
-                                                            <ArrowsRightLeftIcon className="w-5 h-5" />
-                                                        </button>
                                                     </>)}
                                                 </div>
                                             )}

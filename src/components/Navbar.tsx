@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
 import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown } from 'lucide-react'
-import ActionCenter from './notifications/ActionCenter'
 import logoLightBrand from '../assets/logo-light-brand.png'
 import logoDarkBrand from '../assets/logo-dark-brand.png'
 
@@ -75,9 +74,6 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-1 shrink-0">
-                        {/* Action Center (has its own bell trigger + popover) */}
-                        <ActionCenter />
-
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
