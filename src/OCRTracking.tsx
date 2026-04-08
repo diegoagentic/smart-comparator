@@ -17,7 +17,7 @@ const OCR_DOCUMENTS = [
 
 const COLUMNS = [
     { id: 'identified', label: 'Ingesting', icon: FileText, color: 'text-info', bg: 'bg-info-light dark:bg-info/10', border: 'border-info/20' },
-    { id: 'capturing', label: 'Pending Review', icon: ScanEye, color: 'text-ai', bg: 'bg-ai-light dark:bg-ai/10', border: 'border-ai/20' },
+    { id: 'capturing', label: 'Needs Attention', icon: ScanEye, color: 'text-ai', bg: 'bg-ai-light dark:bg-ai/10', border: 'border-ai/20' },
     { id: 'discrepancies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
     { id: 'processed', label: 'Reconciled', icon: CheckCircle2, color: 'text-success', bg: 'bg-success-light dark:bg-success/10', border: 'border-success/20' },
 ]
@@ -120,7 +120,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                     {[
                                         { id: 'all', label: 'All', count: counts.all },
                                         { id: 'identified', label: 'Ingesting', count: counts.identified },
-                                        { id: 'capturing', label: 'Pending Review', count: counts.capturing },
+                                        { id: 'capturing', label: 'Needs Attention', count: counts.capturing },
                                         { id: 'discrepancies', label: 'Awaiting Expert', count: counts.discrepancies },
                                         { id: 'processed', label: 'Reconciled', count: counts.processed },
                                     ].map(tab => (
@@ -258,10 +258,21 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
                                                                     <Eye className="h-3.5 w-3.5" /> Preview Document
                                                                 </button>
-                                                                <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
-                                                                    <FileText className="h-3.5 w-3.5" /> View Extracted Fields
-                                                                </button>
-                                                                {doc.status !== 'processed' && (
+                                                                {doc.status !== 'identified' && (
+                                                                    <button className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors">
+                                                                        <FileText className="h-3.5 w-3.5" /> View Extracted Fields
+                                                                    </button>
+                                                                )}
+                                                                {doc.status === 'capturing' && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
+                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
+                                                                    >
+                                                                        <AlertTriangle className="h-3.5 w-3.5" />
+                                                                        Review Missing Fields
+                                                                    </button>
+                                                                )}
+                                                                {doc.status === 'discrepancies' && (
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
                                                                         className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
@@ -276,7 +287,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
                                                                     >
                                                                         <Sparkles className="h-3.5 w-3.5" />
-                                                                        Convert to PO / Acknowledgment
+                                                                        Move to Transactions
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -331,7 +342,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                         doc.status === 'capturing' ? 'bg-ai-light text-ai' :
                                                         'bg-info-light text-info'
                                                     }`}>
-                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Pending Review' : doc.status === 'discrepancies' ? 'Awaiting Expert' : 'Reconciled'}
+                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Awaiting Expert' : 'Reconciled'}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
