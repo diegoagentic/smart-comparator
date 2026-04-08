@@ -1481,23 +1481,6 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
                                             <div className="w-px h-8 bg-border hidden xl:block mx-1"></div>
 
-                                            <button
-                                                onClick={() => {
-                                                    if (lifecycleTab === 'quotes') {
-                                                        setIsQuoteWidgetOpen(true);
-                                                    } else if (lifecycleTab === 'acknowledgments') {
-                                                        setIsAckModalOpen(true);
-                                                    } else {
-                                                        setIsCreateOrderOpen(true);
-                                                    }
-                                                }}
-                                                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
-                                            >
-                                                <PlusIcon className="w-4 h-4" />
-                                                <span>
-                                                    {lifecycleTab === 'quotes' ? 'Create Quote' : lifecycleTab === 'acknowledgments' ? 'Upload Acknowledgement' : 'Create PO'}
-                                                </span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
