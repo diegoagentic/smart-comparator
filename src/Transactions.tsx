@@ -1493,8 +1493,6 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         setIsQuoteWidgetOpen(true);
                                                     } else if (lifecycleTab === 'acknowledgments') {
                                                         setIsAckModalOpen(true);
-                                                        /* @ts-ignore */
-                                                        if (onNavigate) onNavigate('order-detail');
                                                     } else {
                                                         setIsCreateOrderOpen(true);
                                                     }
