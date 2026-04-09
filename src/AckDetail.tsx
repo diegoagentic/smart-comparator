@@ -535,14 +535,6 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                         ]}
                     />
                 </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-foreground bg-background border border-input rounded-md hover:bg-primary hover:text-zinc-900 group transition-colors">
-                        <FunnelIcon className="h-4 w-4 text-muted-foreground group-hover:text-zinc-900" /> Filter
-                    </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-foreground bg-background border border-input rounded-md hover:bg-primary hover:text-zinc-900 group transition-colors">
-                        <ArrowDownTrayIcon className="h-4 w-4 text-muted-foreground group-hover:text-zinc-900" /> Export
-                    </button>
-                </div>
             </div>
 
             <div className="flex flex-col px-4 py-6 gap-6 max-w-7xl mx-auto w-full">

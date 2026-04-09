@@ -417,17 +417,6 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                         ]}
                     />
                 </div>
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" className="gap-2 px-3 py-1.5 text-sm font-medium text-foreground bg-background border-input hover:bg-primary hover:text-zinc-900 group">
-                        <FunnelIcon className="h-4 w-4 text-muted-foreground group-hover:text-zinc-900" /> Filter
-                    </Button>
-                    <Button variant="outline" className="gap-2 px-3 py-1.5 text-sm font-medium text-foreground bg-background border-input hover:bg-primary hover:text-zinc-900 group">
-                        <ArrowDownTrayIcon className="h-4 w-4 text-muted-foreground group-hover:text-zinc-900" /> Export
-                    </Button>
-                    <Button variant="primary" className="gap-2 px-3 py-1.5 text-sm font-medium">
-                        <PlusIcon className="h-4 w-4" /> Add New Item
-                    </Button>
-                </div>
             </div>
 
             <div className="flex flex-col px-4 py-6 gap-6 max-w-7xl mx-auto w-full">
