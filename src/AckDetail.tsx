@@ -500,6 +500,7 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
         lifecycle: true,
         aiSuggestions: true
     })
+    const [docPhase, setDocPhase] = useState(2) // 0=Received, 1=Fields Extracted, 2=Under Review, 3=Validated, 4=Reconciled
     const [isPOModalOpen, setIsPOModalOpen] = useState(false)
     const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false)
     const [isAiDiagnosisOpen, setIsAiDiagnosisOpen] = useState(false)
@@ -540,9 +541,6 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                     </button>
                     <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-foreground bg-background border border-input rounded-md hover:bg-primary hover:text-zinc-900 group transition-colors">
                         <ArrowDownTrayIcon className="h-4 w-4 text-muted-foreground group-hover:text-zinc-900" /> Export
-                    </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:opacity-90">
-                        <PlusIcon className="h-4 w-4" /> Add New Item
                     </button>
                 </div>
             </div>
@@ -789,18 +787,18 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                     <div className="px-6 py-4 border-b border-border bg-background">
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-sm font-semibold text-foreground">Document Status</h3>
-                            <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
-                                <EnvelopeIcon className="h-3.5 w-3.5" /> Contact Manufacturer
-                            </button>
                         </div>
                         <div className="flex items-center gap-0">
                             {[
-                                { label: 'Received', status: 'done' as const },
-                                { label: 'Fields Extracted', status: 'done' as const },
-                                { label: 'Under Review', status: 'current' as const },
-                                { label: 'Validated', status: 'pending' as const },
-                                { label: 'Reconciled', status: 'pending' as const },
-                            ].map((step, i, arr) => (
+                                { label: 'Received' },
+                                { label: 'Fields Extracted' },
+                                { label: 'Under Review' },
+                                { label: 'Validated' },
+                                { label: 'Reconciled' },
+                            ].map((step, i, arr) => {
+                                const status = i < docPhase ? 'done' as const : i === docPhase ? 'current' as const : 'pending' as const;
+                                return { ...step, status };
+                            }).map((step, i, arr) => (
                                 <div key={i} className="flex items-center flex-1">
                                     <div className="flex flex-col items-center gap-1.5 flex-1">
                                         <div className={cn(
@@ -925,8 +923,27 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Extracted Fields</h4>
                                 <p className="text-[10px] text-muted-foreground mt-0.5">ACK schema · 7 groups</p>
                             </div>
-                            <div className="flex-1 overflow-y-auto">
+                            <div className="flex-1 overflow-y-auto scrollbar-micro">
                                 <ACKInputsTab />
+                            </div>
+                            {/* Phase Action Button */}
+                            <div className="px-4 py-3 border-t border-border bg-muted/20 shrink-0">
+                                {docPhase < 4 ? (
+                                    <button
+                                        onClick={() => setDocPhase(prev => Math.min(prev + 1, 4))}
+                                        className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 dark:hover:bg-brand-600 rounded-lg transition-colors"
+                                    >
+                                        <CheckCircleIcon className="h-4 w-4" />
+                                        {docPhase === 2 ? 'Approve & Move to Validated' :
+                                         docPhase === 3 ? 'Validate & Reconcile' :
+                                         'Advance to Next Phase'}
+                                    </button>
+                                ) : (
+                                    <div className="flex items-center justify-center gap-2 py-2.5 text-sm font-bold text-green-700 dark:text-green-400">
+                                        <CheckCircleIcon className="h-4 w-4" />
+                                        Document Reconciled
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
