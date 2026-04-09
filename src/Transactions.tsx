@@ -227,15 +227,15 @@ const recentQuotes = [
 ]
 
 const recentAcknowledgments = [
-    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Delivered", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", discrepancy: "None", tag: null, initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
-    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "In Production", date: "Jan 13, 2026", expShipDate: "Pending", discrepancy: "Price Mismatch ($500)", tag: "Discrepancy" as const, initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
-    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Ready to Ship", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", discrepancy: "Backordered Items", tag: "Partial" as const, initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
+    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Reconciled", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", discrepancy: "None", tag: null, initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
+    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "Under Review", date: "Jan 13, 2026", expShipDate: "Pending", discrepancy: "Price Mismatch ($500)", tag: "Discrepancy" as const, initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
+    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Validated", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", discrepancy: "Backordered Items", tag: "Partial" as const, initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
 ]
 
 // Pipeline stages
 const pipelineStages = ['Order Received', 'In Production', 'Ready to Ship', 'In Transit', 'Delivered']
 const quoteStages = ['Draft', 'Sent', 'Negotiating', 'Approved', 'Lost']
-const ackStages = ['Order Received', 'In Production', 'Ready to Ship', 'In Transit', 'Delivered']
+const ackStages = ['Received', 'Fields Extracted', 'Under Review', 'Validated', 'Reconciled']
 
 
 // Color Mapping for Status Icons
@@ -327,28 +327,28 @@ const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
     Day: {
         pending_acks: { label: 'Pending Acks', value: '2', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+1', trendUp: true },
         discrepancies: { label: 'Discrepancies', value: '1', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '0', trendUp: true },
-        confirmed: { label: 'Delivered', value: '8', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+3', trendUp: true },
+        confirmed: { label: 'Reconciled', value: '8', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+3', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '3.8w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.4w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '96%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Week: {
         pending_acks: { label: 'Pending Acks', value: '5', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-1', trendUp: false },
         discrepancies: { label: 'Discrepancies', value: '2', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
-        confirmed: { label: 'Delivered', value: '34', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+8', trendUp: true },
+        confirmed: { label: 'Reconciled', value: '34', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+8', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.0w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.2w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '95%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+1%', trendUp: true },
     },
     Month: {
         pending_acks: { label: 'Pending Acks', value: '8', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-2', trendUp: false },
         discrepancies: { label: 'Discrepancies', value: '3', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
-        confirmed: { label: 'Delivered', value: '156', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+42', trendUp: true },
+        confirmed: { label: 'Reconciled', value: '156', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+42', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.2w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.1w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '94%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Quarter: {
         pending_acks: { label: 'Pending Acks', value: '18', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+6', trendUp: true },
         discrepancies: { label: 'Discrepancies', value: '9', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+4', trendUp: true },
-        confirmed: { label: 'Delivered', value: '478', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+112', trendUp: true },
+        confirmed: { label: 'Reconciled', value: '478', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+112', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.5w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.3w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '91%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '-3%', trendUp: false },
     },
@@ -846,13 +846,13 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
         const activeCount = dataToAnalyze.filter(o => {
             // quotes removed; if (false).includes((o as any).status);
-            if (lifecycleTab === 'acknowledgments') return !['Delivered'].includes((o as any).status);
+            if (lifecycleTab === 'acknowledgments') return !['Reconciled'].includes((o as any).status);
             return !['Delivered', 'Completed'].includes(o.status);
         }).length
 
         const completedCount = dataToAnalyze.filter(o => {
             // quotes removed; if (false) return ['Approved', 'Lost'].includes((o as any).status);
-            if (lifecycleTab === 'acknowledgments') return ['Delivered'].includes((o as any).status);
+            if (lifecycleTab === 'acknowledgments') return ['Reconciled'].includes((o as any).status);
             return ['Delivered', 'Completed'].includes(o.status);
         }).length
 
@@ -883,9 +883,9 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
             let matchesTab = true;
             if (activeTab === 'active') {
-                matchesTab = !['Delivered', 'Completed', 'Closed', 'Combined', 'Delivered'].includes(item.status)
+                matchesTab = !['Delivered', 'Completed', 'Closed', 'Combined', 'Reconciled'].includes(item.status)
             } else if (activeTab === 'completed') {
-                matchesTab = ['Delivered', 'Completed', 'Closed', 'Combined', 'Delivered'].includes(item.status)
+                matchesTab = ['Delivered', 'Completed', 'Closed', 'Combined', 'Reconciled'].includes(item.status)
             } else if (activeTab === 'metrics') {
                 matchesTab = true // Metrics view handles its own data
             }
@@ -896,8 +896,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
     const counts = useMemo(() => {
         return {
-            active: currentDataSet.filter(item => !['Delivered', 'Completed', 'Closed', 'Combined', 'Delivered'].includes(item.status)).length,
-            completed: currentDataSet.filter(item => ['Delivered', 'Completed', 'Closed', 'Combined', 'Delivered'].includes(item.status)).length,
+            active: currentDataSet.filter(item => !['Delivered', 'Completed', 'Closed', 'Combined', 'Reconciled'].includes(item.status)).length,
+            completed: currentDataSet.filter(item => ['Delivered', 'Completed', 'Closed', 'Combined', 'Reconciled'].includes(item.status)).length,
             all: currentDataSet.length
         }
     }, [currentDataSet])
