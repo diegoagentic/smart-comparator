@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X } from 'lucide-react'
+import { DocumentTextIcon } from '@heroicons/react/24/outline'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
-import FieldReviewModal from './components/FieldReviewModal'
 import ConvertDocumentModal from './components/ConvertDocumentModal'
 import DocumentPreviewModal from './components/DocumentPreviewModal'
 
@@ -234,7 +234,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                             <div className="pt-3 border-t border-border flex items-center justify-between">
                                                                 <div className="flex items-center gap-2">
                                                                     {doc.confidence ? (
-                                                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                                                        <span title="Confidence Score" className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                                                                             doc.confidence > 90 ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-400/30' :
                                                                             doc.confidence >= 75 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20 dark:ring-amber-400/30' :
                                                                             'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-400/30'
@@ -245,19 +245,35 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         <span className="text-[10px] font-medium text-muted-foreground">{doc.type}</span>
                                                                     )}
                                                                 </div>
-                                                                <button
-                                                                    onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
-                                                                    className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors"
-                                                                >
-                                                                    {selectedDoc === doc.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                                                </button>
+                                                                <div className="flex items-center gap-1">
+                                                                    {doc.status !== 'identified' && (
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setPreviewDoc(doc);
+                                                                            }}
+                                                                            className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all group relative"
+                                                                            title="Preview Document"
+                                                                        >
+                                                                            <DocumentTextIcon className="h-4 w-4" />
+                                                                        </button>
+                                                                    )}
+                                                                    {(doc.status === 'identified' || doc.status === 'processed') && (
+                                                                        <button
+                                                                            onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
+                                                                            className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors"
+                                                                        >
+                                                                            {selectedDoc === doc.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                                                        </button>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         {/* Expanded detail */}
                                                         {selectedDoc === doc.id && (
                                                             <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border">
-                                                                {doc.status === 'identified' ? (
+                                                                {doc.status === 'identified' && (
                                                                     <div className="space-y-2.5 py-1">
                                                                         <span className="text-xs text-muted-foreground font-medium">Ingesting document...</span>
                                                                         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -266,27 +282,11 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         <style>{`@keyframes ingestProgress { from { width: 5%; } to { width: 60%; } }`}</style>
                                                                         <p className="text-[10px] text-muted-foreground">Scanning pages and extracting fields...</p>
                                                                     </div>
-                                                                ) : (
-                                                                    <button
-                                                                        onClick={(e) => { e.stopPropagation(); setPreviewDoc(doc); }}
-                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-muted hover:bg-ai-light dark:hover:bg-ai/10 text-foreground rounded-lg transition-colors"
-                                                                    >
-                                                                        <Eye className="h-3.5 w-3.5" /> Review Document & Fields
-                                                                    </button>
-                                                                )}
-                                                                {(doc.status === 'capturing' || doc.status === 'discrepancies') && (
-                                                                    <button
-                                                                        onClick={(e) => { e.stopPropagation(); setResolveDoc(doc); }}
-                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
-                                                                    >
-                                                                        <AlertTriangle className="h-3.5 w-3.5" />
-                                                                        {doc.discrepancyCount > 0 ? `Review ${doc.discrepancyCount} Inconsistencies` : 'Review Missing Fields'}
-                                                                    </button>
                                                                 )}
                                                                 {doc.status === 'processed' && (
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); setConvertDoc(doc); }}
-                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-brand-300 dark:bg-brand-500 text-zinc-900 rounded-lg transition-colors hover:bg-brand-400 dark:hover:bg-brand-600/50"
+                                                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium bg-[#C3E433] dark:bg-[#C3E433] text-zinc-900 rounded-lg transition-colors hover:bg-[#C3E433]/80"
                                                                     >
                                                                         <Sparkles className="h-3.5 w-3.5" />
                                                                         Move to Transactions
@@ -349,7 +349,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     {doc.confidence ? (
-                                                        <span className={`text-sm font-medium flex items-center gap-1 ${doc.confidence > 90 ? 'text-success' : doc.confidence >= 75 ? 'text-warning' : 'text-error'}`}>
+                                                        <span title="Confidence Score" className={`text-sm font-medium flex items-center gap-1 ${doc.confidence > 90 ? 'text-success' : doc.confidence >= 75 ? 'text-warning' : 'text-error'}`}>
                                                             <Sparkles className="h-3 w-3" />{doc.confidence}%
                                                         </span>
                                                     ) : <span className="text-xs text-muted-foreground">—</span>}
@@ -374,14 +374,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
             <DocumentPreviewModal
                 isOpen={!!previewDoc}
                 onClose={() => setPreviewDoc(null)}
-                document={previewDoc ? { id: previewDoc.id, name: previewDoc.name, vendor: previewDoc.vendor, type: previewDoc.type, fields: previewDoc.fields, confidence: previewDoc.confidence } : null}
-            />
-
-            {/* Field Review Modal */}
-            <FieldReviewModal
-                isOpen={!!resolveDoc}
-                onClose={() => setResolveDoc(null)}
-                document={resolveDoc ? { id: resolveDoc.id, name: resolveDoc.name, vendor: resolveDoc.vendor, discrepancyCount: resolveDoc.discrepancyCount } : null}
+                document={previewDoc ? { id: previewDoc.id, name: previewDoc.name, vendor: previewDoc.vendor, type: previewDoc.type, fields: previewDoc.fields, confidence: previewDoc.confidence, status: previewDoc.status, discrepancyCount: previewDoc.discrepancyCount } : null}
                 onResolve={handleResolve}
             />
 

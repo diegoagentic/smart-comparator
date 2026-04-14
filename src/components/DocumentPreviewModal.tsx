@@ -4,6 +4,7 @@ import {
     X, FileText, Building2, Truck, Package, DollarSign, MapPin,
     ChevronDown, ChevronRight, CheckCircle2, AlertCircle, Sparkles, ZoomIn, ZoomOut
 } from 'lucide-react'
+import FieldReviewModal from './FieldReviewModal'
 
 // ─── Types ────────────────────────────────────────────────────
 interface DocumentPreviewModalProps {
@@ -16,7 +17,10 @@ interface DocumentPreviewModalProps {
         type: string
         fields: number
         confidence: number | null
+        status?: string
+        discrepancyCount?: number
     } | null
+    onResolve?: (id: string) => void
 }
 
 interface ExtractedField {
@@ -279,7 +283,7 @@ function FieldGroupPanel({ group, defaultOpen = false }: { group: FieldGroup; de
 }
 
 // ─── Main Modal ───────────────────────────────────────────────
-export default function DocumentPreviewModal({ isOpen, onClose, document }: DocumentPreviewModalProps) {
+export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve }: DocumentPreviewModalProps) {
     if (!document) return null
 
     const isAck = document.type === 'Acknowledgment'
@@ -322,7 +326,7 @@ export default function DocumentPreviewModal({ isOpen, onClose, document }: Docu
                                             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> {validCount} valid</span>
                                             <span className="flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {totalCount - validCount} issues</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2" title="Document Progress">
                                             <div className="w-20 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                                                 <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
                                             </div>
@@ -346,17 +350,27 @@ export default function DocumentPreviewModal({ isOpen, onClose, document }: Docu
                                         />
                                     </div>
 
-                                    {/* Right: Extracted Fields (2/5) */}
-                                    <div className="col-span-2 flex flex-col min-h-0">
-                                        <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 shrink-0">
-                                            <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Extracted Fields</h4>
-                                            <p className="text-[10px] text-zinc-400 mt-0.5">{totalCount} fields · {document.fields} from document</p>
-                                        </div>
-                                        <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ scrollbarWidth: 'thin' }}>
-                                            {fieldGroups.map((group, i) => (
-                                                <FieldGroupPanel key={group.id} group={group} defaultOpen={i === 0} />
-                                            ))}
-                                        </div>
+                                    {/* Right: Extracted Fields or Field Review (2/5) */}
+                                    <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
+                                        {(document.status === 'capturing' || document.status === 'discrepancies') ? (
+                                            <FieldReviewModal 
+                                                document={document} 
+                                                onResolve={onResolve} 
+                                                onClose={onClose} 
+                                            />
+                                        ) : (
+                                            <>
+                                                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 shrink-0">
+                                                    <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Extracted Fields</h4>
+                                                    <p className="text-[10px] text-zinc-400 mt-0.5">{totalCount} fields · {document.fields} from document</p>
+                                                </div>
+                                                <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ scrollbarWidth: 'thin' }}>
+                                                    {fieldGroups.map((group, i) => (
+                                                        <FieldGroupPanel key={group.id} group={group} defaultOpen={i === 0} />
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </DialogPanel>

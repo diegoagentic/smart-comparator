@@ -939,9 +939,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                             className={cn(
                                 "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
                                 lifecycleTab === 'orders'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
+                                    ? "bg-[#C3E433] dark:bg-[#C3E433] text-zinc-900 shadow-sm"
+                                    : "text-muted-foreground hover:bg-[#C3E433] dark:hover:bg-[#C3E433]/50 hover:text-zinc-900 dark:hover:text-white"
                             )}
                         >
                             <ShoppingCartIcon className="w-4 h-4" />
