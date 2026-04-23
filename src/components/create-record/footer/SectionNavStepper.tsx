@@ -30,17 +30,17 @@ export default function SectionNavStepper({ view, setView, issuesByStep }: Secti
                         <button
                             onClick={() => setView(s.id)}
                             title={s.hint + (issues > 0 ? ` · ${issues} field${issues === 1 ? '' : 's'} need${issues === 1 ? 's' : ''} review` : '')}
-                            className={`relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
+                            className={`relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
                                 isActive
-                                    ? 'bg-foreground text-background'
+                                    ? 'bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-[0_4px_14px_-4px_rgba(198,228,51,0.55)]'
                                     : isPast
-                                        ? 'text-foreground/80 hover:bg-muted'
-                                        : 'text-muted-foreground hover:bg-muted'
+                                        ? 'text-foreground/80 hover:bg-muted font-medium'
+                                        : 'text-muted-foreground hover:bg-muted font-medium'
                             }`}
                         >
-                            <span className={`size-4 inline-flex items-center justify-center rounded-full text-[10px] font-semibold ${
+                            <span className={`size-4 inline-flex items-center justify-center rounded-full text-[10px] font-bold ${
                                 isActive
-                                    ? 'bg-brand-300 dark:bg-brand-500 text-zinc-900'
+                                    ? 'bg-zinc-900 text-brand-300 dark:text-brand-500'
                                     : 'bg-muted text-muted-foreground'
                             }`}>
                                 {i + 1}
@@ -51,7 +51,7 @@ export default function SectionNavStepper({ view, setView, issuesByStep }: Secti
                                     title={`${issues} unresolved issue${issues === 1 ? '' : 's'} in ${s.label}`}
                                     className={`inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[9.5px] font-bold ${
                                         isActive
-                                            ? 'bg-red-400 text-white'
+                                            ? 'bg-zinc-900 text-red-400'
                                             : 'bg-red-50 dark:bg-red-500/15 text-red-700 dark:text-red-400'
                                     }`}
                                 >
