@@ -2,9 +2,10 @@ import { useState, Fragment } from 'react'
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react'
 import {
     X, FileText, Building2, Truck, Package, DollarSign, MapPin,
-    ChevronDown, ChevronRight, CheckCircle2, AlertCircle, Sparkles, ZoomIn, ZoomOut
+    ChevronDown, ChevronRight, CheckCircle2, AlertCircle, Sparkles, ZoomIn, ZoomOut, Archive
 } from 'lucide-react'
 import FieldReviewModal from './FieldReviewModal'
+import OrderbahnSyncBanner from './create-record/OrderbahnSyncBanner'
 
 // ─── Types ────────────────────────────────────────────────────
 interface DocumentPreviewModalProps {
@@ -21,6 +22,8 @@ interface DocumentPreviewModalProps {
         inconsistencyCount?: number
     } | null
     onResolve?: (id: string) => void
+    /** Opens the Deprecation modal in the parent. Hidden when doc is already deprecated. */
+    onMarkDeprecated?: (id: string) => void
 }
 
 interface ExtractedField {
@@ -160,9 +163,9 @@ function DocumentMockPreview({ fields, vendor, docName, docType }: { fields: Fie
             <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 shrink-0">
                 <span className="text-xs font-semibold text-zinc-500">{docName}</span>
                 <div className="flex items-center gap-1">
-                    <button onClick={() => setZoom(z => Math.max(80, z - 10))} className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomOut className="h-3.5 w-3.5" /></button>
-                    <span className="text-[10px] font-mono text-zinc-400 w-8 text-center">{zoom}%</span>
-                    <button onClick={() => setZoom(z => Math.min(150, z + 10))} className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomIn className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setZoom(z => Math.max(80, z - 10))} title="Zoom out" aria-label="Zoom out" className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomOut className="h-3.5 w-3.5" /></button>
+                    <span title="Current zoom level" className="text-[10px] font-mono text-zinc-400 w-8 text-center">{zoom}%</span>
+                    <button onClick={() => setZoom(z => Math.min(150, z + 10))} title="Zoom in" aria-label="Zoom in" className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomIn className="h-3.5 w-3.5" /></button>
                 </div>
             </div>
 
@@ -283,7 +286,7 @@ function FieldGroupPanel({ group, defaultOpen = false }: { group: FieldGroup; de
 }
 
 // ─── Main Modal ───────────────────────────────────────────────
-export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve }: DocumentPreviewModalProps) {
+export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve, onMarkDeprecated }: DocumentPreviewModalProps) {
     if (!document) return null
 
     const isAck = document.type === 'Acknowledgment'
@@ -323,8 +326,8 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
                                     <div className="flex items-center gap-4">
                                         {/* Summary stats */}
                                         <div className="flex items-center gap-3 text-xs">
-                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> {validCount} valid</span>
-                                            <span className="flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {totalCount - validCount} issues</span>
+                                            <span title={`${validCount} fields extracted with high confidence`} className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> {validCount} valid</span>
+                                            <span title={`${totalCount - validCount} fields need review (low confidence, missing, or inconsistent)`} className="flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {totalCount - validCount} issues</span>
                                         </div>
                                         <div className="flex items-center gap-2" title="Document Progress">
                                             <div className="w-20 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
@@ -332,11 +335,28 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
                                             </div>
                                             <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{pct}%</span>
                                         </div>
+                                        {/* Mark as Deprecated — hidden if doc is already deprecated */}
+                                        {onMarkDeprecated && document.status !== 'deprecated' && (
+                                            <button
+                                                onClick={() => onMarkDeprecated(document.id)}
+                                                title="Move this document to the archive (Deprecated tab)"
+                                                aria-label="Mark document as deprecated"
+                                                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-3 py-1.5 text-[12px] font-medium text-zinc-700 dark:text-zinc-200 transition-colors"
+                                            >
+                                                <Archive className="w-3.5 h-3.5" />
+                                                Mark as Deprecated
+                                            </button>
+                                        )}
                                         <button onClick={onClose} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Close">
                                             <X className="h-5 w-5" />
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Orderbahn sync banner — simulates AI-detected catalog updates */}
+                                <OrderbahnSyncBanner
+                                    changesCount={2 + (document.id.charCodeAt(document.id.length - 1) % 4)}
+                                />
 
                                 {/* Split Pane */}
                                 <div className="flex-1 grid grid-cols-5 min-h-0">
@@ -352,7 +372,7 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
 
                                     {/* Right: Extracted Fields or Field Review (2/5) */}
                                     <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
-                                        {(document.status === 'capturing' || document.status === 'discrepancies') ? (
+                                        {(document.status === 'capturing' || document.status === 'inconsistencies') ? (
                                             <FieldReviewModal 
                                                 document={document} 
                                                 onResolve={onResolve} 
