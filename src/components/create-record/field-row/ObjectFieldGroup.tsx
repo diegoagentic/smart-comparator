@@ -58,20 +58,17 @@ export default function ObjectFieldGroup({ field, fieldState, setFS, keyPrefix }
             </button>
             {!collapsed && (
                 <div className="border-t border-border bg-muted/30">
-                    <div className="relative pl-6 pr-3 py-3 space-y-1.5">
-                        <div className="absolute left-[22px] top-2 bottom-2 w-px bg-border" />
+                    <div className="px-3 py-3 grid grid-cols-1 lg:grid-cols-2 gap-2">
                         {children.map((child, i) => {
                             const key = childKeys[i]
                             return (
-                                <div key={key} className="relative">
-                                    <div className="absolute -left-3 top-5 w-3 h-px bg-border" />
-                                    <FieldRow
-                                        field={child}
-                                        state={fieldState[key]}
-                                        setState={setFS(key)}
-                                        compact
-                                    />
-                                </div>
+                                <FieldRow
+                                    key={key}
+                                    field={child}
+                                    state={fieldState[key]}
+                                    setState={setFS(key)}
+                                    compact
+                                />
                             )
                         })}
                     </div>

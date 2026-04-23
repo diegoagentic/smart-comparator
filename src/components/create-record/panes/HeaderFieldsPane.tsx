@@ -18,17 +18,18 @@ export default function HeaderFieldsPane({ preflight, fieldState, setFS }: Heade
                             {section.label}
                         </span>
                     </div>
-                    <div className="space-y-2.5">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
                         {section.fields.map((f) => {
                             if (f.isObject) {
                                 return (
-                                    <ObjectFieldGroup
-                                        key={`${section.id}:${f.dtoPath}`}
-                                        field={f}
-                                        fieldState={fieldState}
-                                        setFS={setFS}
-                                        keyPrefix={`h:${section.id}:${f.dtoPath}`}
-                                    />
+                                    <div key={`${section.id}:${f.dtoPath}`} className="lg:col-span-2">
+                                        <ObjectFieldGroup
+                                            field={f}
+                                            fieldState={fieldState}
+                                            setFS={setFS}
+                                            keyPrefix={`h:${section.id}:${f.dtoPath}`}
+                                        />
+                                    </div>
                                 )
                             }
                             const key = `h:${section.id}:${f.dtoPath}`

@@ -41,8 +41,9 @@ export default function ExtrasPane({ extras, setExtras }: ExtrasPaneProps) {
                 </div>
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {extras.map(x => (
-                <div key={x.id} className="rounded-xl border border-border bg-card overflow-hidden">
+                <div key={x.id} className={`rounded-xl border border-border bg-card overflow-hidden ${x.dataType === 'Object' ? 'lg:col-span-2' : ''}`}>
                     <div className="px-4 py-3 flex items-start gap-3 border-b border-border">
                         <input
                             type="checkbox"
@@ -93,6 +94,7 @@ export default function ExtrasPane({ extras, setExtras }: ExtrasPaneProps) {
                     )}
                 </div>
             ))}
+            </div>
         </div>
     )
 }

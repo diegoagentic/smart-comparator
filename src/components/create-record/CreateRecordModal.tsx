@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dialog, Transition, TransitionChild, DialogPanel } from '@headlessui/react'
 import { X, CheckCircle2, AlertTriangle } from 'lucide-react'
-import PreflightLeftRail, { type PaneView } from './left-rail/PreflightLeftRail'
+import { type PaneView } from './left-rail/PreflightLeftRail'
 import ModalFooter from './footer/ModalFooter'
 import SectionNavStepper from './footer/SectionNavStepper'
 import HeaderFieldsPane from './panes/HeaderFieldsPane'
@@ -9,10 +9,12 @@ import LineItemsPane from './panes/LineItemsPane'
 import ExtrasPane from './panes/ExtrasPane'
 import KpiCallout from './KpiCallout'
 import OrderbahnSyncBanner from './OrderbahnSyncBanner'
+import PreflightSummaryPopover from './PreflightSummaryPopover'
 import PublishingOverlay from './states/PublishingOverlay'
 import PublishedView, { type PublishResult } from './states/PublishedView'
 import { getPreflightForDoc } from './mockPreflightData'
 import { usePreflight } from './usePreflight'
+import { configFor } from './recordTypeConfig'
 import type { RecordType, ExtraField } from './types'
 
 export type { RecordType } from './types'
@@ -85,8 +87,6 @@ export default function CreateRecordModal({
 
     if (!document || !preflight) return null
 
-    const extrasIncludedCount = extras.filter(x => x.included).length
-
     const handleCreate = () => {
         if (publishing) return
         setPublishing(true)
@@ -129,7 +129,7 @@ export default function CreateRecordModal({
                             enter="ease-out duration-260" enterFrom="opacity-0 translate-y-2 scale-[0.995]" enterTo="opacity-100 translate-y-0 scale-100"
                             leave="ease-in duration-150" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-[0.995]"
                         >
-                            <DialogPanel className="relative w-full max-w-[1120px] h-[760px] rounded-3xl bg-card border border-border shadow-2xl overflow-hidden flex">
+                            <DialogPanel className="relative w-full max-w-[1120px] h-[760px] rounded-3xl bg-card border border-border shadow-2xl overflow-hidden flex flex-col">
                                 {publishing && <PublishingOverlay />}
 
                                 {result ? (
@@ -142,93 +142,110 @@ export default function CreateRecordModal({
                                     />
                                 ) : (
                                     <>
-                                <PreflightLeftRail
-                                    recordType={recordType}
-                                    documentId={document.id}
-                                    vendor={document.vendor}
-                                    summary={summary}
+                                {(() => {
+                                    const cfg = configFor(recordType)
+                                    const TypeIcon = cfg.icon
+                                    return (
+                                        <header className="px-5 py-3 flex items-center gap-4 border-b border-border">
+                                            {/* Brand block — record type + vendor · doc id */}
+                                            <div className="flex items-center gap-2.5 min-w-0 shrink-0">
+                                                <div className="flex items-center justify-center size-9 rounded-lg bg-brand-300 dark:bg-brand-500 text-zinc-900 shrink-0">
+                                                    <TypeIcon className="size-5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="text-[14px] font-semibold tracking-tight text-foreground leading-tight truncate">
+                                                        {cfg.label}
+                                                    </div>
+                                                    <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
+                                                        {document.vendor} · <span className="font-mono text-foreground/80">{document.id}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="h-7 w-px bg-border shrink-0" />
+
+                                            {/* Stepper — single source of section navigation */}
+                                            <SectionNavStepper
+                                                view={view}
+                                                setView={setView}
+                                                issuesByStep={{
+                                                    header: headerCounts.issues,
+                                                    lineItems: lineCounts.issues,
+                                                }}
+                                            />
+
+                                            <div className="flex-1" />
+
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                {summary.valid ? (
+                                                    <span title="All required fields resolved — record can be created" className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                        <CheckCircle2 className="size-3" /> Ready
+                                                    </span>
+                                                ) : (
+                                                    <span title={summary.requiredUnresolved > 0 ? `${summary.requiredUnresolved} required field${summary.requiredUnresolved === 1 ? '' : 's'} blocking record creation` : 'Some fields need attention before creating the record'} className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                        <AlertTriangle className="size-3" />
+                                                        {summary.requiredUnresolved > 0
+                                                            ? `${summary.requiredUnresolved} required`
+                                                            : 'Action needed'}
+                                                    </span>
+                                                )}
+                                                {overrideCount > 0 && (
+                                                    <span title={`${overrideCount} manual change${overrideCount === 1 ? '' : 's'} you've made on top of AI extraction`} className="inline-flex items-center gap-1 rounded-full bg-muted text-foreground/80 px-2 py-0.5 text-[10.5px] font-medium">
+                                                        {overrideCount} {overrideCount === 1 ? 'change' : 'changes'}
+                                                    </span>
+                                                )}
+                                                <PreflightSummaryPopover summary={summary} />
+                                                <button
+                                                    onClick={onClose}
+                                                    title="Close without creating record"
+                                                    className="inline-flex items-center justify-center size-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ml-1"
+                                                    aria-label="Close"
+                                                >
+                                                    <X className="size-4" />
+                                                </button>
+                                            </div>
+                                        </header>
+                                    )
+                                })()}
+
+                                <OrderbahnSyncBanner
+                                    changesCount={2 + (document.id.charCodeAt(document.id.length - 1) % 4)}
                                 />
 
-                                <div className="flex-1 min-w-0 flex flex-col">
-                                    <header className="h-14 px-5 flex items-center justify-between gap-3 border-b border-border">
-                                        {/* Stepper — single source of section navigation, with per-section issue badges */}
-                                        <SectionNavStepper
-                                            view={view}
-                                            setView={setView}
-                                            issuesByStep={{
-                                                header: headerCounts.issues,
-                                                lineItems: lineCounts.issues,
-                                            }}
+                                <KpiCallout
+                                    preflight={preflight}
+                                    recordType={recordType}
+                                    fieldState={fieldState}
+                                />
+
+                                <div className="flex-1 overflow-y-auto px-6 py-5 scrollbar-minimal">
+                                    {view === 'header' && (
+                                        <HeaderFieldsPane
+                                            preflight={preflight}
+                                            fieldState={fieldState}
+                                            setFS={setFS}
                                         />
-
-                                        <div className="flex items-center gap-2 shrink-0">
-                                            {summary.valid ? (
-                                                <span title="All required fields resolved — record can be created" className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
-                                                    <CheckCircle2 className="size-3" /> Ready to create
-                                                </span>
-                                            ) : (
-                                                <span title={summary.requiredUnresolved > 0 ? `${summary.requiredUnresolved} required field${summary.requiredUnresolved === 1 ? '' : 's'} blocking record creation` : 'Some fields need attention before creating the record'} className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
-                                                    <AlertTriangle className="size-3" />
-                                                    {summary.requiredUnresolved > 0
-                                                        ? `${summary.requiredUnresolved} required left`
-                                                        : 'Action needed'}
-                                                </span>
-                                            )}
-                                            {overrideCount > 0 && (
-                                                <span title={`${overrideCount} manual change${overrideCount === 1 ? '' : 's'} you've made on top of AI extraction`} className="inline-flex items-center gap-1 rounded-full bg-muted text-foreground/80 px-2 py-0.5 text-[10.5px] font-medium">
-                                                    {overrideCount} {overrideCount === 1 ? 'change' : 'changes'}
-                                                </span>
-                                            )}
-                                            <button
-                                                onClick={onClose}
-                                                title="Close without creating record"
-                                                className="inline-flex items-center justify-center size-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                                aria-label="Close"
-                                            >
-                                                <X className="size-4" />
-                                            </button>
-                                        </div>
-                                    </header>
-
-                                    <OrderbahnSyncBanner
-                                        changesCount={2 + (document.id.charCodeAt(document.id.length - 1) % 4)}
-                                    />
-
-                                    <KpiCallout
-                                        preflight={preflight}
-                                        recordType={recordType}
-                                        fieldState={fieldState}
-                                    />
-
-                                    <div className="flex-1 overflow-y-auto px-6 py-5 scrollbar-minimal">
-                                        {view === 'header' && (
-                                            <HeaderFieldsPane
-                                                preflight={preflight}
-                                                fieldState={fieldState}
-                                                setFS={setFS}
-                                            />
-                                        )}
-                                        {view === 'lineItems' && (
-                                            <LineItemsPane
-                                                preflight={preflight}
-                                                fieldState={fieldState}
-                                                setFS={setFS}
-                                            />
-                                        )}
-                                        {view === 'extras' && (
-                                            <ExtrasPane
-                                                extras={extras}
-                                                setExtras={setExtras}
-                                            />
-                                        )}
-                                    </div>
-
-                                    <ModalFooter
-                                        canCreate={summary.valid}
-                                        onCancel={onClose}
-                                        onCreate={handleCreate}
-                                    />
+                                    )}
+                                    {view === 'lineItems' && (
+                                        <LineItemsPane
+                                            preflight={preflight}
+                                            fieldState={fieldState}
+                                            setFS={setFS}
+                                        />
+                                    )}
+                                    {view === 'extras' && (
+                                        <ExtrasPane
+                                            extras={extras}
+                                            setExtras={setExtras}
+                                        />
+                                    )}
                                 </div>
+
+                                <ModalFooter
+                                    canCreate={summary.valid}
+                                    onCancel={onClose}
+                                    onCreate={handleCreate}
+                                />
                                     </>
                                 )}
                             </DialogPanel>
