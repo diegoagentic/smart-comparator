@@ -18,7 +18,7 @@ interface DocumentPreviewModalProps {
         fields: number
         confidence: number | null
         status?: string
-        discrepancyCount?: number
+        inconsistencyCount?: number
     } | null
     onResolve?: (id: string) => void
 }
