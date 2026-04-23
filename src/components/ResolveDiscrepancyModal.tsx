@@ -2,14 +2,14 @@ import { useState, Fragment } from 'react'
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react'
 import { X, AlertTriangle, ChevronDown, ChevronUp, Check, Pencil, Sparkles, Info } from 'lucide-react'
 
-interface ResolveDiscrepancyModalProps {
+interface ResolveInconsistencyModalProps {
     isOpen: boolean
     onClose: () => void
     document: {
         id: string
         name: string
         vendor: string
-        discrepancyCount: number
+        inconsistencyCount: number
     } | null
     onResolve?: (docId: string) => void
 }
@@ -63,7 +63,7 @@ const MOCK_ITEMS = [
     },
 ]
 
-export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onResolve }: ResolveDiscrepancyModalProps) {
+export default function ResolveInconsistencyModal({ isOpen, onClose, document, onResolve }: ResolveInconsistencyModalProps) {
     const [expandedItem, setExpandedItem] = useState<number>(0)
     const [resolvedItems, setResolvedItems] = useState<Set<number>>(new Set())
     const [showWarning, setShowWarning] = useState(true)
@@ -91,7 +91,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <DialogTitle as="h3" className="text-xl font-bold text-zinc-900 dark:text-white">
-                                                Resolve Item Discrepancy
+                                                Resolve Item Inconsistency
                                             </DialogTitle>
                                             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                                                 Review the issue and confirm the correct information
@@ -118,7 +118,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                         </div>
                                     )}
 
-                                    {/* Discrepancy Items */}
+                                    {/* Inconsistency Items */}
                                     <div className="space-y-3 pb-4">
                                         {MOCK_ITEMS.map((item, idx) => {
                                             const isExpanded = expandedItem === idx
@@ -143,7 +143,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                                                 <span className="text-sm font-bold text-zinc-900 dark:text-white">{item.ackNumber} — {item.vendor}</span>
                                                                 {!isResolved && (
                                                                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500 text-white flex items-center gap-1">
-                                                                        <AlertTriangle className="h-2.5 w-2.5" /> Discrepancy
+                                                                        <AlertTriangle className="h-2.5 w-2.5" /> Inconsistency
                                                                     </span>
                                                                 )}
                                                                 {isResolved && (
@@ -252,7 +252,7 @@ export default function ResolveDiscrepancyModal({ isOpen, onClose, document, onR
                                                 : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
                                         }`}
                                     >
-                                        Resolve Discrepancies
+                                        Resolve Inconsistencies
                                     </button>
                                 </div>
                             </DialogPanel>

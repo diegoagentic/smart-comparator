@@ -135,7 +135,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
     const [selectedDoc, setSelectedDoc] = useState<DocItem | null>(null);
     const [scanProgress, setScanProgress] = useState(0);
     const [scanComplete, setScanComplete] = useState(false);
-    const [discrepancyFixes, setDiscrepancyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
+    const [inconsistencyFixes, setInconsistencyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
 
     // Config by mode
     const config = useMemo(() => mode === 'quote-to-order'
@@ -170,7 +170,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                 setSelectedDoc(null);
                 setScanProgress(0);
                 setScanComplete(false);
-                setDiscrepancyFixes({});
+                setInconsistencyFixes({});
             }, 300);
             return () => clearTimeout(t);
         }
@@ -199,7 +199,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
     const isCleanDoc = selectedDoc?.status === 'Ready';
     const activeComparison = isCleanDoc ? CLEAN_COMPARISON : config.comparison;
 
-    // Auto-advance to confirm for clean docs (no discrepancies)
+    // Auto-advance to confirm for clean docs (no inconsistencies)
     useEffect(() => {
         if (step === 'compare' && scanComplete && isCleanDoc) {
             const t = setTimeout(() => setStep('confirm'), 1200);
@@ -208,14 +208,14 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
     }, [step, scanComplete, isCleanDoc]);
 
     // Derived data
-    const discrepancies = useMemo(() =>
+    const inconsistencies = useMemo(() =>
         activeComparison.filter(f => f.status !== 'match'),
         [activeComparison]
     );
 
     const matchedCount = activeComparison.filter(f => f.status === 'match').length;
-    const allDecided = discrepancies.every((_, i) => discrepancyFixes[i] !== undefined);
-    const acceptedCount = Object.values(discrepancyFixes).filter(v => v === 'accept').length;
+    const allDecided = inconsistencies.every((_, i) => inconsistencyFixes[i] !== undefined);
+    const acceptedCount = Object.values(inconsistencyFixes).filter(v => v === 'accept').length;
 
     const adjustedAmount = useMemo(() => {
         const totalField = activeComparison.find(f => f.field === 'Total Net');
@@ -367,8 +367,8 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                 <span className="text-sm text-indigo-700 dark:text-indigo-300">
                                                     {scanComplete
                                                         ? isCleanDoc
-                                                            ? ` — All ${matchedCount} fields matched. No discrepancies — converting directly.`
-                                                            : ` — Scan complete. ${matchedCount}/${activeComparison.length} fields matched, ${discrepancies.length} discrepancies found.`
+                                                            ? ` — All ${matchedCount} fields matched. No inconsistencies — converting directly.`
+                                                            : ` — Scan complete. ${matchedCount}/${activeComparison.length} fields matched, ${inconsistencies.length} inconsistencies found.`
                                                         : ` — Scanning ${selectedDoc?.id} against manufacturer database & Avanto ecosystem...`
                                                     }
                                                 </span>
@@ -400,10 +400,10 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                         {matchedCount} Matched
                                                     </span>
                                                     <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400">
-                                                        {discrepancies.filter(d => d.status === 'mismatch').length} Mismatch
+                                                        {inconsistencies.filter(d => d.status === 'mismatch').length} Mismatch
                                                     </span>
                                                     <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">
-                                                        {discrepancies.filter(d => d.status === 'partial').length} Partial
+                                                        {inconsistencies.filter(d => d.status === 'partial').length} Partial
                                                     </span>
                                                 </div>
 
@@ -438,7 +438,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                     onClick={() => setStep('review')}
                                                     className="w-full mt-5 py-3 rounded-xl text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all flex items-center justify-center gap-2"
                                                 >
-                                                    Review Discrepancies ({discrepancies.length})
+                                                    Review Inconsistencies ({inconsistencies.length})
                                                     <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -446,7 +446,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                     </div>
                                 )}
 
-                                {/* ──── Step 3: Review Discrepancies ──── */}
+                                {/* ──── Step 3: Review Inconsistencies ──── */}
                                 {step === 'review' && (
                                     <div className="p-6 sm:p-8">
                                         <div className="flex justify-between items-start mb-5">
@@ -455,8 +455,8 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                     <ArrowLeftIcon className="w-4 h-4" />
                                                 </button>
                                                 <div>
-                                                    <h3 className="text-lg font-brand font-bold text-foreground">Review Discrepancies</h3>
-                                                    <p className="text-[11px] text-muted-foreground">{discrepancies.length} items require your decision</p>
+                                                    <h3 className="text-lg font-brand font-bold text-foreground">Review Inconsistencies</h3>
+                                                    <p className="text-[11px] text-muted-foreground">{inconsistencies.length} items require your decision</p>
                                                 </div>
                                             </div>
                                             <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
@@ -471,8 +471,8 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                 <span className="text-[10px] text-green-600 dark:text-green-300 block font-medium">Matched</span>
                                             </div>
                                             <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800 text-center">
-                                                <span className="text-lg font-bold text-red-700 dark:text-red-400">{discrepancies.length}</span>
-                                                <span className="text-[10px] text-red-600 dark:text-red-300 block font-medium">Discrepancies</span>
+                                                <span className="text-lg font-bold text-red-700 dark:text-red-400">{inconsistencies.length}</span>
+                                                <span className="text-[10px] text-red-600 dark:text-red-300 block font-medium">Inconsistencies</span>
                                             </div>
                                             <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-800 text-center">
                                                 <span className="text-lg font-bold text-indigo-700 dark:text-indigo-400">{acceptedCount}</span>
@@ -480,16 +480,16 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                             </div>
                                             <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-800 text-center">
                                                 <span className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                                                    {Math.round(discrepancies.reduce((sum, d) => sum + (d.confidence || 90), 0) / discrepancies.length)}%
+                                                    {Math.round(inconsistencies.reduce((sum, d) => sum + (d.confidence || 90), 0) / inconsistencies.length)}%
                                                 </span>
                                                 <span className="text-[10px] text-blue-600 dark:text-blue-300 block font-medium">Avg Confidence</span>
                                             </div>
                                         </div>
 
-                                        {/* Discrepancy Cards */}
+                                        {/* Inconsistency Cards */}
                                         <div className="space-y-3 max-h-[380px] overflow-y-auto scrollbar-minimal pr-1">
-                                            {discrepancies.map((disc, i) => {
-                                                const fixed = discrepancyFixes[i];
+                                            {inconsistencies.map((disc, i) => {
+                                                const fixed = inconsistencyFixes[i];
                                                 return (
                                                     <div
                                                         key={i}
@@ -549,14 +549,14 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                         {fixed === undefined && (
                                                             <div className="flex items-center gap-2">
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => ({ ...prev, [i]: 'accept' }))}
+                                                                    onClick={() => setInconsistencyFixes(prev => ({ ...prev, [i]: 'accept' }))}
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-green-600 hover:bg-green-700 text-white transition-colors"
                                                                 >
                                                                     <CheckCircleIcon className="w-3.5 h-3.5" />
                                                                     Accept Fix
                                                                 </button>
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => ({ ...prev, [i]: 'reject' }))}
+                                                                    onClick={() => setInconsistencyFixes(prev => ({ ...prev, [i]: 'reject' }))}
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-muted hover:bg-muted/80 text-muted-foreground transition-colors"
                                                                 >
                                                                     Keep Original
@@ -569,7 +569,7 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                                                     {fixed === 'accept' ? 'Fix applied' : 'Original kept'}
                                                                 </span>
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => {
+                                                                    onClick={() => setInconsistencyFixes(prev => {
                                                                         const next = { ...prev };
                                                                         delete next[i];
                                                                         return next;
@@ -660,8 +660,8 @@ export default function DocumentConversionModal({ isOpen, onClose, mode, trigger
                                             <SparklesIcon className="w-4 h-4 text-indigo-500 dark:text-indigo-400 mt-0.5 shrink-0" />
                                             <span className="text-[11px] text-indigo-700 dark:text-indigo-300">
                                                 {isCleanDoc
-                                                    ? `All ${matchedCount} fields validated — zero discrepancies. Direct conversion completed and synced to eManage ecosystem.`
-                                                    : `${discrepancies.length} discrepancies resolved. ${acceptedCount} auto-fixed, ${discrepancies.length - acceptedCount} kept as original. All changes synced to eManage ecosystem.`
+                                                    ? `All ${matchedCount} fields validated — zero inconsistencies. Direct conversion completed and synced to eManage ecosystem.`
+                                                    : `${inconsistencies.length} inconsistencies resolved. ${acceptedCount} auto-fixed, ${inconsistencies.length - acceptedCount} kept as original. All changes synced to eManage ecosystem.`
                                                 }
                                             </span>
                                         </div>

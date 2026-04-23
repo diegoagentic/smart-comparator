@@ -12,8 +12,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
 
-// Unified Discrepancy Type
-export interface DiscrepancyItem {
+// Unified Inconsistency Type
+export interface InconsistencyItem {
     id: string;
     type: 'header' | 'rule' | 'line_item';
     title: string;
@@ -38,14 +38,14 @@ export interface DiscrepancyItem {
     metadata?: any;
 }
 
-interface DiscrepancyResolverProps {
-    issues: DiscrepancyItem[];
+interface InconsistencyResolverProps {
+    issues: InconsistencyItem[];
     onResolve: (id: string, action: 'accept' | 'keep' | 'manual', data?: any) => void;
     onClose: () => void;
     title?: string;
 }
 
-export default function DiscrepancyResolverArtifact({ issues, onResolve, onClose, title }: DiscrepancyResolverProps) {
+export default function InconsistencyResolverArtifact({ issues, onResolve, onClose, title }: InconsistencyResolverProps) {
     const [initialTotal, setInitialTotal] = useState(issues.length);
     const [processedCount, setProcessedCount] = useState(0);
     const [isAutoFixing, setIsAutoFixing] = useState(false);
@@ -119,10 +119,10 @@ export default function DiscrepancyResolverArtifact({ issues, onResolve, onClose
 
     const getTypeLabel = (type: string) => {
         switch (type) {
-            case 'header': return 'Context Discrepancy';
+            case 'header': return 'Context Inconsistency';
             case 'rule': return 'Business Rule Warning';
             case 'line_item': return 'Asset Data Mismatch';
-            default: return 'Discrepancy';
+            default: return 'Inconsistency';
         }
     };
 
@@ -139,7 +139,7 @@ export default function DiscrepancyResolverArtifact({ issues, onResolve, onClose
                 <div>
                     <h2 className="text-xl font-bold font-brand flex items-center gap-2 text-foreground">
                         {isSubstitution ? <SparklesIcon className="w-6 h-6 text-indigo-500" /> : getTypeIcon(currentIssue.type)}
-                        {title || 'Review Discrepancy'}
+                        {title || 'Review Inconsistency'}
                     </h2>
                     <p className="text-sm text-muted-foreground mt-1">
                         Issue {progressIndex} of {initialTotal} • <span className={isSubstitution ? "text-indigo-600 font-medium" : "text-amber-600 font-medium"}>Resolution Required</span>
