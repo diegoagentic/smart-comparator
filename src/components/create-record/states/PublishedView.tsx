@@ -1,5 +1,6 @@
 import { Check, ArrowRight, Sparkles } from 'lucide-react'
 import type { RecordType } from '../types'
+import { configFor } from '../recordTypeConfig'
 
 export interface PublishResult {
     recordId: string
@@ -51,7 +52,8 @@ function formatTimestamp(d: Date): string {
 }
 
 export default function PublishedView({ result, recordType, vendor, onClose, onViewRecord }: PublishedViewProps) {
-    const recordTypeLabel = recordType === 'PO' ? 'Purchase order' : 'Acknowledgement'
+    const cfg = configFor(recordType)
+    const recordTypeLabel = cfg.label
     const createdAt = formatTimestamp(new Date())
 
     return (
@@ -93,7 +95,7 @@ export default function PublishedView({ result, recordType, vendor, onClose, onV
                 </div>
 
                 <h2 className="mt-2 text-[32px] font-medium tracking-tight text-foreground font-brand">
-                    {recordTypeLabel} created
+                    {cfg.successHeroCopy}
                 </h2>
                 <p className="text-[14px] text-muted-foreground mt-2 leading-relaxed text-center max-w-md">
                     Record stored in Orderbahn. Line items persisted and synced to downstream systems.

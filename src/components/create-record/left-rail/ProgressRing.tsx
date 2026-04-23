@@ -8,7 +8,7 @@ export default function ProgressRing({ pct }: ProgressRingProps) {
     const o = c - (Math.max(0, Math.min(100, pct)) / 100) * c
 
     return (
-        <div className="relative w-[72px] h-[72px]">
+        <div title={`${Math.round(pct)}% of fields ready to publish`} className="relative w-[72px] h-[72px]">
             <svg width="72" height="72" viewBox="0 0 72 72" className="-rotate-90">
                 <circle cx="36" cy="36" r={r} stroke="currentColor" strokeWidth="8" fill="none" className="text-muted/60" />
                 <circle

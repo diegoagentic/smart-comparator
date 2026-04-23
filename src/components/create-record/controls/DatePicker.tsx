@@ -164,6 +164,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Pick a date
                         <button
                             type="button"
                             onClick={goPrev}
+                            title="Previous month"
                             className="size-7 inline-flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                             aria-label="Previous month"
                         >
@@ -175,6 +176,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Pick a date
                         <button
                             type="button"
                             onClick={goNext}
+                            title="Next month"
                             className="size-7 inline-flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                             aria-label="Next month"
                         >
@@ -227,6 +229,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Pick a date
                         <button
                             type="button"
                             onClick={goToday}
+                            title="Jump to today and select it"
                             className="text-[12px] font-medium text-foreground/80 hover:text-foreground hover:bg-muted px-2 py-1 rounded-md transition-colors"
                         >
                             Today
@@ -235,6 +238,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Pick a date
                             <button
                                 type="button"
                                 onClick={() => { onChange(''); setOpen(false) }}
+                                title="Remove the selected date"
                                 className="text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted px-2 py-1 rounded-md transition-colors"
                             >
                                 Clear

@@ -50,6 +50,7 @@ export default function FieldBody({ field, state, setState, effective }: FieldBo
                         effectiveResolution: field.resolution,
                         picking: false,
                     })}
+                    title="Discard your change and restore the original AI-extracted value"
                     className="text-green-700/70 hover:text-green-900 dark:text-green-400/80 dark:hover:text-green-300 text-[12px] font-medium shrink-0"
                 >
                     Reset

@@ -16,8 +16,13 @@ interface SourceDoc {
 }
 
 // Whether a doc gets a "messy" preflight (with inconsistencies) or "clean" one.
-// Heuristic: docs whose id ends in odd digit are messy. Replaceable later.
+// Overrides keep demo behavior predictable; replace with backend data when real.
+const FORCE_CLEAN = new Set(['OCR-007']) // always goes to toast (simple path)
+const FORCE_MESSY = new Set(['OCR-006']) // always opens the modal (PO demo)
+
 export function isMessyPreflight(doc: SourceDoc): boolean {
+    if (FORCE_CLEAN.has(doc.id)) return false
+    if (FORCE_MESSY.has(doc.id)) return true
     const lastDigit = parseInt(doc.id.slice(-1), 10)
     return Number.isFinite(lastDigit) ? lastDigit % 2 !== 0 : true
 }

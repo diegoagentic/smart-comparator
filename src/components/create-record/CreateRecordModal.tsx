@@ -3,9 +3,12 @@ import { Dialog, Transition, TransitionChild, DialogPanel } from '@headlessui/re
 import { X, CheckCircle2, AlertTriangle } from 'lucide-react'
 import PreflightLeftRail, { type PaneView } from './left-rail/PreflightLeftRail'
 import ModalFooter from './footer/ModalFooter'
+import SectionNavStepper from './footer/SectionNavStepper'
 import HeaderFieldsPane from './panes/HeaderFieldsPane'
 import LineItemsPane from './panes/LineItemsPane'
 import ExtrasPane from './panes/ExtrasPane'
+import KpiCallout from './KpiCallout'
+import OrderbahnSyncBanner from './OrderbahnSyncBanner'
 import PublishingOverlay from './states/PublishingOverlay'
 import PublishedView, { type PublishResult } from './states/PublishedView'
 import { getPreflightForDoc } from './mockPreflightData'
@@ -27,12 +30,6 @@ interface CreateRecordModalProps {
     document: CreateRecordDoc | null
     recordType: RecordType
     onCreated?: (recordId: string) => void
-}
-
-const VIEW_TITLES: Record<PaneView, string> = {
-    header: 'Header fields',
-    lineItems: 'Line items',
-    extras: 'Extra fields',
 }
 
 export default function CreateRecordModal({
@@ -150,51 +147,58 @@ export default function CreateRecordModal({
                                     documentId={document.id}
                                     vendor={document.vendor}
                                     summary={summary}
-                                    view={view}
-                                    setView={setView}
-                                    headerCounts={headerCounts}
-                                    lineCounts={lineCounts}
-                                    extrasIncludedCount={extrasIncludedCount}
                                 />
 
                                 <div className="flex-1 min-w-0 flex flex-col">
-                                    <header className="h-16 px-6 flex items-center justify-between border-b border-border">
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-300 dark:bg-brand-500 text-zinc-900 px-2.5 py-1 text-[11px] font-semibold">
-                                                <span className="size-1.5 rounded-full bg-zinc-900" />
-                                                REVIEW & CREATE
-                                            </span>
-                                            <h1 className="text-[16px] font-medium tracking-tight text-foreground truncate">
-                                                {VIEW_TITLES[view]}
-                                            </h1>
+                                    <header className="h-14 px-5 flex items-center justify-between gap-3 border-b border-border">
+                                        {/* Stepper — single source of section navigation, with per-section issue badges */}
+                                        <SectionNavStepper
+                                            view={view}
+                                            setView={setView}
+                                            issuesByStep={{
+                                                header: headerCounts.issues,
+                                                lineItems: lineCounts.issues,
+                                            }}
+                                        />
+
+                                        <div className="flex items-center gap-2 shrink-0">
                                             {summary.valid ? (
-                                                <span className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                <span title="All required fields resolved — record can be created" className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
                                                     <CheckCircle2 className="size-3" /> Ready to create
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                <span title={summary.requiredUnresolved > 0 ? `${summary.requiredUnresolved} required field${summary.requiredUnresolved === 1 ? '' : 's'} blocking record creation` : 'Some fields need attention before creating the record'} className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
                                                     <AlertTriangle className="size-3" />
                                                     {summary.requiredUnresolved > 0
                                                         ? `${summary.requiredUnresolved} required left`
                                                         : 'Action needed'}
                                                 </span>
                                             )}
-                                        </div>
-                                        <div className="flex items-center gap-2">
                                             {overrideCount > 0 && (
-                                                <span className="inline-flex items-center gap-1 rounded-full bg-muted text-foreground/80 px-2.5 py-1 text-[11px] font-medium">
+                                                <span title={`${overrideCount} manual change${overrideCount === 1 ? '' : 's'} you've made on top of AI extraction`} className="inline-flex items-center gap-1 rounded-full bg-muted text-foreground/80 px-2 py-0.5 text-[10.5px] font-medium">
                                                     {overrideCount} {overrideCount === 1 ? 'change' : 'changes'}
                                                 </span>
                                             )}
                                             <button
                                                 onClick={onClose}
-                                                className="inline-flex items-center justify-center size-8 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                                title="Close without creating record"
+                                                className="inline-flex items-center justify-center size-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                                                 aria-label="Close"
                                             >
                                                 <X className="size-4" />
                                             </button>
                                         </div>
                                     </header>
+
+                                    <OrderbahnSyncBanner
+                                        changesCount={2 + (document.id.charCodeAt(document.id.length - 1) % 4)}
+                                    />
+
+                                    <KpiCallout
+                                        preflight={preflight}
+                                        recordType={recordType}
+                                        fieldState={fieldState}
+                                    />
 
                                     <div className="flex-1 overflow-y-auto px-6 py-5 scrollbar-minimal">
                                         {view === 'header' && (
@@ -220,8 +224,6 @@ export default function CreateRecordModal({
                                     </div>
 
                                     <ModalFooter
-                                        view={view}
-                                        setView={setView}
                                         canCreate={summary.valid}
                                         onCancel={onClose}
                                         onCreate={handleCreate}

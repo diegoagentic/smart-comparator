@@ -48,13 +48,15 @@ export default function ExtrasPane({ extras, setExtras }: ExtrasPaneProps) {
                             type="checkbox"
                             checked={x.included}
                             onChange={() => toggle(x.id)}
+                            title={x.included ? 'Uncheck to exclude this field from the record' : 'Check to include this field in the record'}
+                            aria-label={`Include ${x.label}`}
                             className="mt-0.5 size-4 rounded border-[1.5px] border-zinc-400 dark:border-zinc-600 bg-card checked:bg-foreground checked:border-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors cursor-pointer accent-foreground"
                         />
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                                 <span className="text-[13.5px] font-medium text-foreground">{x.label}</span>
                                 {x.required && (
-                                    <span className="text-[10px] font-semibold text-red-600 dark:text-red-400">REQUIRED</span>
+                                    <span title="This extra field must be included to create the record" className="text-[10px] font-semibold text-red-600 dark:text-red-400">REQUIRED</span>
                                 )}
                             </div>
                             {!x.included && (

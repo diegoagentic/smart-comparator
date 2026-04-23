@@ -98,6 +98,7 @@ export default function LineItemsPane({ preflight, fieldState, setFS }: LineItem
                                     <tr
                                         className={`border-b border-border/60 hover:bg-muted/40 transition-colors cursor-pointer ${isExpanded ? 'bg-muted/40' : ''}`}
                                         onClick={() => setExpanded(isExpanded ? null : li.rowIndex)}
+                                        title={isExpanded ? 'Click to collapse row details' : 'Click to expand and resolve row issues'}
                                     >
                                         <td className="pl-3">
                                             <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${isExpanded ? '' : '-rotate-90'}`} />
@@ -119,11 +120,11 @@ export default function LineItemsPane({ preflight, fieldState, setFS }: LineItem
                                         })}
                                         <td className="px-3 py-3">
                                             {rowSummary.valid ? (
-                                                <span className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                <span title="All fields in this row are valid" className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10.5px] font-medium">
                                                     <Check className="size-3" /> Ready
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
+                                                <span title="One or more fields in this row need resolution" className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-2 py-0.5 text-[10.5px] font-medium">
                                                     <AlertTriangle className="size-3" /> Review
                                                 </span>
                                             )}
