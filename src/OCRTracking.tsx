@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X } from 'lucide-react'
+import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
@@ -14,12 +14,15 @@ const OCR_DOCUMENTS = [
     { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, discrepancyCount: 0 },
     { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, discrepancyCount: 0 },
     { id: 'OCR-007', name: 'ACK-7831_9to5.pdf', vendor: '9to5 Seating', type: 'Acknowledgment', pages: 1, fields: 12, date: '3 days ago', status: 'processed', confidence: 100, discrepancyCount: 0 },
+    { id: 'OCR-008', name: 'ACK-7855_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 32, date: '1 hour ago', status: 'in_progress', confidence: 86, discrepancyCount: 8, assignee: { name: 'Sarah', initials: 'SJ', color: 'bg-amber-600' } },
+    { id: 'OCR-009', name: 'PO-1031_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 4, fields: 47, date: '2 hours ago', status: 'in_progress', confidence: 81, discrepancyCount: 12, assignee: { name: 'Marcus', initials: 'MW', color: 'bg-orange-600' } },
 ]
 
 const COLUMNS = [
     { id: 'identified', label: 'Ingesting', icon: FileText, color: 'text-info', bg: 'bg-info-light dark:bg-info/10', border: 'border-info/20' },
     { id: 'capturing', label: 'Needs Attention', icon: ScanEye, color: 'text-ai', bg: 'bg-ai-light dark:bg-ai/10', border: 'border-ai/20' },
     { id: 'discrepancies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
+    { id: 'in_progress', label: 'In-progress', icon: Clock, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-100 dark:bg-indigo-900/30', border: 'border-indigo-200 dark:border-indigo-800' },
     { id: 'processed', label: 'Reconciled', icon: CheckCircle2, color: 'text-success', bg: 'bg-success-light dark:bg-success/10', border: 'border-success/20' },
 ]
 
@@ -39,7 +42,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [documents, setDocuments] = useState(OCR_DOCUMENTS)
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
     const [searchQuery, setSearchQuery] = useState('')
-    const [activeTab, setActiveTab] = useState<'all' | 'identified' | 'capturing' | 'discrepancies' | 'processed'>('all')
+    const [activeTab, setActiveTab] = useState<'all' | 'identified' | 'capturing' | 'discrepancies' | 'in_progress' | 'processed'>('all')
 
     const handleResolve = (docId: string) => {
         setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', discrepancyCount: 0, confidence: 99 } : d))
@@ -57,6 +60,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
         identified: OCR_DOCUMENTS.filter(d => d.status === 'identified').length,
         capturing: OCR_DOCUMENTS.filter(d => d.status === 'capturing').length,
         discrepancies: OCR_DOCUMENTS.filter(d => d.status === 'discrepancies').length,
+        in_progress: OCR_DOCUMENTS.filter(d => d.status === 'in_progress').length,
         processed: OCR_DOCUMENTS.filter(d => d.status === 'processed').length,
     }
 
@@ -124,6 +128,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                         { id: 'identified', label: 'Ingesting', count: counts.identified },
                                         { id: 'capturing', label: 'Needs Attention', count: counts.capturing },
                                         { id: 'discrepancies', label: 'Awaiting Expert', count: counts.discrepancies },
+                                        { id: 'in_progress', label: 'In-progress', count: counts.in_progress },
                                         { id: 'processed', label: 'Validated', count: counts.processed },
                                     ].map(tab => (
                                         <button
@@ -172,12 +177,12 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                     <div className="p-6">
                         {/* Kanban View */}
                         {viewMode === 'kanban' && (
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
                                 {COLUMNS.map(column => {
                                     const docs = filteredDocs.filter(d => d.status === column.id)
                                     const Icon = column.icon
                                     return (
-                                        <div key={column.id} className="space-y-3">
+                                        <div key={column.id} className="min-w-[280px] max-w-[320px] flex-1 space-y-3 snap-start">
                                             {/* Column Header */}
                                             <div className="flex items-center gap-2 mb-1">
                                                 <span className={`text-sm font-semibold ${column.color}`}>{column.label}</span>
@@ -201,6 +206,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                     <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900 ${
                                                                         doc.status === 'processed' ? 'bg-gradient-to-br from-green-500 to-green-700 text-white' :
                                                                         doc.status === 'discrepancies' ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-white' :
+                                                                        doc.status === 'in_progress' ? 'bg-indigo-600 text-white' :
                                                                         doc.status === 'capturing' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700 text-white' :
                                                                         'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
                                                                     }`}>
@@ -211,6 +217,14 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         <p className="text-[10px] text-muted-foreground font-mono">{doc.id}</p>
                                                                     </div>
                                                                 </div>
+                                                                {(doc as any).assignee && (
+                                                                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full border border-border text-xs bg-background shadow-sm">
+                                                                        <div className={`h-5 w-5 rounded-full ${(doc as any).assignee.color} text-white flex items-center justify-center font-bold text-[10px]`}>
+                                                                            {(doc as any).assignee.initials}
+                                                                        </div>
+                                                                        <span className="font-medium pr-1">{(doc as any).assignee.name}</span>
+                                                                    </div>
+                                                                )}
                                                             </div>
 
                                                             <div className="space-y-2 mb-3">
@@ -341,10 +355,11 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                     <span className={`text-xs font-semibold px-2 py-1 rounded-md ${
                                                         doc.status === 'processed' ? 'bg-success-light text-success' :
                                                         doc.status === 'discrepancies' ? 'bg-error-light text-error' :
+                                                        doc.status === 'in_progress' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                                                         doc.status === 'capturing' ? 'bg-ai-light text-ai' :
                                                         'bg-info-light text-info'
                                                     }`}>
-                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Awaiting Expert' : 'Reconciled'}
+                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Awaiting Expert' : doc.status === 'in_progress' ? 'In Progress' : 'Reconciled'}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
