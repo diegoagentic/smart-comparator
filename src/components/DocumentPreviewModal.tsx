@@ -352,7 +352,7 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
 
                                     {/* Right: Extracted Fields or Field Review (2/5) */}
                                     <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
-                                        {(document.status === 'capturing' || document.status === 'discrepancies') ? (
+                                        {(document.status === 'capturing' || document.status === 'discrepancies' || document.status === 'in_progress' || document.status === 'processed') ? (
                                             <FieldReviewModal 
                                                 document={document} 
                                                 onResolve={onResolve} 

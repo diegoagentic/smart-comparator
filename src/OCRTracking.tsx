@@ -405,7 +405,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                                 e.stopPropagation();
                                                                                 setDocuments(prev => prev.filter(d => d.id !== doc.id));
                                                                             }}
-                                                                            className="p-1.5 rounded-md text-muted-foreground hover:text-[#D20322] hover:bg-[#D20322]/10 transition-all"
+                                                                            className="p-1.5 rounded-md text-[#D20322] hover:bg-[#D20322]/10 transition-all"
                                                                             title="Delete Document"
                                                                         >
                                                                             <Trash2 className="h-4 w-4" />
@@ -414,7 +414,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                     {(doc.status === 'identified' || doc.status === 'processed') && (
                                                                         <button
                                                                             onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
-                                                                            className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors"
+                                                                            className="p-1.5 text-muted-foreground hover:text-black transition-colors"
                                                                         >
                                                                             {selectedDoc === doc.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                                                         </button>
