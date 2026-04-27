@@ -6,6 +6,8 @@ import Breadcrumbs from './components/Breadcrumbs'
 import ConvertDocumentModal from './components/ConvertDocumentModal'
 import CreateRecordModal from './components/CreateRecordModal'
 import DocumentPreviewModal from './components/DocumentPreviewModal'
+import DeprecateModal from './components/DeprecateModal'
+import AssignExpertPopover from './components/AssignExpertModal'
 
 const OCR_DOCUMENTS = [
     { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
@@ -48,6 +50,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [resolveDoc, setResolveDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [convertDoc, setConvertDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [previewDoc, setPreviewDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
+    const [deprecateDoc, setDeprecateDoc] = useState<typeof OCR_DOCUMENTS[0] | null>(null)
     const [documents, setDocuments] = useState(OCR_DOCUMENTS)
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
     const [searchQuery, setSearchQuery] = useState('')
@@ -58,6 +61,33 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const handleResolve = (docId: string) => {
         setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', discrepancyCount: 0, confidence: 99 } : d))
         setResolveDoc(null)
+    }
+
+    const handleDeprecate = (reason: string) => {
+        if (!deprecateDoc) return
+        setDocuments(prev => prev.map(d => d.id === deprecateDoc.id ? { 
+            ...d, 
+            status: 'deprecated', 
+            deprecatedReason: reason,
+            wasStatus: d.status === 'processed' ? 'Reconciled' : 
+                       d.status === 'discrepancies' ? 'Awaiting Expert' : 
+                       d.status === 'in_progress' ? 'In Progress' : 
+                       d.status === 'capturing' ? 'Needs Attention' : 'Ingesting'
+        } : d))
+        setDeprecateDoc(null)
+        // Optionally switch to deprecated tab to show the result
+        // setActiveTab('deprecated')
+    }
+
+    const handleAssign = (doc: any, member: any) => {
+        setDocuments(prev => prev.map(d => d.id === doc.id ? { 
+            ...d, 
+            status: d.status === 'discrepancies' ? 'in_progress' : d.status,
+            assignee: { 
+                name: member.name === 'Demo User' ? 'Sarah' : member.name.split(' ')[0], 
+                photo: member.photo || (member.name === 'Demo User' ? 'https://randomuser.me/api/portraits/women/44.jpg' : `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 99)}.jpg`) 
+            } 
+        } : d))
     }
 
     const filteredDocs = documents.filter(d => {
@@ -340,14 +370,26 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 {['discrepancies', 'in_progress', 'processed'].includes(doc.status) && (
                                                                     <div className="flex items-center">
                                                                         {doc.status === 'discrepancies' ? (
-                                                                            <button className="h-8 w-8 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors shadow-sm" title="Assign Expert">
-                                                                                <User className="h-4 w-4" />
-                                                                            </button>
+                                                                            <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
+                                                                                <button 
+                                                                                    onClick={(e) => e.stopPropagation()}
+                                                                                    className="h-8 w-8 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors shadow-sm" 
+                                                                                    title="Assign Expert"
+                                                                                >
+                                                                                    <User className="h-4 w-4" />
+                                                                                </button>
+                                                                            </AssignExpertPopover>
                                                                         ) : (
                                                                             (doc as any).assignee && (
-                                                                                <button className="h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm hover:ring-2 ring-primary/20 transition-all" title={(doc as any).assignee.name}>
-                                                                                    <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
-                                                                                </button>
+                                                                                <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
+                                                                                    <button 
+                                                                                        onClick={(e) => e.stopPropagation()}
+                                                                                        className="h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm hover:ring-2 ring-primary/20 transition-all" 
+                                                                                        title={(doc as any).assignee.name}
+                                                                                    >
+                                                                                        <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
+                                                                                    </button>
+                                                                                </AssignExpertPopover>
                                                                             )
                                                                         )}
                                                                     </div>
@@ -403,10 +445,10 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         <button
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
-                                                                                setDocuments(prev => prev.filter(d => d.id !== doc.id));
+                                                                                setDeprecateDoc(doc);
                                                                             }}
                                                                             className="p-1.5 rounded-md text-[#D20322] hover:bg-[#D20322]/10 transition-all"
-                                                                            title="Delete Document"
+                                                                            title="Deprecate Document"
                                                                         >
                                                                             <Trash2 className="h-4 w-4" />
                                                                         </button>
@@ -509,16 +551,29 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    {(doc as any).assignee ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="h-6 w-6 rounded-full overflow-hidden border border-border shadow-sm">
-                                                                <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
-                                                            </div>
-                                                            <span className="text-xs font-medium text-foreground">{(doc as any).assignee.name}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-xs text-muted-foreground italic">—</span>
-                                                    )}
+                                                    <AssignExpertPopover align="left" onAssign={(member) => handleAssign(doc, member)}>
+                                                        <button 
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex items-center gap-2 hover:bg-muted/50 p-1 rounded-lg transition-colors text-left"
+                                                            title="Change Assignee"
+                                                        >
+                                                            {(doc as any).assignee ? (
+                                                                <>
+                                                                    <div className="h-6 w-6 rounded-full overflow-hidden border border-border shadow-sm">
+                                                                        <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
+                                                                    </div>
+                                                                    <span className="text-xs font-medium text-foreground">{(doc as any).assignee.name}</span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <div className="h-6 w-6 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground">
+                                                                        <User className="h-3 w-3" />
+                                                                    </div>
+                                                                    <span className="text-xs text-muted-foreground italic">Unassigned</span>
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </AssignExpertPopover>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     {doc.confidence ? (
@@ -535,10 +590,10 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                             <button 
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    setDocuments(prev => prev.filter(d => d.id !== doc.id));
+                                                                    setDeprecateDoc(doc);
                                                                 }}
                                                                 className="p-1.5 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-[#D20322]" 
-                                                                title="Delete Document"
+                                                                title="Deprecate Document"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </button>
@@ -588,6 +643,14 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                         onNavigate('transactions')
                     }
                 }}
+            />
+
+            {/* Deprecate Modal */}
+            <DeprecateModal
+                isOpen={!!deprecateDoc}
+                onClose={() => setDeprecateDoc(null)}
+                onConfirm={handleDeprecate}
+                vendorName={deprecateDoc?.vendor || ''}
             />
         </div>
     )
