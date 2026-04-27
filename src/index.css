@@ -1,4 +1,4 @@
-@import './styles/theme.css';
+﻿@import './styles/theme.css';
 
 @tailwind base;
 @tailwind components;
@@ -107,4 +107,121 @@
     transition: box-shadow 0.5s ease-out;
     position: relative;
     z-index: 1;
+}@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.cdnfonts.com/css/pp-monument-extended');
+
+:root {
+  --bg: #EBECEE;
+  --card: #FAFAFA;
+  --surface: #FFFFFF;
+  --border: #E5E5E5;
+  --border-strong: #D0D4D8;
+  --muted: #959DA7;
+  --fg: #0a0a0a;
+  --fg-dim: #546070;
+  --brand-50:#FDFEE7; --brand-100:#F4F8E1; --brand-200:#F4FFC9; --brand-300:#E6F993;
+  --brand-400:#DAF75F; --brand-500:#C3E433; --brand-600:#A0C114;
 }
+
+html, body { font-family: Inter, system-ui, sans-serif; }
+
+/* Subtle dotted page backdrop behind modal (for demo; shows the modal pops) */
+.page-backdrop {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(15,23,42,0.06) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
+/* Scrollbar polish */
+.scroll-polish::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll-polish::-webkit-scrollbar-thumb {
+  background: #D0D4D8;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.scroll-polish::-webkit-scrollbar-thumb:hover { background: #B4BBC2; background-clip: padding-box; border: 2px solid transparent; }
+.scroll-polish::-webkit-scrollbar-track { background: transparent; }
+
+/* Tiny reveal animation for the modal */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px) scale(0.995); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.anim-fadeup { animation: fadeUp 260ms cubic-bezier(.2,.7,.2,1) both; }
+
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+.anim-fadein { animation: fadeIn 160ms ease-out both; }
+
+/* Backdrop */
+.modal-backdrop {
+  background: rgba(11, 11, 12, 0.35);
+  backdrop-filter: blur(8px) saturate(1.1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.1);
+}
+
+/* Field card hover */
+.field-row { transition: background 120ms ease, border-color 120ms ease; }
+.field-row:hover { background: #FBFBFC; }
+
+/* Accent chevrons, shimmer, etc */
+.shimmer::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(198,228,51,0.25) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: shimmerMove 1.6s linear infinite;
+}
+@keyframes shimmerMove { to { transform: translateX(100%); } }
+
+/* Checkbox subtle */
+input[type="checkbox"].strata-check {
+  appearance: none;
+  width: 16px; height: 16px;
+  border: 1.5px solid #B4BBC2;
+  border-radius: 4px;
+  display: inline-block;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+input[type="checkbox"].strata-check:checked {
+  background: #0B0B0C; border-color: #0B0B0C;
+}
+input[type="checkbox"].strata-check:checked::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M3.5 8.5l3 3 6-6' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 14px 14px; background-position: center; background-repeat: no-repeat;
+}
+
+/* Mono tag pills */
+.tag-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-size: 11px;
+  letter-spacing: -0.005em;
+  color: #546070;
+  background: #F4F4F1;
+  border: 1px solid #E5E5E5;
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* Eyebrow */
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #546070;
+}
+
+/* Progress segments */
+.seg {
+  height: 6px; border-radius: 999px; overflow: hidden;
+  background: #EBECEE; display: flex; gap: 2px;
+}
+.seg > span { display:block; height: 100%; }
+
+/* Ring ticks for circular progress */
+.ring-wrap { position: relative; width: 72px; height: 72px; }
+.ring-wrap svg { transform: rotate(-90deg); }
+
