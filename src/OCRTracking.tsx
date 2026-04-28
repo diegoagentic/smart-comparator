@@ -10,17 +10,17 @@ import DeprecateModal from './components/DeprecateModal'
 import AssignExpertPopover from './components/AssignExpertModal'
 
 const OCR_DOCUMENTS = [
-    { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, discrepancyCount: 0 },
-    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 72, discrepancyCount: 0 },
-    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'discrepancies', confidence: 83, discrepancyCount: 3 },
-    { id: 'OCR-004', name: 'INV-4521_HermanMiller.pdf', vendor: 'Herman Miller', type: 'Invoice', pages: 4, fields: 61, date: 'Yesterday', status: 'discrepancies', confidence: 88, discrepancyCount: 5 },
-    { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, discrepancyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
-    { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, discrepancyCount: 0, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
-    { id: 'OCR-007', name: 'ACK-7831_9to5.pdf', vendor: '9to5 Seating', type: 'Acknowledgment', pages: 1, fields: 12, date: '3 days ago', status: 'processed', confidence: 100, discrepancyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
-    { id: 'OCR-008', name: 'ACK-7855_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 32, date: '1 hour ago', status: 'in_progress', confidence: 86, discrepancyCount: 8, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
-    { id: 'OCR-009', name: 'PO-1031_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 4, fields: 47, date: '2 hours ago', status: 'in_progress', confidence: 81, discrepancyCount: 12, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
-    { id: 'OCR-011', name: 'ACK-7810_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: '4 days ago', status: 'processed', confidence: 98, discrepancyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
-    { id: 'OCR-012', name: 'INV-4500_AIS.pdf', vendor: 'AIS Furniture', type: 'Invoice', pages: 3, fields: 28, date: '1 week ago', status: 'processed', confidence: 95, discrepancyCount: 0, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
+    { id: 'OCR-001', name: 'ACK-7842_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 3, fields: 50, date: 'Today, 2:30 PM', status: 'identified', confidence: null, inconsistencyCount: 0 },
+    { id: 'OCR-002', name: 'PO-1029_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 5, fields: 82, date: 'Today, 1:15 PM', status: 'capturing', confidence: 72, inconsistencyCount: 0 },
+    { id: 'OCR-003', name: 'ACK-7839_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: 'Yesterday', status: 'inconsistencies', confidence: 83, inconsistencyCount: 3 },
+    { id: 'OCR-004', name: 'INV-4521_HermanMiller.pdf', vendor: 'Herman Miller', type: 'Invoice', pages: 4, fields: 61, date: 'Yesterday', status: 'inconsistencies', confidence: 88, inconsistencyCount: 5 },
+    { id: 'OCR-005', name: 'ACK-7835_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 days ago', status: 'processed', confidence: 99, inconsistencyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
+    { id: 'OCR-006', name: 'PO-1025_Haworth.pdf', vendor: 'Haworth', type: 'Purchase Order', pages: 3, fields: 45, date: '2 days ago', status: 'processed', confidence: 97, inconsistencyCount: 0, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
+    { id: 'OCR-007', name: 'ACK-7831_9to5.pdf', vendor: '9to5 Seating', type: 'Acknowledgment', pages: 1, fields: 12, date: '3 days ago', status: 'processed', confidence: 100, inconsistencyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
+    { id: 'OCR-008', name: 'ACK-7855_Knoll.pdf', vendor: 'Knoll', type: 'Acknowledgment', pages: 2, fields: 32, date: '1 hour ago', status: 'in_progress', confidence: 86, inconsistencyCount: 8, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
+    { id: 'OCR-009', name: 'PO-1031_ApexFurniture.pdf', vendor: 'Apex Furniture', type: 'Purchase Order', pages: 4, fields: 47, date: '2 hours ago', status: 'in_progress', confidence: 81, inconsistencyCount: 12, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
+    { id: 'OCR-011', name: 'ACK-7810_Steelcase.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: '4 days ago', status: 'processed', confidence: 98, inconsistencyCount: 0, assignee: { name: 'Sarah', photo: 'https://randomuser.me/api/portraits/women/44.jpg' } },
+    { id: 'OCR-012', name: 'INV-4500_AIS.pdf', vendor: 'AIS Furniture', type: 'Invoice', pages: 3, fields: 28, date: '1 week ago', status: 'processed', confidence: 95, inconsistencyCount: 0, assignee: { name: 'Marcus', photo: 'https://randomuser.me/api/portraits/men/32.jpg' } },
     { id: 'OCR-901', name: 'ACK-7842_Steelcase_v1.pdf', vendor: 'Steelcase', type: 'Acknowledgment', pages: 2, fields: 35, date: '4 days ago', status: 'deprecated', deprecatedReason: 'Superseded', wasStatus: 'Reconciled', confidence: 96, linkedDoc: 'ACK-7843' },
     { id: 'OCR-902', name: 'PO-1018_Knoll.pdf', vendor: 'Knoll', type: 'Purchase Order', pages: 3, fields: 42, date: '1 week ago', status: 'deprecated', deprecatedReason: 'Cancelled', wasStatus: 'Awaiting Expert', confidence: 87 },
     { id: 'OCR-903', name: 'ACK-7820_AIS.pdf', vendor: 'AIS Furniture', type: 'Acknowledgment', pages: 2, fields: 28, date: '2 weeks ago', status: 'deprecated', deprecatedReason: 'Duplicate', wasStatus: 'Needs Attention', confidence: 78 },
@@ -32,7 +32,7 @@ const OCR_DOCUMENTS = [
 const COLUMNS = [
     { id: 'identified', label: 'Ingesting', icon: FileText, color: 'text-foreground', bg: 'bg-info-light dark:bg-info/10', border: 'border-info/20' },
     { id: 'capturing', label: 'Needs Attention', icon: ScanEye, color: 'text-foreground', bg: 'bg-ai-light dark:bg-ai/10', border: 'border-ai/20' },
-    { id: 'discrepancies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-foreground', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
+    { id: 'inconsistencies', label: 'Awaiting Expert', icon: AlertTriangle, color: 'text-foreground', bg: 'bg-warning-light dark:bg-warning/10', border: 'border-warning/20' },
     { id: 'in_progress', label: 'In-progress', icon: Clock, color: 'text-foreground', bg: 'bg-indigo-100 dark:bg-indigo-900/30', border: 'border-indigo-200 dark:border-indigo-800' },
     { id: 'processed', label: 'Reconciled', icon: CheckCircle2, color: 'text-foreground', bg: 'bg-success-light dark:bg-success/10', border: 'border-success/20' },
 ]
@@ -59,7 +59,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [timeFilter, setTimeFilter] = useState('All Time')
 
     const handleResolve = (docId: string) => {
-        setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', discrepancyCount: 0, confidence: 99 } : d))
+        setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', inconsistencyCount: 0, confidence: 99 } : d))
         setResolveDoc(null)
     }
 
@@ -70,7 +70,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
             status: 'deprecated', 
             deprecatedReason: reason,
             wasStatus: d.status === 'processed' ? 'Reconciled' : 
-                       d.status === 'discrepancies' ? 'Awaiting Expert' : 
+                       d.status === 'inconsistencies' ? 'Awaiting Expert' : 
                        d.status === 'in_progress' ? 'In Progress' : 
                        d.status === 'capturing' ? 'Needs Attention' : 'Ingesting'
         } : d))
@@ -82,7 +82,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const handleAssign = (doc: any, member: any) => {
         setDocuments(prev => prev.map(d => d.id === doc.id ? { 
             ...d, 
-            status: d.status === 'discrepancies' ? 'in_progress' : d.status,
+            status: d.status === 'inconsistencies' ? 'in_progress' : d.status,
             assignee: { 
                 name: member.name === 'Demo User' ? 'Sarah' : member.name.split(' ')[0], 
                 photo: member.photo || (member.name === 'Demo User' ? 'https://randomuser.me/api/portraits/women/44.jpg' : `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 99)}.jpg`) 
@@ -101,7 +101,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
         all: documents.length,
         identified: documents.filter(d => d.status === 'identified').length,
         capturing: documents.filter(d => d.status === 'capturing').length,
-        discrepancies: documents.filter(d => d.status === 'discrepancies').length,
+        inconsistencies: documents.filter(d => d.status === 'inconsistencies').length,
         in_progress: documents.filter(d => d.status === 'in_progress').length,
         processed: documents.filter(d => d.status === 'processed').length,
         deprecated: documents.filter(d => d.status === 'deprecated').length,
@@ -170,7 +170,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                         { id: 'all', label: 'All', count: counts.all },
                                         { id: 'identified', label: 'Ingesting', count: counts.identified },
                                         { id: 'capturing', label: 'Needs Attention', count: counts.capturing },
-                                        { id: 'discrepancies', label: 'Awaiting Expert', count: counts.discrepancies },
+                                        { id: 'inconsistencies', label: 'Awaiting Expert', count: counts.inconsistencies },
                                         { id: 'in_progress', label: 'In-progress', count: counts.in_progress },
                                         { id: 'processed', label: 'Validated', count: counts.processed },
                                         { id: 'deprecated', label: 'Deprecated', count: counts.deprecated },
@@ -266,7 +266,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                     </div>
                                                 </div>
                                                 <button 
-                                                    onClick={() => setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, status: d.wasStatus || 'discrepancies' } : d))}
+                                                    onClick={() => setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, status: d.wasStatus || 'inconsistencies' } : d))}
                                                     className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
                                                     title="Recover Document"
                                                 >
@@ -361,7 +361,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 <div className="flex items-center gap-2">
                                                                     <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900 ${
                                                                         doc.status === 'processed' ? 'bg-gradient-to-br from-green-500 to-green-700 text-white' :
-                                                                        doc.status === 'discrepancies' ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-white' :
+                                                                        doc.status === 'inconsistencies' ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-white' :
                                                                         doc.status === 'in_progress' ? 'bg-indigo-600 text-white' :
                                                                         doc.status === 'capturing' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700 text-white' :
                                                                         'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
@@ -373,9 +373,9 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         <p className="text-[10px] text-muted-foreground font-mono">{doc.id}</p>
                                                                     </div>
                                                                 </div>
-                                                                {['discrepancies', 'in_progress', 'processed'].includes(doc.status) && (
+                                                                {['inconsistencies', 'in_progress', 'processed'].includes(doc.status) && (
                                                                     <div className="flex items-center">
-                                                                        {doc.status === 'discrepancies' ? (
+                                                                        {doc.status === 'inconsistencies' ? (
                                                                             <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
                                                                                 <button 
                                                                                     onClick={(e) => e.stopPropagation()}
@@ -413,9 +413,9 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 </div>
                                                             </div>
 
-                                                            {doc.discrepancyCount > 0 && (
+                                                            {doc.inconsistencyCount > 0 && (
                                                                 <div className="flex items-center gap-1.5 text-xs text-error font-medium bg-error-light dark:bg-error/10 px-2 py-1 rounded-md mb-3">
-                                                                    <AlertTriangle className="h-3 w-3" />{doc.discrepancyCount} discrepancies
+                                                                    <AlertTriangle className="h-3 w-3" />{doc.inconsistencyCount} inconsistencies
                                                                 </div>
                                                             )}
 
@@ -447,7 +447,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                             <DocumentTextIcon className="h-4 w-4" />
                                                                         </button>
                                                                     )}
-                                                                    {['capturing', 'discrepancies', 'in_progress', 'processed'].includes(doc.status) && (
+                                                                    {['capturing', 'inconsistencies', 'in_progress', 'processed'].includes(doc.status) && (
                                                                         <button
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
@@ -547,13 +547,13 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 <td className="px-4 py-3">
                                                     <span className={`text-xs font-semibold px-2 py-1 rounded-md ${
                                                         doc.status === 'processed' ? 'bg-success-light text-success' :
-                                                        doc.status === 'discrepancies' ? 'bg-error-light text-error' :
+                                                        doc.status === 'inconsistencies' ? 'bg-error-light text-error' :
                                                         doc.status === 'in_progress' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                                                         doc.status === 'capturing' ? 'bg-ai-light text-ai' :
                                                         doc.status === 'deprecated' ? 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400' :
                                                         'bg-info-light text-info'
                                                     }`}>
-                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'discrepancies' ? 'Awaiting Expert' : doc.status === 'in_progress' ? 'In Progress' : doc.status === 'processed' ? 'Reconciled' : 'Deprecated'}
+                                                        {doc.status === 'identified' ? 'Ingesting' : doc.status === 'capturing' ? 'Needs Attention' : doc.status === 'inconsistencies' ? 'Awaiting Expert' : doc.status === 'in_progress' ? 'In Progress' : doc.status === 'processed' ? 'Reconciled' : 'Deprecated'}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
@@ -592,7 +592,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex items-center justify-end gap-1">
                                                         <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="Review Document"><Eye className="h-4 w-4" /></button>
-                                                        {['capturing', 'discrepancies', 'in_progress', 'processed'].includes(doc.status) && (
+                                                        {['capturing', 'inconsistencies', 'in_progress', 'processed'].includes(doc.status) && (
                                                             <button 
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
@@ -622,7 +622,7 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
             <DocumentPreviewModal
                 isOpen={!!previewDoc}
                 onClose={() => setPreviewDoc(null)}
-                document={previewDoc ? { id: previewDoc.id, name: previewDoc.name, vendor: previewDoc.vendor, type: previewDoc.type, fields: previewDoc.fields, confidence: previewDoc.confidence, status: previewDoc.status, discrepancyCount: previewDoc.discrepancyCount } : null}
+                document={previewDoc ? { id: previewDoc.id, name: previewDoc.name, vendor: previewDoc.vendor, type: previewDoc.type, fields: previewDoc.fields, confidence: previewDoc.confidence, status: previewDoc.status, inconsistencyCount: previewDoc.inconsistencyCount } : null}
                 onResolve={handleResolve}
             />
 
