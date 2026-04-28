@@ -1,19 +1,18 @@
-import { useState, Fragment } from 'react'
+import { useState } from 'react'
 import {
-    X, AlertTriangle, ChevronDown, ChevronUp, Check, Pencil, Sparkles,
+    ChevronDown, ChevronUp, Check, Sparkles,
     FileText, DollarSign, Truck, ClipboardList, Zap, Info
 } from 'lucide-react'
 
 interface FieldReviewModalProps {
-    isOpen: boolean
-    onClose: () => void
     document: {
         id: string
         name: string
         vendor: string
-        discrepancyCount: number
+        inconsistencyCount: number
     } | null
     onResolve?: (docId: string) => void
+    onClose: () => void
 }
 
 interface ReviewField {
@@ -58,44 +57,36 @@ const MOCK_FIELDS: ReviewField[] = [
     { id: 'f16', name: 'Freight Terms', category: 'logistics', extractedValue: 'Prepaid', expectedValue: 'Prepaid & Add', aiSuggestion: 'Prepaid & Add', confidence: 90, status: 'inconsistent', reason: 'Partial match — OCR missed "& Add" portion. Common truncation in scanned PDFs.' },
 ]
 
-const confidenceColor = (c: number) => {
-    if (c >= 90) return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
-    if (c >= 75) return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
-    return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
-}
-
-const statusDot = (s: ReviewField['status']) => {
-    if (s === 'valid') return 'bg-green-500'
-    if (s === 'inconsistent') return 'bg-amber-500'
-    return 'bg-red-500'
-}
-
-export default function FieldReviewModal({ isOpen, onClose, document, onResolve }: FieldReviewModalProps) {
+export default function FieldReviewModal({ document, onResolve, onClose, initialFields }: FieldReviewModalProps) {
+    const [fields, setFields] = useState<ReviewField[]>(initialFields || MOCK_FIELDS)
     const [resolvedFields, setResolvedFields] = useState<Set<string>>(new Set())
-    const [expandedField, setExpandedField] = useState<string | null>(null)
+    const [expandedField, setExpandedField] = useState<string | null>('f5') // Default open Line 1 Product SKU for demo
     const [activeCategory, setActiveCategory] = useState<string>('all')
 
-    const issueFields = MOCK_FIELDS.filter(f => f.status !== 'valid')
+    const issueFields = fields.filter(f => f.status !== 'valid')
     const totalIssues = issueFields.length
     const resolvedCount = resolvedFields.size
     const allResolved = resolvedCount >= totalIssues
 
-    const categories = ['all', ...Array.from(new Set(MOCK_FIELDS.map(f => f.category)))]
     const displayFields = activeCategory === 'all'
-        ? MOCK_FIELDS
-        : MOCK_FIELDS.filter(f => f.category === activeCategory)
+        ? fields
+        : fields.filter(f => f.category === activeCategory)
 
     const handleAccept = (fieldId: string) => {
         setResolvedFields(prev => new Set([...prev, fieldId]))
         setExpandedField(null)
     }
 
+    const handleUpdateExtractedValue = (fieldId: string, newValue: string) => {
+        setFields(prev => prev.map(f => f.id === fieldId ? { ...f, extractedValue: newValue } : f))
+    }
+
     const handleAutoValidate = () => {
-        const highConfidence = issueFields.filter(f => f.confidence >= 90 && !resolvedFields.has(f.id))
-        highConfidence.forEach((f, i) => {
+        const remaining = issueFields.filter(f => !resolvedFields.has(f.id))
+        remaining.forEach((f, i) => {
             setTimeout(() => {
                 setResolvedFields(prev => new Set([...prev, f.id]))
-            }, i * 200)
+            }, i * 150)
         })
     }
 
@@ -105,69 +96,83 @@ export default function FieldReviewModal({ isOpen, onClose, document, onResolve 
     }
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-zinc-900 shrink-0 min-h-0">
-            {/* Header */}
-            <div className="px-4 py-3 shrink-0 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
-                <div className="flex justify-between items-start">
+        <div className="flex flex-col h-full bg-white dark:bg-zinc-900 shrink-0 min-h-0 border-l border-zinc-200 dark:border-zinc-800">
+            {/* Header Area */}
+            <div className="px-6 pt-6 pb-4 shrink-0">
+                <div className="flex justify-between items-start mb-1">
                     <div>
-                        <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                            Field Review
+                        <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-widest">
+                            FIELD REVIEW
                         </h4>
-                        <p className="text-[10px] text-zinc-400 mt-0.5">
+                        <p className="text-[11px] text-zinc-400 font-medium">
                             Validate extracted fields
                         </p>
                     </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="mt-2 flex items-center gap-3" title="Document Progress">
-                    <div className="flex-1 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-green-500 rounded-full transition-all duration-500"
-                            style={{ width: `${totalIssues > 0 ? (resolvedCount / totalIssues) * 100 : 100}%` }}
-                        />
+                {/* Progress Bar with Right Text */}
+                <div className="mt-4 flex flex-col gap-1.5">
+                    <div className="flex justify-between items-center relative">
+                        <div className="flex-1 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mr-4 relative">
+                            <div
+                                className="h-full bg-zinc-200 dark:bg-zinc-700 rounded-full transition-all duration-700"
+                                style={{ width: '100%' }}
+                            />
+                            <div
+                                className="h-full bg-green-500 rounded-full transition-all duration-700 absolute top-0 left-0"
+                                style={{ width: `${totalIssues > 0 ? (resolvedCount / totalIssues) * 100 : 100}%` }}
+                            />
+                        </div>
+                        <span className="text-[11px] font-bold text-zinc-400 whitespace-nowrap">
+                            {resolvedCount}/{totalIssues} resolved
+                        </span>
                     </div>
-                    <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                        {resolvedCount}/{totalIssues} resolved
-                    </span>
                 </div>
 
-                {/* Stats + Auto-validate */}
-                <div className="mt-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[10px]">
-                        <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-green-500" /> {MOCK_FIELDS.filter(f => f.status === 'valid').length}</span>
-                        <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> {MOCK_FIELDS.filter(f => f.status === 'inconsistent').length}</span>
-                        <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {MOCK_FIELDS.filter(f => f.status === 'missing').length}</span>
+                {/* Status Pills + Auto-resolve */}
+                <div className="mt-5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                            <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{fields.filter(f => f.status === 'valid').length}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-amber-500" />
+                            <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{fields.filter(f => f.status === 'inconsistent').length}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-red-500" />
+                            <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{fields.filter(f => f.status === 'missing').length}</span>
+                        </div>
                     </div>
-                    {!allResolved && (
-                        <button
-                            onClick={handleAutoValidate}
-                            className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold bg-ai-light dark:bg-ai/20 text-ai rounded hover:bg-ai/20 transition-colors uppercase tracking-wider"
-                        >
-                            <Zap className="h-2.5 w-2.5" /> Auto-resolve
-                        </button>
-                    )}
+                    <button
+                        onClick={handleAutoValidate}
+                        className="flex items-center gap-1.5 text-[11px] font-black text-zinc-900 dark:text-white hover:opacity-70 transition-all uppercase tracking-wider"
+                    >
+                        <Zap className="h-3.5 w-3.5 fill-zinc-900 dark:fill-white" /> AUTO-RESOLVE
+                    </button>
                 </div>
 
-                {/* Category Tabs */}
-                <div className="mt-2 flex gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                {/* Custom Tabs Style */}
+                <div className="mt-6 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
                     <button
                         onClick={() => setActiveCategory('all')}
-                        className={`px-2 py-1 text-[10px] font-medium rounded transition-colors whitespace-nowrap ${activeCategory === 'all' ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
+                        className={`px-4 py-2 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap flex items-center gap-2 ${activeCategory === 'all' ? 'bg-[#FAFAFA] dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
                     >
-                        All ({MOCK_FIELDS.length})
+                        All ({fields.length})
                     </button>
                     {Object.entries(CATEGORY_META).map(([key, meta]) => {
-                        const issues = MOCK_FIELDS.filter(f => f.category === key && f.status !== 'valid').length
+                        const count = fields.filter(f => f.category === key).length
+                        const issues = fields.filter(f => f.category === key && f.status !== 'valid').length
                         return (
                             <button
                                 key={key}
                                 onClick={() => setActiveCategory(key)}
-                                className={`px-2 py-1 text-[10px] font-medium rounded transition-colors flex items-center gap-1 whitespace-nowrap ${activeCategory === key ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
+                                className={`px-3 py-2 text-[11px] font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${activeCategory === key ? 'bg-[#FAFAFA] dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
                             >
-                                <meta.icon className="h-2.5 w-2.5" />
-                                <span className="hidden sm:inline">{meta.label}</span>
-                                {issues > 0 && <span className="text-[8px] px-1 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 font-bold ml-0.5">{issues}</span>}
+                                <meta.icon className="h-3.5 w-3.5 opacity-40" />
+                                <span>{meta.label}</span>
+                                {issues > 0 && <span className="text-[10px] text-red-500 ml-1">{issues}</span>}
                             </button>
                         )
                     })}
@@ -175,8 +180,8 @@ export default function FieldReviewModal({ isOpen, onClose, document, onResolve 
             </div>
 
             {/* Scrollable field list */}
-            <div className="flex-1 overflow-y-auto px-4 py-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d4d4d8 transparent' }}>
-                <div className="space-y-2 pb-2">
+            <div className="flex-1 overflow-y-auto px-6 py-2 no-scrollbar">
+                <div className="space-y-4 pb-4">
                     {displayFields.map(field => {
                         const isExpanded = expandedField === field.id
                         const isResolved = resolvedFields.has(field.id)
@@ -185,80 +190,109 @@ export default function FieldReviewModal({ isOpen, onClose, document, onResolve 
                         return (
                             <div
                                 key={field.id}
-                                className={`border rounded-lg overflow-hidden transition-all ${
-                                    isResolved ? 'border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-500/5 opacity-70' :
-                                    field.status === 'missing' ? 'border-red-200 dark:border-red-800 bg-red-50/20 dark:bg-red-500/5' :
-                                    field.status === 'inconsistent' ? 'border-amber-200 dark:border-amber-800 bg-amber-50/20 dark:bg-amber-500/5' :
-                                    'border-zinc-200 dark:border-zinc-700'
+                                className={`border rounded-xl transition-all ${
+                                    isExpanded 
+                                        ? 'border-red-200 dark:border-red-900/50 bg-white dark:bg-zinc-900 shadow-sm' 
+                                        : isResolved 
+                                            ? 'border-green-100 dark:border-green-900/30 bg-green-50/10 dark:bg-green-500/5' 
+                                            : 'border-zinc-100 dark:border-zinc-800'
                                 }`}
                             >
                                 {/* Field row */}
                                 <button
                                     onClick={() => isIssue && !isResolved ? setExpandedField(isExpanded ? null : field.id) : null}
-                                    className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${isIssue && !isResolved ? 'hover:bg-zinc-50/50 dark:hover:bg-white/5 cursor-pointer' : 'cursor-default'}`}
+                                    className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${isIssue && !isResolved ? 'cursor-pointer' : 'cursor-default'}`}
                                 >
-                                    <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${isResolved ? 'bg-green-500' : statusDot(field.status)}`} />
+                                    <div className="relative">
+                                        <span className={`h-2 w-2 rounded-full block ${isResolved ? 'bg-green-500' : statusDot(field.status)}`} />
+                                        {isExpanded && <div className="absolute inset-0 h-2 w-2 rounded-full bg-red-500 animate-ping opacity-40" />}
+                                    </div>
+                                    
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate">{field.name}</span>
-                                            {isResolved && <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-green-500 text-white uppercase">Valid</span>}
-                                            {!isResolved && field.status === 'missing' && <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-red-500 text-white uppercase">Missing</span>}
-                                            {!isResolved && field.status === 'inconsistent' && <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-amber-500 text-white uppercase">Mismatch</span>}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[13px] font-bold text-zinc-900 dark:text-white truncate">{field.name}</span>
+                                            {field.status === 'missing' && !isResolved && (
+                                                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-[#FF4D4D] text-white uppercase tracking-tighter">MISSING</span>
+                                            )}
+                                            {field.status === 'inconsistent' && !isResolved && (
+                                                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500 text-white uppercase tracking-tighter">MISMATCH</span>
+                                            )}
+                                            {isResolved && (
+                                                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-green-500 text-white uppercase tracking-tighter">RESOLVED</span>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-2 mt-0.5">
-                                            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono truncate">
-                                                {field.extractedValue || <span className="italic text-red-400">empty</span>}
+                                            <span className={`text-[11px] font-medium font-mono ${field.extractedValue ? 'text-zinc-500' : 'text-red-400 italic'}`}>
+                                                {field.extractedValue || 'empty'}
                                             </span>
                                             {field.aiSuggestion && !isResolved && (
-                                                <span className="text-[10px] text-zinc-400">→</span>
-                                            )}
-                                            {field.aiSuggestion && !isResolved && (
-                                                <span className="text-[10px] font-semibold text-ai font-mono truncate">{field.aiSuggestion}</span>
+                                                <>
+                                                    <span className="text-zinc-300 text-[10px]">→</span>
+                                                    <span className="text-[11px] font-bold text-zinc-900 dark:text-white font-mono">{field.aiSuggestion}</span>
+                                                </>
                                             )}
                                         </div>
                                     </div>
                                     {isIssue && !isResolved && (
-                                        isExpanded ? <ChevronUp className="h-3 w-3 text-zinc-400 shrink-0" /> : <ChevronDown className="h-3 w-3 text-zinc-400 shrink-0" />
+                                        <div className="text-zinc-400">
+                                            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
                                     )}
                                 </button>
 
                                 {/* Expanded detail */}
                                 {isExpanded && !isResolved && (
-                                    <div className="px-3 pb-3 space-y-2 border-t border-zinc-200/50 dark:border-zinc-700/50 mt-1 pt-2">
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <div className="p-2 rounded bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                                                <p className="text-[9px] font-bold text-zinc-500 uppercase mb-0.5">Extracted</p>
-                                                <p className={`text-[11px] font-mono break-words ${field.extractedValue ? 'text-zinc-900 dark:text-white' : 'text-red-400 italic'}`}>
-                                                    {field.extractedValue || 'None'}
-                                                </p>
+                                    <div className="px-4 pb-4 space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {/* EXTRACTED box */}
+                                            <div className="p-3 rounded-lg bg-[#FAFAFA] dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 relative">
+                                                <p className="text-[10px] font-black text-zinc-400 uppercase mb-2 tracking-widest">EXTRACTED</p>
+                                                <input 
+                                                    type="text"
+                                                    value={field.extractedValue}
+                                                    onChange={(e) => handleUpdateExtractedValue(field.id, e.target.value)}
+                                                    placeholder="None"
+                                                    className={`w-full bg-transparent border-none p-0 text-[13px] font-mono focus:ring-0 placeholder:italic ${field.extractedValue ? 'text-zinc-900 dark:text-white' : 'text-red-400 italic'}`}
+                                                />
+                                                {!field.extractedValue && <span className="absolute right-3 top-3 text-[10px] text-red-400 font-bold uppercase opacity-20 pointer-events-none">Edit</span>}
                                             </div>
-                                            <div className="p-2 rounded bg-ai/5 border border-ai/20">
-                                                <p className="text-[9px] font-bold text-ai uppercase mb-0.5 flex items-center gap-1">
-                                                    <Sparkles className="h-2.5 w-2.5" /> Suggestion
+
+                                            {/* SUGGESTION box */}
+                                            <div className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
+                                                <p className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase mb-2 tracking-widest flex items-center gap-1.5">
+                                                    <Sparkles className="h-3 w-3" /> SUGGESTION
                                                 </p>
-                                                <p className="text-[11px] font-mono font-semibold text-zinc-900 dark:text-white break-words">
+                                                <p className="text-[13px] font-mono font-bold text-zinc-900 dark:text-white">
                                                     {field.aiSuggestion || field.expectedValue || '—'}
                                                 </p>
                                             </div>
                                         </div>
+
+                                        {/* AI Info Box */}
                                         {field.reason && (
-                                            <div className="flex items-start gap-1 p-1.5 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded">
-                                                <Info className="h-3 w-3 text-blue-500 shrink-0 mt-0.5" />
-                                                <p className="text-[10px] text-blue-700 dark:text-blue-300 leading-tight">{field.reason}</p>
+                                            <div className="flex items-start gap-3 p-3 bg-[#EAF5FF] dark:bg-blue-500/10 border border-[#D6EBFF] dark:border-blue-500/20 rounded-xl">
+                                                <div className="h-5 w-5 rounded-full border border-[#007AFF] flex items-center justify-center shrink-0 mt-0.5">
+                                                    <Info className="h-3 w-3 text-[#007AFF]" />
+                                                </div>
+                                                <p className="text-[11px] text-[#0060C7] dark:text-blue-300 font-medium leading-relaxed">
+                                                    {field.reason}
+                                                </p>
                                             </div>
                                         )}
-                                        <div className="flex items-center gap-2 pt-1">
+
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-3 pt-2">
                                             <button
                                                 onClick={() => handleAccept(field.id)}
-                                                className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] font-bold bg-green-500 text-white rounded hover:bg-green-600 transition-colors uppercase tracking-wider"
+                                                className="flex-1 flex items-center justify-center gap-2 py-3 text-xs font-black bg-[#22C55E] text-white rounded-xl hover:bg-[#16A34A] transition-all uppercase tracking-widest shadow-sm shadow-green-200 dark:shadow-none"
                                             >
-                                                <Check className="h-3 w-3" /> Accept
+                                                <Check className="h-4 w-4" /> ACCEPT
                                             </button>
                                             <button
                                                 onClick={() => handleAccept(field.id)}
-                                                className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] font-bold border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-300 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors uppercase tracking-wider"
+                                                className="flex-1 flex items-center justify-center gap-2 py-3 text-xs font-black border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all uppercase tracking-widest"
                                             >
-                                                Keep Extracted
+                                                KEEP EXTRACTED
                                             </button>
                                         </div>
                                     </div>
@@ -269,31 +303,37 @@ export default function FieldReviewModal({ isOpen, onClose, document, onResolve 
                 </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 flex flex-col gap-2 shrink-0">
-                <div className="text-[10px] text-zinc-500 font-medium text-center">
-                    {MOCK_FIELDS.length} fields · {totalIssues} need review
+            {/* Footer Buttons */}
+            <div className="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shrink-0">
+                <div className="text-[11px] text-zinc-400 font-bold text-center mb-4 uppercase tracking-widest">
+                    {fields.length} fields · {totalIssues} need review
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     <button
                         onClick={onClose}
-                        className="flex-1 px-3 py-1.5 text-xs font-bold border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors uppercase tracking-wider"
+                        className="flex-1 py-3 text-xs font-black border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all uppercase tracking-widest"
                     >
-                        Save
+                        SAVE
                     </button>
                     <button
                         onClick={handleResolveAll}
                         disabled={!allResolved}
-                        className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors uppercase tracking-wider ${
+                        className={`flex-1 py-3 text-xs font-black rounded-xl transition-all uppercase tracking-widest ${
                             allResolved
-                                ? 'bg-[#C3E433] dark:bg-[#C3E433] text-zinc-900 hover:bg-[#C3E433]/80 shadow-sm'
-                                : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
+                                ? 'bg-[#D1D4D8] text-zinc-900 hover:opacity-80 shadow-sm'
+                                : 'bg-[#E5E7EB] dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed opacity-50'
                         }`}
                     >
-                        Validate
+                        VALIDATE
                     </button>
                 </div>
             </div>
         </div>
     )
+}
+
+function statusDot(s: ReviewField['status']) {
+    if (s === 'valid') return 'bg-green-500'
+    if (s === 'inconsistent') return 'bg-amber-500'
+    return 'bg-red-500'
 }
