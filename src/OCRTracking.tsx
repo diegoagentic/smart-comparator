@@ -251,7 +251,13 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                         <div key={doc.id} className="bg-card border border-border/50 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group flex flex-col gap-4 relative overflow-hidden">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20 group-hover:text-brand-600 transition-colors">
+                                                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${
+                                                        doc.deprecatedReason === 'Superseded' ? 'bg-blue-50 text-blue-600' :
+                                                        doc.deprecatedReason === 'Cancelled' ? 'bg-red-50 text-red-600' :
+                                                        doc.deprecatedReason === 'Duplicate' ? 'bg-amber-50 text-amber-600' :
+                                                        doc.deprecatedReason === 'Vendor Correction' ? 'bg-purple-50 text-purple-600' :
+                                                        'bg-zinc-100 text-zinc-500'
+                                                    }`}>
                                                         <FileText className="h-5 w-5" />
                                                     </div>
                                                     <div>
