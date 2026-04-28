@@ -2484,7 +2484,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                         </button>
                                                     </div>
 
-                                                    <div className="bg-muted/30 rounded-2xl p-3 h-full min-h-[500px] border border-border/50 space-y-3">
+                                                    <div className="bg-[#FAFAFA] dark:bg-zinc-800/40 rounded-[24px] p-3 h-full min-h-[500px] border border-[#D0D4D8] dark:border-zinc-700 space-y-3">
                                                         {/* Animated converted card from OCR */}
                                                         {newConvertedCard && (stage === 'Order Received' || stage === 'Pending') && (
                                                             <div
