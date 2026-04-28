@@ -401,76 +401,153 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
           >
             <DialogPanel className="anim-fadeup relative w-full max-w-[960px] h-[85vh] rounded-[24px] bg-white shadow-[0_30px_80px_-20px_rgba(11,11,12,0.35)] overflow-hidden flex flex-col text-zinc-900">
               
-              {/* Header Section */}
-              <div className="px-10 pt-10 pb-6 space-y-6 shrink-0 bg-white">
-                {/* Top Row: Title, Avatar, Close */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <h2 className="text-[28px] font-bold text-zinc-900 tracking-tight">OrderBahn — Purchase Order</h2>
-                  </div>
-                  <button onClick={onClose} className="p-2 -mr-2 text-zinc-400 hover:text-zinc-900 transition-colors">
-                    <Icon.Close className="size-7" />
-                  </button>
-                </div>
-
-                {/* Subtitle */}
-                <div className="text-[16px] text-zinc-500 font-medium -mt-4">
-                  Draft PO-001 | Created Apr 22, 2026
-                </div>
-
-                {/* Warning Banner */}
-                <div className="bg-amber-50/40 border border-amber-100/60 rounded-2xl p-4 flex items-start gap-3">
-                  <Icon.Warn className="size-5 text-amber-600 mt-0.5 shrink-0" />
-                  <p className="text-[14px] text-amber-800/90 font-medium leading-normal">
-                    Review how your data maps into OrderBahn. Fields that match automatically are shown, while others need your confirmation.
-                  </p>
-                </div>
-
-                {/* Progress Section */}
-                <div className="bg-zinc-50/50 border border-zinc-100 rounded-2xl p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[18px] font-bold text-zinc-900">Preflight</span>
-                      <span className="text-[14px] text-zinc-400 font-medium">42/50 ready</span>
+              <div className="flex-1 overflow-y-auto scroll-polish">
+                {/* Header Section */}
+                <div className="px-10 pt-10 pb-6 space-y-6 bg-white">
+                  {/* Top Row: Title, Avatar, Close */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-4">
+                      <h2 className="text-[28px] font-bold text-zinc-900 tracking-tight">OrderBahn — Purchase Order</h2>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[14px] font-bold text-zinc-900">84%</span>
-                      <span className="text-[12px] text-zinc-400 font-medium">ready</span>
-                    </div>
-                  </div>
-                  <div className="h-2 w-full bg-zinc-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-600 rounded-full transition-all duration-500" style={{ width: '84%' }} />
-                  </div>
-                </div>
-
-                {/* Stepper & Refresh */}
-                <div className="flex items-center justify-between pt-2">
-                  <div className="flex items-center gap-6">
-                    <button 
-                      onClick={() => setView("document")}
-                      className="flex items-center gap-3 group"
-                    >
-                      <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "document" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>1</div>
-                      <span className={`text-[16px] font-bold transition-colors ${view === "document" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Header Fields</span>
-                    </button>
-                    <Icon.Arrow className="size-5 text-zinc-300" />
-                    <button 
-                      onClick={() => setView("lineItems")}
-                      className="flex items-center gap-3 group"
-                    >
-                      <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "lineItems" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>2</div>
-                      <span className={`text-[16px] font-bold transition-colors ${view === "lineItems" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Line Items</span>
+                    <button onClick={onClose} className="p-2 -mr-2 text-zinc-400 hover:text-zinc-900 transition-colors">
+                      <Icon.Close className="size-7" />
                     </button>
                   </div>
-                  <button className="flex items-center gap-2 bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all shadow-sm active:scale-95">
-                    <Icon.Refresh className="size-4" />
-                    Refresh
-                  </button>
+
+                  {/* Subtitle */}
+                  <div className="text-[16px] text-zinc-500 font-medium -mt-4">
+                    Draft PO-001 | Created Apr 22, 2026
+                  </div>
+
+                  {/* Warning Banner */}
+                  <div className="bg-amber-50/40 border border-amber-100/60 rounded-2xl p-4 flex items-start gap-3">
+                    <Icon.Warn className="size-5 text-amber-600 mt-0.5 shrink-0" />
+                    <p className="text-[14px] text-amber-800/90 font-medium leading-normal">
+                      Review how your data maps into OrderBahn. Fields that match automatically are shown, while others need your confirmation.
+                    </p>
+                  </div>
+
+                  {/* Progress Section */}
+                  <div className="bg-zinc-50/50 border border-zinc-100 rounded-2xl p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[18px] font-bold text-zinc-900">Preflight</span>
+                        <span className="text-[14px] text-zinc-400 font-medium">42/50 ready</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[14px] font-bold text-zinc-900">84%</span>
+                        <span className="text-[12px] text-zinc-400 font-medium">ready</span>
+                      </div>
+                    </div>
+                    <div className="h-2 w-full bg-zinc-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-green-600 rounded-full transition-all duration-500" style={{ width: '84%' }} />
+                    </div>
+                  </div>
+
+                  {/* Stepper & Refresh */}
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-6">
+                      <button 
+                        onClick={() => setView("document")}
+                        className="flex items-center gap-3 group"
+                      >
+                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "document" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>1</div>
+                        <span className={`text-[16px] font-bold transition-colors ${view === "document" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Header Fields</span>
+                      </button>
+                      <Icon.Arrow className="size-5 text-zinc-300" />
+                      <button 
+                        onClick={() => setView("lineItems")}
+                        className="flex items-center gap-3 group"
+                      >
+                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "lineItems" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>2</div>
+                        <span className={`text-[16px] font-bold transition-colors ${view === "lineItems" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Line Items</span>
+                      </button>
+                    </div>
+                    <button className="flex items-center gap-2 bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all shadow-sm active:scale-95">
+                      <Icon.Refresh className="size-4" />
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="px-10 py-8 bg-[#fbfbfb] border-t border-zinc-100">
+                    {view === "document" ? (
+                        <div className="max-w-2xl mx-auto space-y-2">
+                             {PREFLIGHT.sections.map((section: any) => (
+                                <div key={section.id}>
+                                    <Eyebrow>{section.label}</Eyebrow>
+                                    <div className="grid grid-cols-1 gap-2.5">
+                                        {section.fields.map((f: any) => {
+                                            if (f.isObject) return <ObjectFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} keyPrefix={`h:${section.id}:${f.dtoPath}`} />;
+                                            return (
+                                                <FieldRow
+                                                    key={f.dtoPath}
+                                                    field={f}
+                                                    state={fieldState[`h:${section.id}:${f.dtoPath}`]}
+                                                    setState={setFS(`h:${section.id}:${f.dtoPath}`)}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                             ))}
+                             
+                             {/* Extra Fields */}
+                             <Eyebrow trailing={<span className="text-[11px] text-zinc-400 font-medium">Catalog-level passthrough</span>}>Extra fields</Eyebrow>
+                             <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-4 text-[12.5px] text-zinc-500 mb-6 flex gap-3 items-start">
+                                <Icon.Info className="size-5 text-indigo-500 shrink-0 mt-0.5" />
+                                <div>Fields outside the standard schema. Forwarded as-is without auto-matching.</div>
+                             </div>
+                             {EXTRA_FIELDS.map(x => (
+                                <div key={x.id} className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div className="strata-check size-4 border-2 border-zinc-300 rounded checked:bg-zinc-900"></div>
+                                        <span className="text-[13.5px] font-bold text-zinc-900">{x.label}</span>
+                                    </div>
+                                    <div className="text-[13px] font-medium text-zinc-500">{x.value}</div>
+                                </div>
+                             ))}
+                        </div>
+                    ) : (
+                        <div className="space-y-4 max-w-4xl mx-auto">
+                            <div className="rounded-xl border border-zinc-200 overflow-hidden shadow-xl bg-white">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-zinc-50 border-b border-zinc-200">
+                                        <tr>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Product</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-center">Qty</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Unit Price</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-zinc-100">
+                                        {PREFLIGHT.lineItems.map((li: any) => (
+                                            <tr key={li.rowIndex} className="hover:bg-zinc-50/50 transition-colors cursor-pointer">
+                                                <td className="px-6 py-5">
+                                                    <div className="text-[14px] font-bold text-zinc-900">
+                                                        {li.fields.find((f: any) => f.dtoPath === "productNumber")?.inputValue}
+                                                    </div>
+                                                    <div className="text-[12px] text-zinc-500 font-medium mt-1">{li.fields.find((f: any) => f.dtoPath === "productDescription")?.inputValue}</div>
+                                                </td>
+                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-center">{li.fields.find((f: any) => f.dtoPath === "quantity")?.inputValue}</td>
+                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-right tabular-nums">
+                                                    ${Number(li.fields.find((f: any) => f.dtoPath === "productList")?.inputValue).toFixed(2)}
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm"><Icon.Check className="size-3.5" /> Ready</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
               </div>
 
-              {/* Main Content Area */}
-              <div className="flex-1 overflow-y-auto scroll-polish px-10 py-8 bg-[#fbfbfb] border-t border-zinc-100">
+              <footer className="h-[88px] px-10 flex items-center justify-between border-t border-zinc-200 bg-[#FAFAFA] shrink-0">
                   {view === "document" ? (
                       <div className="max-w-2xl mx-auto space-y-2">
                            {PREFLIGHT.sections.map((section: any) => (
