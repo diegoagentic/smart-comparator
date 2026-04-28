@@ -1,5 +1,5 @@
 import {
-    ChevronRightIcon, MagnifyingGlassIcon, FunnelIcon, ArrowDownTrayIcon,
+    ChevronRightIcon, MagnifyingGlassIcon, FunnelIcon, ArrowDownTrayIcon, ArrowUpTrayIcon,
     PlusIcon, CheckCircleIcon, DocumentTextIcon, CubeIcon,
     ExclamationTriangleIcon, ChevronDownIcon, ChevronUpIcon, EllipsisHorizontalIcon, SunIcon, MoonIcon,
     XMarkIcon, HomeIcon, Squares2X2Icon, ArrowTrendingUpIcon, ClipboardDocumentListIcon,
@@ -915,7 +915,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                         cn(
                                             "py-4 text-sm font-medium border-b-2 outline-none transition-colors",
                                             selected
-                                                ? "border-zinc-500 text-zinc-900 dark:border-primary dark:text-foreground"
+                                                ? "border-foreground text-foreground"
                                                 : "border-transparent text-muted-foreground hover:text-foreground"
                                         )
                                     }
@@ -927,7 +927,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                         cn(
                                             "py-4 text-sm font-medium border-b-2 outline-none transition-colors",
                                             selected
-                                                ? "border-zinc-500 text-zinc-900 dark:border-primary dark:text-foreground"
+                                                ? "border-foreground text-foreground"
                                                 : "border-transparent text-muted-foreground hover:text-foreground"
                                         )
                                     }
@@ -935,6 +935,17 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                     Inputs
                                 </Tab>
                             </TabList>
+                            <div className="flex items-center gap-2">
+                                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                                    <FunnelIcon className="h-3.5 w-3.5" /> Filter
+                                </Button>
+                                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                                    <ArrowUpTrayIcon className="h-3.5 w-3.5" /> Export
+                                </Button>
+                                <Button size="sm" className="gap-1.5 text-xs h-8 bg-primary text-primary-foreground hover:bg-primary/90">
+                                    <PlusIcon className="h-3.5 w-3.5" /> Add New Item
+                                </Button>
+                            </div>
                         </div>
                         <TabPanels className="">
                             <TabPanel className="flex flex-col focus:outline-none">

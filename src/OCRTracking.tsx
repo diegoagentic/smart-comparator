@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScanEye, FileText, AlertTriangle, CheckCircle2, Upload, Eye, MoreHorizontal, Sparkles, Search, LayoutGrid, List, ChevronDown, ChevronUp, X, FilePlus2, Archive, Loader2 } from 'lucide-react'
+import { ScanEye, FileText, AlertTriangle, CheckCircle2, Upload, Eye, MoreHorizontal, Sparkles, Search, LayoutGrid, List, ChevronDown, ChevronUp, X, FilePlus2, Archive, Loader2, Flame, Trash2 } from 'lucide-react'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
@@ -306,7 +306,6 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 : 'text-muted-foreground hover:bg-zinc-300/40 dark:hover:bg-zinc-700/40 hover:text-foreground'
                                         }`}
                                     >
-                                        <Archive className="h-3.5 w-3.5" />
                                         Deprecated
                                         <span title={`${counts.deprecated} archived document${counts.deprecated === 1 ? '' : 's'}`} className={`text-xs px-1.5 py-0.5 rounded-full transition-colors ${
                                             activeTab === 'deprecated' ? 'bg-white/15 dark:bg-zinc-900/15 text-white dark:text-zinc-900' : 'bg-background text-muted-foreground'
@@ -384,13 +383,14 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         doc.status === 'inconsistencies' ? 'Awaiting Expert · inconsistencies detected' :
                                                                         doc.status === 'capturing' ? 'Needs Attention · low-confidence fields' :
                                                                         'Ingesting · scanning and extracting'
-                                                                    } className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900 ${
-                                                                        doc.status === 'processed' ? 'bg-gradient-to-br from-green-500 to-green-700 text-white' :
-                                                                        doc.status === 'in_progress' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700 text-white' :
-                                                                        doc.status === 'inconsistencies' ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-white' :
-                                                                        doc.status === 'capturing' ? 'bg-gradient-to-br from-purple-500 to-purple-700 text-white' :
-                                                                        'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
-                                                                    }`}>
+                                                                    }
+                                                                        className={`h-9 w-9 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ${
+                                                                            doc.status === 'processed' ? 'bg-green-600 text-white' :
+                                                                            doc.status === 'in_progress' ? 'bg-indigo-600 text-white' :
+                                                                            doc.status === 'inconsistencies' ? 'bg-amber-600 text-white' :
+                                                                            doc.status === 'capturing' ? 'bg-violet-600 text-white' :
+                                                                            'bg-blue-600 text-white'
+                                                                        }`}>
                                                                         <Icon className={`h-4 w-4 ${doc.status === 'in_progress' ? 'animate-spin' : ''}`} />
                                                                     </div>
                                                                     <div>
@@ -489,13 +489,26 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                             <div className="pt-3 border-t border-border flex items-center justify-between">
                                                                 <div className="flex items-center gap-2">
                                                                     {doc.confidence ? (
-                                                                        <span title="Confidence Score" className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                                                        <span title="Confidence Score" className={`text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
                                                                             doc.confidence > 90 ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-400/30' :
                                                                             doc.confidence >= 75 ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20 dark:ring-amber-400/30' :
                                                                             'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 ring-1 ring-inset ring-red-600/20 dark:ring-red-400/30'
                                                                         }`}>
-                                                                            <Sparkles className="h-3 w-3 inline mr-1" />{doc.confidence}%
+                                                                            <Flame className="h-3 w-3 fill-current" />{doc.confidence}%
                                                                         </span>
+                                                                    ) : doc.status === 'identified' ? (
+                                                                        <select
+                                                                            value={doc.type}
+                                                                            onChange={(e) => setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, type: e.target.value } : d))}
+                                                                            onClick={(e) => e.stopPropagation()}
+                                                                            title="Select document type"
+                                                                            className="text-[10px] font-medium text-muted-foreground bg-muted border border-border rounded-md px-1.5 py-0.5 hover:bg-background focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer"
+                                                                        >
+                                                                            <option value="Purchase Order">Purchase Order</option>
+                                                                            <option value="Acknowledgment">Acknowledgment</option>
+                                                                            <option value="Invoice">Invoice</option>
+                                                                            <option value="Quote">Quote</option>
+                                                                        </select>
                                                                     ) : (
                                                                         <span title="Document type detected by OCR" className="text-[10px] font-medium text-muted-foreground">{doc.type}</span>
                                                                     )}
@@ -507,13 +520,24 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                                 e.stopPropagation();
                                                                                 setPreviewDoc(doc);
                                                                             }}
-                                                                            className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all group relative"
+                                                                            className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all"
                                                                             title="Preview document and review extracted fields"
                                                                             aria-label="Preview document"
                                                                         >
                                                                             <DocumentTextIcon className="h-4 w-4" />
                                                                         </button>
                                                                     )}
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            openDeprecation(doc);
+                                                                        }}
+                                                                        className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                                                                        title="Mark as Deprecated — move to archive"
+                                                                        aria-label="Deprecate document"
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </button>
                                                                     {(doc.status === 'identified' || doc.status === 'processed') && (
                                                                         <button
                                                                             onClick={() => setSelectedDoc(selectedDoc === doc.id ? null : doc.id)}
@@ -623,7 +647,14 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                 <td className="px-4 py-3 text-xs text-muted-foreground">{doc.date}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex items-center justify-end gap-1">
-                                                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="Review Document"><Eye className="h-4 w-4" /></button>
+                                                        <button
+                                                                            onClick={() => setPreviewDoc(doc)}
+                                                                            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                                                            title="Review Document"
+                                                                            aria-label="Review document"
+                                                                        >
+                                                                            <Eye className="h-4 w-4" />
+                                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>

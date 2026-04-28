@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
 import { useTenant } from '../TenantContext'
-import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown, Building2, Check } from 'lucide-react'
+import { ScanEye, FileOutput, Banknote, Bell, Moon, Sun, LogOut, ChevronDown, Building2, Check } from 'lucide-react'
 import logoLightBrand from '../assets/logo-light-brand.png'
 import logoDarkBrand from '../assets/logo-dark-brand.png'
 
-type NavTab = 'Transactions' | 'OCR'
+type NavTab = 'Transactions' | 'OCR' | 'DocumentConversion'
 
 interface NavbarProps {
     onLogout: () => void;
@@ -33,9 +33,10 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [isTenantOpen])
 
-    const tabs: { name: string; page: string; icon: any }[] = [
-        { name: 'OCR', page: 'ocr', icon: ScanEye },
-        { name: 'Transactions', page: 'transactions', icon: FileText },
+    const tabs: { name: string; label: string; page: string; icon: any }[] = [
+        { name: 'OCR', label: 'OCR', page: 'ocr', icon: ScanEye },
+        { name: 'Transactions', label: 'Transactions', page: 'transactions', icon: Banknote },
+        { name: 'DocumentConversion', label: 'Document Conversion', page: 'document-conversion', icon: FileOutput },
     ]
 
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Sara Chen'
@@ -105,7 +106,7 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                         </div>
                     </div>
 
-                    {/* Center: Nav Tabs — same pill style as dealer */}
+                    {/* Center: Nav Tabs */}
                     <div className="flex items-center gap-1 mx-auto">
                         {tabs.map(tab => {
                             const isActive = activeTab === tab.name
@@ -114,18 +115,16 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                                 <button
                                     key={tab.name}
                                     onClick={() => onNavigate(tab.page)}
-                                    className={`relative flex items-center justify-center h-9 px-3 rounded-full transition-all duration-300 group overflow-hidden ${
+                                    className={`flex items-center gap-2 h-9 rounded-full transition-all duration-200 ${
                                         isActive
-                                            ? 'bg-primary text-primary-foreground'
-                                            : 'hover:bg-muted text-muted-foreground'
+                                            ? 'bg-primary text-primary-foreground px-4'
+                                            : 'px-2.5 hover:bg-muted text-muted-foreground'
                                     }`}
                                 >
-                                    <span className="relative z-10"><Icon className="w-5 h-5" /></span>
-                                    <span className={`ml-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ease-in-out ${
-                                        isActive ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100'
-                                    }`}>
-                                        {tab.name}
-                                    </span>
+                                    <Icon className="w-4 h-4 shrink-0" />
+                                    {isActive && (
+                                        <span className="text-sm font-medium whitespace-nowrap">{tab.label}</span>
+                                    )}
                                 </button>
                             )
                         })}
@@ -133,13 +132,21 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-1 shrink-0">
+                        {/* Bell */}
+                        <button
+                            className="flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+                            title="Notifications"
+                        >
+                            <Bell className="w-4 h-4" />
+                        </button>
+
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
                             className="flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
                             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
                         >
-                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                         </button>
 
                         {/* Separator */}

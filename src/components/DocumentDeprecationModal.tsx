@@ -174,41 +174,43 @@ export default function DocumentDeprecationModal({
                                         <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-muted-foreground mb-2">
                                             Reason <span className="text-red-600 dark:text-red-400">*</span>
                                         </div>
-                                        <div className="space-y-1">
+                                        <div className="grid grid-cols-2 gap-1.5">
                                             {availableReasons.map(r => {
                                                 const meta = DEPRECATION_REASON_META[r]
                                                 const active = reason === r
                                                 const isRecommended = isUnsupported && r === 'unsupported_type'
                                                 return (
-                                                    <button
-                                                        key={r}
-                                                        onClick={() => setReason(r)}
-                                                        title={meta.description}
-                                                        className={`w-full flex items-start gap-2.5 px-3 py-2 rounded-lg border text-left transition-colors ${
-                                                            active
-                                                                ? 'border-foreground bg-muted/60'
-                                                                : isRecommended
-                                                                    ? 'border-orange-200 dark:border-orange-500/30 bg-orange-50/50 dark:bg-orange-500/5 hover:bg-orange-50 dark:hover:bg-orange-500/10'
-                                                                    : 'border-border hover:bg-muted/40'
-                                                        }`}
-                                                    >
-                                                        <span className={`mt-1 size-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                                                            active ? 'border-foreground' : 'border-zinc-400 dark:border-zinc-600'
-                                                        }`}>
-                                                            {active && <span className="size-1.5 rounded-full bg-foreground" />}
-                                                        </span>
-                                                        <span className="flex-1 min-w-0">
-                                                            <div className="text-[13px] font-medium text-foreground flex items-center gap-1.5 flex-wrap">
+                                                    <div key={r} className="relative group/reason">
+                                                        <button
+                                                            onClick={() => setReason(r)}
+                                                            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left transition-colors ${
+                                                                active
+                                                                    ? 'border-foreground bg-muted/60'
+                                                                    : isRecommended
+                                                                        ? 'border-orange-200 dark:border-orange-500/30 bg-orange-50/50 dark:bg-orange-500/5 hover:bg-orange-50 dark:hover:bg-orange-500/10'
+                                                                        : 'border-border hover:bg-muted/40'
+                                                            }`}
+                                                        >
+                                                            <span className={`size-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                                                active ? 'border-foreground' : 'border-zinc-400 dark:border-zinc-600'
+                                                            }`}>
+                                                                {active && <span className="size-1.5 rounded-full bg-foreground" />}
+                                                            </span>
+                                                            <span className="text-[12.5px] font-medium text-foreground leading-tight">
                                                                 {meta.label}
                                                                 {isRecommended && (
-                                                                    <span className="text-[9.5px] font-semibold tracking-[0.08em] uppercase px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300">
-                                                                        Recommended
+                                                                    <span className="ml-1.5 text-[9px] font-semibold tracking-[0.08em] uppercase px-1 py-0.5 rounded bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300">
+                                                                        Rec.
                                                                     </span>
                                                                 )}
-                                                            </div>
-                                                            <div className="text-[11.5px] text-muted-foreground">{meta.description}</div>
-                                                        </span>
-                                                    </button>
+                                                            </span>
+                                                        </button>
+                                                        {/* Tooltip on hover */}
+                                                        <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-max max-w-[180px] rounded-md bg-zinc-900 dark:bg-zinc-100 px-2.5 py-1.5 text-[11px] text-white dark:text-zinc-900 shadow-lg opacity-0 group-hover/reason:opacity-100 transition-opacity duration-150 z-10 text-center leading-snug">
+                                                            {meta.description}
+                                                            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900 dark:border-t-zinc-100" />
+                                                        </div>
+                                                    </div>
                                                 )
                                             })}
                                         </div>

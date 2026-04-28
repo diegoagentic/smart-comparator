@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 
 interface FieldReviewModalProps {
-    isOpen: boolean
+    isOpen?: boolean
     onClose: () => void
     document: {
         id: string

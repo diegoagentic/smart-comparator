@@ -42,6 +42,7 @@ export default function AssignPopover({
     const assignee = getTeamMember(assigneeId)
 
     const showHoverCard = hovered && !open && !!hoverContent && !!assignee
+    const showUnassignedTooltip = hovered && !open && !assignee
 
     // Recompute trigger anchor — used by both popovers.
     const recomputeAnchor = useCallback(() => {
@@ -56,7 +57,7 @@ export default function AssignPopover({
 
     // Compute position when popover or hover card opens; track scroll/resize.
     useEffect(() => {
-        if (!open && !showHoverCard) return
+        if (!open && !showHoverCard && !showUnassignedTooltip) return
         recomputeAnchor()
         window.addEventListener('scroll', recomputeAnchor, true)
         window.addEventListener('resize', recomputeAnchor)
@@ -64,7 +65,7 @@ export default function AssignPopover({
             window.removeEventListener('scroll', recomputeAnchor, true)
             window.removeEventListener('resize', recomputeAnchor)
         }
-    }, [open, showHoverCard, recomputeAnchor])
+    }, [open, showHoverCard, showUnassignedTooltip, recomputeAnchor])
 
     // Click outside closes the popover (must check both trigger AND portal popover).
     useEffect(() => {
@@ -153,13 +154,11 @@ export default function AssignPopover({
             ) : (
                 <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); setOpen(o => !o) }}
-                    title="Assign this document to someone"
-                    aria-label="Assign document"
-                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-border hover:border-foreground/40 hover:bg-muted text-muted-foreground hover:text-foreground px-2 py-1 text-[10.5px] font-medium transition-colors"
+                    onClick={(e) => { e.stopPropagation(); setHovered(false); setOpen(o => !o) }}
+                    aria-label={triggerLabel}
+                    className="inline-flex items-center justify-center size-7 rounded-full border border-dashed border-border hover:border-foreground/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 >
-                    <UserPlus className="size-3" />
-                    {triggerLabel}
+                    <UserPlus className="size-3.5" />
                 </button>
             )}
 
@@ -186,6 +185,22 @@ export default function AssignPopover({
                     <div className="px-3 py-2.5">
                         {hoverContent}
                     </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Unassigned tooltip (portal — escapes card overflow:hidden) */}
+            {showUnassignedTooltip && anchor && createPortal(
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: window.innerHeight - anchor.top + GAP * 2 + 28,
+                        right: anchor.right,
+                        zIndex: 250,
+                    }}
+                    className="pointer-events-none whitespace-nowrap rounded-md bg-zinc-900 dark:bg-zinc-100 px-2 py-1 text-[10.5px] font-medium text-white dark:text-zinc-900 shadow-md animate-in fade-in duration-100"
+                >
+                    {triggerLabel}
                 </div>,
                 document.body
             )}

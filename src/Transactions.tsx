@@ -208,15 +208,15 @@ const trackingSteps = [
 ]
 
 const recentOrders = [
-    { id: "#ORD-2055", customer: "AutoManfacture Co.", client: "AutoManfacture Co.", project: "Office Renovation", amount: "$385,000", status: "Order Received", date: "Dec 20, 2025", initials: "AC", statusColor: "bg-zinc-100 text-zinc-700", location: "New York" },
-    { id: "#ORD-2054", customer: "TechDealer Solutions", client: "TechDealer Solutions", project: "HQ Upgrade", amount: "$62,500", status: "In Production", date: "Nov 15, 2025", initials: "TS", statusColor: "bg-brand-50 text-brand-700 ring-brand-600/20", location: "London" },
+    { id: "#ORD-2055", customer: "AutoManufacture Co.", client: "AutoManufacture Co.", project: "Office Renovation", amount: "$385,000", status: "Order Received", date: "Dec 20, 2025", initials: "AC", statusColor: "bg-zinc-100 text-zinc-600 ring-zinc-500/20", location: "New York" },
+    { id: "#ORD-2054", customer: "TechDealer Solutions", client: "TechDealer Solutions", project: "HQ Upgrade", amount: "$62,500", status: "In Production", date: "Nov 15, 2025", initials: "TS", statusColor: "bg-yellow-50 text-yellow-700 ring-yellow-600/20", location: "London" },
     { id: "#ORD-2053", customer: "Urban Living Inc.", client: "Urban Living Inc.", project: "Lobby Refresh", amount: "$112,000", status: "Ready to Ship", date: "Oct 30, 2025", initials: "UL", statusColor: "bg-green-50 text-green-700 ring-green-600/20", location: "Austin" },
-    { id: "#ORD-2052", customer: "Global Logistics", client: "Global Logistics", project: "Warehouse Expansion", amount: "$45,000", status: "Delivered", date: "Oct 15, 2025", initials: "GL", statusColor: "bg-gray-100 text-gray-700", location: "Berlin" },
-    { id: "#ORD-2051", customer: "City Builders", client: "City Builders", project: "City Center", amount: "$120,000", status: "Order Received", date: "Jan 05, 2026", initials: "CB", statusColor: "bg-zinc-100 text-zinc-700", location: "New York" },
-    { id: "#ORD-2050", customer: "Modern Homes", client: "Modern Homes", project: "Residential A", amount: "$85,000", status: "Acknowledgement", date: "Jan 02, 2026", initials: "MH", statusColor: "bg-blue-50 text-blue-700", location: "Austin" },
-    { id: "#ORD-2049", customer: "Coastal Props", client: "Coastal Props", project: "Beach House", amount: "$210,000", status: "In Production", date: "Dec 10, 2025", initials: "CP", statusColor: "bg-indigo-50 text-indigo-700", location: "London" },
-    { id: "#ORD-2048", customer: "Valley Homes", client: "Valley Homes", project: "Mountain Retreat", amount: "$95,000", status: "Ready to Ship", date: "Nov 20, 2025", initials: "VH", statusColor: "bg-indigo-50 text-indigo-700", location: "Berlin" },
-    { id: "#ORD-2047", customer: "Elite Builders", client: "Elite Builders", project: "Sky V", amount: "$450,000", status: "In Transit", date: "Nov 05, 2025", initials: "EB", statusColor: "bg-amber-50 text-amber-700", location: "New York" },
+    { id: "#ORD-2052", customer: "Global Logistics", client: "Global Logistics", project: "Warehouse Expansion", amount: "$45,000", status: "Delivered", date: "Oct 15, 2025", initials: "GL", statusColor: "bg-zinc-100 text-zinc-500 ring-zinc-400/20", location: "Berlin" },
+    { id: "#ORD-2051", customer: "City Builders", client: "City Builders", project: "City Center", amount: "$120,000", status: "Order Received", date: "Jan 05, 2026", initials: "CB", statusColor: "bg-zinc-100 text-zinc-600 ring-zinc-500/20", location: "New York" },
+    { id: "#ORD-2050", customer: "Modern Homes", client: "Modern Homes", project: "Residential A", amount: "$85,000", status: "Acknowledgement", date: "Jan 02, 2026", initials: "MH", statusColor: "bg-violet-50 text-violet-700 ring-violet-600/20", location: "Austin" },
+    { id: "#ORD-2049", customer: "Coastal Props", client: "Coastal Props", project: "Beach House", amount: "$210,000", status: "In Production", date: "Dec 10, 2025", initials: "CP", statusColor: "bg-yellow-50 text-yellow-700 ring-yellow-600/20", location: "London" },
+    { id: "#ORD-2048", customer: "Valley Homes", client: "Valley Homes", project: "Mountain Retreat", amount: "$95,000", status: "Ready to Ship", date: "Nov 20, 2025", initials: "VH", statusColor: "bg-green-50 text-green-700 ring-green-600/20", location: "Berlin" },
+    { id: "#ORD-2047", customer: "Elite Builders", client: "Elite Builders", project: "Sky V", amount: "$450,000", status: "In Transit", date: "Nov 05, 2025", initials: "EB", statusColor: "bg-orange-50 text-orange-700 ring-orange-600/20", location: "New York" },
 ]
 
 const recentQuotes = [
@@ -919,59 +919,31 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                 </div>
 
                 {/* Lifecycle Tabs Navigation */}
-                <div className="flex items-center mb-6">
-                    <div className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-card/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                        <button
-                            style={{display:'none'}} onClick={() => {}}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
-                                lifecycleTab === 'quotes'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <DocumentTextIcon className="w-4 h-4" />
-                            Quotes
-                        </button>
-                        <button
-                            onClick={() => setLifecycleTab('orders')}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
-                                lifecycleTab === 'orders'
-                                    ? "bg-[#C3E433] dark:bg-[#C3E433] text-zinc-900 shadow-sm"
-                                    : "text-muted-foreground hover:bg-[#C3E433] dark:hover:bg-[#C3E433]/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <ShoppingCartIcon className="w-4 h-4" />
-                            Purchase Orders
-                        </button>
-                        <button
-                            onClick={() => setLifecycleTab('acknowledgments')}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
-                                lifecycleTab === 'acknowledgments'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <ClipboardDocumentCheckIcon className="w-4 h-4" />
-                            Acknowledgements
-                        </button>
-                        <button
-                            style={{display:'none'}} onClick={() => {}}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
-                                lifecycleTab === 'projects'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <ClipboardDocumentListIcon className="w-4 h-4" />
-                            Projects
-                        </button>
-                    </div>
+                <div className="flex items-center gap-2 mb-6">
+                    <button
+                        onClick={() => setLifecycleTab('orders')}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all",
+                            lifecycleTab === 'orders'
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:bg-muted"
+                        )}
+                    >
+                        <ShoppingCartIcon className="w-4 h-4" />
+                        Purchase Orders
+                    </button>
+                    <button
+                        onClick={() => setLifecycleTab('acknowledgments')}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all",
+                            lifecycleTab === 'acknowledgments'
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:bg-muted"
+                        )}
+                    >
+                        <ClipboardDocumentCheckIcon className="w-4 h-4" />
+                        Acknowledgements
+                    </button>
                 </div>
 
                 {/* Quotes Tab Content */}
@@ -2358,7 +2330,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                 {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
                                                                             </button>
                                                                         )}
-                                                                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                                                                        <div className="h-8 w-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
                                                                             {order.initials}
                                                                         </div>
                                                                         <div>
@@ -2565,7 +2537,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                     {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
                                                                                 </button>
                                                                             )}
-                                                                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
+                                                                            <div className="h-8 w-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
                                                                                 {order.initials}
                                                                             </div>
                                                                             <div className="space-y-0.5">
