@@ -399,198 +399,169 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
             leaveFrom="opacity-100 translate-y-0 scale-100"
             leaveTo="opacity-0 translate-y-4 scale-95"
           >
-            <DialogPanel className="anim-fadeup relative w-full max-w-[1120px] h-[760px] rounded-[20px] bg-white shadow-[0_30px_80px_-20px_rgba(11,11,12,0.35)] overflow-hidden flex text-zinc-900">
+            <DialogPanel className="anim-fadeup relative w-full max-w-[960px] h-[85vh] rounded-[24px] bg-white shadow-[0_30px_80px_-20px_rgba(11,11,12,0.35)] overflow-hidden flex flex-col text-zinc-900">
               
-              {/* Left Sidebar */}
-              <div className="h-full w-[300px] shrink-0 border-r border-zinc-200 bg-gradient-to-b from-[#FAFAFA] to-[#F2F3F5] flex flex-col">
-                <div className="px-5 pt-8 pb-6 border-b border-zinc-200">
-                  <div className="flex items-center gap-2">
-                    <span className="eyebrow">Publish to</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900 text-white px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">Orderbahn</span>
-                  </div>
-                  <div className="mt-4 text-[22px] font-bold tracking-tight text-zinc-900 leading-tight">
-                    Purchase order
-                  </div>
-                  <div className="mt-1 text-[12px] text-zinc-500 font-medium">
-                    Draft <span className="font-bold text-zinc-700">{document.id}</span> \u00b7 Created Today
-                  </div>
-                </div>
-
-                <div className="px-5 py-6 border-b border-zinc-200 bg-white/30">
+              {/* Header Section */}
+              <div className="px-10 pt-10 pb-6 space-y-6 shrink-0 bg-white">
+                {/* Top Row: Title, Avatar, Close */}
+                <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <ProgressRing pct={pct} />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-bold text-zinc-900">Preflight</div>
-                      <div className="text-[12px] text-zinc-500 mt-0.5 font-medium">
-                        {summary.resolved} of {summary.total} ready
-                      </div>
-                      <div className="mt-3">
-                        <SegmentedBar summary={summary} />
-                      </div>
+                    <h2 className="text-[28px] font-bold text-zinc-900 tracking-tight">OrderBahn — Purchase Order</h2>
+                  </div>
+                  <button onClick={onClose} className="p-2 -mr-2 text-zinc-400 hover:text-zinc-900 transition-colors">
+                    <Icon.Close className="size-7" />
+                  </button>
+                </div>
+
+                {/* Subtitle */}
+                <div className="text-[16px] text-zinc-500 font-medium -mt-4">
+                  Draft PO-001 | Created Apr 22, 2026
+                </div>
+
+                {/* Warning Banner */}
+                <div className="bg-amber-50/40 border border-amber-100/60 rounded-2xl p-4 flex items-start gap-3">
+                  <Icon.Warn className="size-5 text-amber-600 mt-0.5 shrink-0" />
+                  <p className="text-[14px] text-amber-800/90 font-medium leading-normal">
+                    Review how your data maps into OrderBahn. Fields that match automatically are shown, while others need your confirmation.
+                  </p>
+                </div>
+
+                {/* Progress Section */}
+                <div className="bg-zinc-50/50 border border-zinc-100 rounded-2xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[18px] font-bold text-zinc-900">Preflight</span>
+                      <span className="text-[14px] text-zinc-400 font-medium">42/50 ready</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[14px] font-bold text-zinc-900">84%</span>
+                      <span className="text-[12px] text-zinc-400 font-medium">ready</span>
+                    </div>
+                  </div>
+                  <div className="h-2 w-full bg-zinc-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-green-600 rounded-full transition-all duration-500" style={{ width: '84%' }} />
                   </div>
                 </div>
 
-                <nav className="px-3 py-5 flex-1 overflow-y-auto scroll-polish">
-                  <div className="eyebrow px-3 pb-3">Sections</div>
-                  <button
-                    onClick={() => setView("document")}
-                    className={`w-full text-left rounded-xl px-4 py-3.5 mb-2 transition flex items-center justify-between ${view === "document" ? "bg-zinc-900 text-white shadow-xl" : "hover:bg-white text-zinc-800"}`}
-                  >
-                    <div className="flex flex-col">
-                        <span className="text-[14px] font-bold">Document</span>
-                        <span className={`text-[11px] mt-0.5 font-medium ${view === "document" ? "text-white/60" : "text-zinc-500"}`}>General info</span>
-                    </div>
-                    {summary.unresolved + summary.aiUncertain > 0 && (
-                        <span className={`size-5 rounded-full flex items-center justify-center text-[10px] font-bold ${view === "document" ? "bg-red-500 text-white" : "bg-red-50 text-red-600"}`}>
-                            {summary.unresolved + summary.aiUncertain}
-                        </span>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setView("lineItems")}
-                    className={`w-full text-left rounded-xl px-4 py-3.5 mb-2 transition flex items-center justify-between ${view === "lineItems" ? "bg-zinc-900 text-white shadow-xl" : "hover:bg-white text-zinc-800"}`}
-                  >
-                    <div className="flex flex-col">
-                        <span className="text-[14px] font-bold">Line Items</span>
-                        <span className={`text-[11px] mt-0.5 font-medium ${view === "lineItems" ? "text-white/60" : "text-zinc-500"}`}>{PREFLIGHT.lineItems.length} rows</span>
-                    </div>
-                  </button>
-                </nav>
-
-                <div className="px-5 py-4 border-t border-zinc-200 bg-white/50">
-                    <button className="w-full py-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-[13px] font-bold text-zinc-700 transition flex items-center justify-center gap-2 shadow-sm">
-                        <Icon.Refresh className="size-4" />
-                        Re-run preflight
+                {/* Stepper & Refresh */}
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-6">
+                    <button 
+                      onClick={() => setView("document")}
+                      className="flex items-center gap-3 group"
+                    >
+                      <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "document" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>1</div>
+                      <span className={`text-[16px] font-bold transition-colors ${view === "document" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Header Fields</span>
                     </button>
+                    <Icon.Arrow className="size-5 text-zinc-300" />
+                    <button 
+                      onClick={() => setView("lineItems")}
+                      className="flex items-center gap-3 group"
+                    >
+                      <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "lineItems" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>2</div>
+                      <span className={`text-[16px] font-bold transition-colors ${view === "lineItems" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Line Items</span>
+                    </button>
+                  </div>
+                  <button className="flex items-center gap-2 bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all shadow-sm active:scale-95">
+                    <Icon.Refresh className="size-4" />
+                    Refresh
+                  </button>
                 </div>
               </div>
 
               {/* Main Content Area */}
-              <div className="flex-1 min-w-0 flex flex-col bg-white">
-                <header className="h-[80px] px-8 flex items-center justify-between border-b border-zinc-200 shrink-0 bg-white">
-                  <div className="flex items-center gap-4">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E2F373] text-zinc-900 px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase">
-                      <span className="size-1.5 rounded-full bg-zinc-900"></span>
-                      Review & Publish
-                    </span>
-                    <div className="flex items-baseline gap-2">
-                        <h1 className="text-[18px] font-bold tracking-tight text-zinc-900">
-                            {view === "document" ? "Purchase Order" : "Line Items"}
-                        </h1>
-                        {view === "document" && <span className="text-[18px] font-medium text-zinc-400">#12001-A</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {summary.valid ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[11px] font-bold uppercase tracking-wide">
-                            <Icon.Check className="size-3.5" /> Ready to publish
-                        </span>
-                    ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-[11px] font-bold uppercase tracking-wide">
-                            <Icon.Warn className="size-3.5" /> Action needed
-                        </span>
-                    )}
-                    <div className="w-px h-6 bg-zinc-200 mx-1" />
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900 transition-all">
-                        <Icon.Close className="size-6" />
-                    </button>
-                  </div>
-                </header>
-
-                <div className="flex-1 overflow-y-auto scroll-polish px-10 py-8 bg-[#fbfbfb]">
-                    {view === "document" ? (
-                        <div className="max-w-2xl mx-auto space-y-2">
-                             {PREFLIGHT.sections.map((section: any) => (
-                                <div key={section.id}>
-                                    <Eyebrow>{section.label}</Eyebrow>
-                                    <div className="grid grid-cols-1 gap-2.5">
-                                        {section.fields.map((f: any) => {
-                                            if (f.isObject) return <ObjectFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} keyPrefix={`h:${section.id}:${f.dtoPath}`} />;
-                                            return (
-                                                <FieldRow
-                                                    key={f.dtoPath}
-                                                    field={f}
-                                                    state={fieldState[`h:${section.id}:${f.dtoPath}`]}
-                                                    setState={setFS(`h:${section.id}:${f.dtoPath}`)}
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                             ))}
-                             
-                             {/* Extra Fields */}
-                             <Eyebrow trailing={<span className="text-[11px] text-zinc-400 font-medium">Catalog-level passthrough</span>}>Extra fields</Eyebrow>
-                             <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-4 text-[12.5px] text-zinc-500 mb-6 flex gap-3 items-start">
-                                <Icon.Info className="size-5 text-indigo-500 shrink-0 mt-0.5" />
-                                <div>Fields outside the standard schema. Forwarded as-is without auto-matching.</div>
-                             </div>
-                             {EXTRA_FIELDS.map(x => (
-                                <div key={x.id} className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between shadow-sm">
-                                    <div className="flex items-center gap-3">
-                                        <div className="strata-check size-4 border-2 border-zinc-300 rounded checked:bg-zinc-900"></div>
-                                        <span className="text-[13.5px] font-bold text-zinc-900">{x.label}</span>
-                                    </div>
-                                    <div className="text-[13px] font-medium text-zinc-500">{x.value}</div>
-                                </div>
-                             ))}
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            <div className="rounded-xl border border-zinc-200 overflow-hidden shadow-xl bg-white">
-                                <table className="w-full text-left border-collapse">
-                                    <thead className="bg-zinc-50 border-b border-zinc-200">
-                                        <tr>
-                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Product</th>
-                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-center">Qty</th>
-                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Unit Price</th>
-                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-zinc-100">
-                                        {PREFLIGHT.lineItems.map((li: any) => (
-                                            <tr key={li.rowIndex} className="hover:bg-zinc-50/50 transition-colors cursor-pointer">
-                                                <td className="px-6 py-5">
-                                                    <div className="text-[14px] font-bold text-zinc-900">
-                                                        {li.fields.find((f: any) => f.dtoPath === "productNumber")?.inputValue}
-                                                    </div>
-                                                    <div className="text-[12px] text-zinc-500 font-medium mt-1">{li.fields.find((f: any) => f.dtoPath === "productDescription")?.inputValue}</div>
-                                                </td>
-                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-center">{li.fields.find((f: any) => f.dtoPath === "quantity")?.inputValue}</td>
-                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-right tabular-nums">
-                                                    ${Number(li.fields.find((f: any) => f.dtoPath === "productList")?.inputValue).toFixed(2)}
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm"><Icon.Check className="size-3.5" /> Ready</span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <footer className="h-[88px] px-10 flex items-center justify-between border-t border-zinc-200 bg-[#FAFAFA] shrink-0">
-                  <div className="flex items-center gap-8">
-                    <button onClick={onClose} className="text-[14px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors">Cancel</button>
-                    <div className="h-5 w-px bg-zinc-200" />
-                    <button className="text-[12px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors uppercase tracking-[0.15em]">Save Draft</button>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <button
-                      disabled={!summary.valid}
-                      onClick={() => onConvert(document.id, 'po')}
-                      className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 shadow-[#e2f373]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
-                    >
-                      Publish to Orderbahn
-                      <Icon.Arrow className="size-4.5" />
-                    </button>
-                  </div>
-                </footer>
+              <div className="flex-1 overflow-y-auto scroll-polish px-10 py-8 bg-[#fbfbfb] border-t border-zinc-100">
+                  {view === "document" ? (
+                      <div className="max-w-2xl mx-auto space-y-2">
+                           {PREFLIGHT.sections.map((section: any) => (
+                              <div key={section.id}>
+                                  <Eyebrow>{section.label}</Eyebrow>
+                                  <div className="grid grid-cols-1 gap-2.5">
+                                      {section.fields.map((f: any) => {
+                                          if (f.isObject) return <ObjectFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} keyPrefix={`h:${section.id}:${f.dtoPath}`} />;
+                                          return (
+                                              <FieldRow
+                                                  key={f.dtoPath}
+                                                  field={f}
+                                                  state={fieldState[`h:${section.id}:${f.dtoPath}`]}
+                                                  setState={setFS(`h:${section.id}:${f.dtoPath}`)}
+                                              />
+                                          );
+                                      })}
+                                  </div>
+                              </div>
+                           ))}
+                           
+                           {/* Extra Fields */}
+                           <Eyebrow trailing={<span className="text-[11px] text-zinc-400 font-medium">Catalog-level passthrough</span>}>Extra fields</Eyebrow>
+                           <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-4 text-[12.5px] text-zinc-500 mb-6 flex gap-3 items-start">
+                              <Icon.Info className="size-5 text-indigo-500 shrink-0 mt-0.5" />
+                              <div>Fields outside the standard schema. Forwarded as-is without auto-matching.</div>
+                           </div>
+                           {EXTRA_FIELDS.map(x => (
+                              <div key={x.id} className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between shadow-sm">
+                                  <div className="flex items-center gap-3">
+                                      <div className="strata-check size-4 border-2 border-zinc-300 rounded checked:bg-zinc-900"></div>
+                                      <span className="text-[13.5px] font-bold text-zinc-900">{x.label}</span>
+                                  </div>
+                                  <div className="text-[13px] font-medium text-zinc-500">{x.value}</div>
+                              </div>
+                           ))}
+                      </div>
+                  ) : (
+                      <div className="space-y-4 max-w-4xl mx-auto">
+                          <div className="rounded-xl border border-zinc-200 overflow-hidden shadow-xl bg-white">
+                              <table className="w-full text-left border-collapse">
+                                  <thead className="bg-zinc-50 border-b border-zinc-200">
+                                      <tr>
+                                          <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Product</th>
+                                          <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-center">Qty</th>
+                                          <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Unit Price</th>
+                                          <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Status</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-zinc-100">
+                                      {PREFLIGHT.lineItems.map((li: any) => (
+                                          <tr key={li.rowIndex} className="hover:bg-zinc-50/50 transition-colors cursor-pointer">
+                                              <td className="px-6 py-5">
+                                                  <div className="text-[14px] font-bold text-zinc-900">
+                                                      {li.fields.find((f: any) => f.dtoPath === "productNumber")?.inputValue}
+                                                  </div>
+                                                  <div className="text-[12px] text-zinc-500 font-medium mt-1">{li.fields.find((f: any) => f.dtoPath === "productDescription")?.inputValue}</div>
+                                              </td>
+                                              <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-center">{li.fields.find((f: any) => f.dtoPath === "quantity")?.inputValue}</td>
+                                              <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-right tabular-nums">
+                                                  ${Number(li.fields.find((f: any) => f.dtoPath === "productList")?.inputValue).toFixed(2)}
+                                              </td>
+                                              <td className="px-6 py-5">
+                                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm"><Icon.Check className="size-3.5" /> Ready</span>
+                                              </td>
+                                          </tr>
+                                      ))}
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  )}
               </div>
+
+              <footer className="h-[88px] px-10 flex items-center justify-between border-t border-zinc-200 bg-[#FAFAFA] shrink-0">
+                <div className="flex items-center gap-8">
+                  <button onClick={onClose} className="text-[14px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors">Cancel</button>
+                  <div className="h-5 w-px bg-zinc-200" />
+                  <button className="text-[12px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors uppercase tracking-[0.15em]">Save Draft</button>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button
+                    disabled={!summary.valid}
+                    onClick={() => onConvert(document.id, 'po')}
+                    className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 shadow-[#e2f373]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
+                  >
+                    Publish to Orderbahn
+                    <Icon.Arrow className="size-4.5" />
+                  </button>
+                </div>
+              </footer>
 
             </DialogPanel>
           </TransitionChild>
