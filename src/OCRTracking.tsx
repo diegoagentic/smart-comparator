@@ -233,14 +233,14 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="flex items-center gap-2 bg-muted p-1 rounded-lg shrink-0 border border-border/50">
+                                    <div className="flex items-center gap-2 bg-[#FAFAFA] p-1 rounded-lg shrink-0 border border-[#D0D4D8]">
                                         <select
                                             value={timeFilter}
                                             onChange={(e) => setTimeFilter(e.target.value)}
-                                            className="bg-transparent text-[11px] font-bold text-foreground outline-none px-2 py-0.5 cursor-pointer"
+                                            className="bg-transparent text-[11px] font-bold text-zinc-900 outline-none px-2 py-0.5 cursor-pointer"
                                         >
                                             {['Last 7 days', 'Last 30 days', 'Last 90 days', 'All Time'].map(t => (
-                                                <option key={t} value={t} className="bg-background text-foreground">{t}</option>
+                                                <option key={t} value={t} className="bg-white text-zinc-900">{t}</option>
                                             ))}
                                         </select>
                                     </div>
