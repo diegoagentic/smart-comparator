@@ -547,9 +547,6 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                 </div>
               </div>
 
-                </div>
-              </div>
-
               <footer className="h-[88px] px-10 flex items-center justify-between border-t border-zinc-200 bg-[#FAFAFA] shrink-0">
                 <div className="flex items-center gap-8">
                   <button onClick={onClose} className="text-[14px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors">Cancel</button>
