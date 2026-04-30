@@ -352,25 +352,11 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
 
                                     {/* Right: Extracted Fields or Field Review (2/5) */}
                                     <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
-                                        {(document.status === 'capturing' || document.status === 'discrepancies' || document.status === 'in_progress' || document.status === 'processed') ? (
-                                            <FieldReviewModal 
-                                                document={document} 
-                                                onResolve={onResolve} 
-                                                onClose={onClose} 
-                                            />
-                                        ) : (
-                                            <>
-                                                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 shrink-0">
-                                                    <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Extracted Fields</h4>
-                                                    <p className="text-[10px] text-zinc-400 mt-0.5">{totalCount} fields · {document.fields} from document</p>
-                                                </div>
-                                                <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ scrollbarWidth: 'thin' }}>
-                                                    {fieldGroups.map((group, i) => (
-                                                        <FieldGroupPanel key={group.id} group={group} defaultOpen={i === 0} />
-                                                    ))}
-                                                </div>
-                                            </>
-                                        )}
+                                        <FieldReviewModal 
+                                            document={document} 
+                                            onResolve={onResolve} 
+                                            onClose={onClose} 
+                                        />
                                     </div>
                                 </div>
                             </DialogPanel>

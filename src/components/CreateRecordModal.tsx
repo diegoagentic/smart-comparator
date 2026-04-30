@@ -27,13 +27,13 @@ const Icon = {
 // Resolution → visual tone
 // =====================================================================
 const TONE: Record<string, any> = {
-  resolved:       { pill: "bg-green-50 text-green-700",       dot: "bg-green-500",  label: "Ready",          ring: "ring-green-200/60" },
-  ai_suggested:   { pill: "bg-brand-200 text-zinc-900",       dot: "bg-brand-600",  label: "AI match",       ring: "ring-brand-300/60" },
-  ai_uncertain:   { pill: "bg-amber-50 text-amber-700",       dot: "bg-amber-500",  label: "Low confidence", ring: "ring-amber-200/60" },
-  partial:        { pill: "bg-amber-50 text-amber-700",       dot: "bg-amber-500",  label: "Partial match",  ring: "ring-amber-200/60" },
-  unresolved:     { pill: "bg-red-50 text-red-700",           dot: "bg-red-500",    label: "Needs choice",   ring: "ring-red-200/60" },
-  unmapped:       { pill: "bg-zinc-100 text-zinc-600",        dot: "bg-zinc-400",   label: "Not sent",       ring: "ring-zinc-200/60" },
-  coercion_error: { pill: "bg-red-50 text-red-700",           dot: "bg-red-500",    label: "Fix value",      ring: "ring-red-200/60" },
+  resolved:       { pill: "bg-[#E8F5E9] text-green-800",       dot: "bg-green-600",  label: "Ready",          ring: "ring-green-200/60" },
+  ai_suggested:   { pill: "bg-[#E2F373] text-[#507206]",       dot: "bg-[#718B03]",  label: "AI Match",       ring: "ring-brand-300/60" },
+  ai_uncertain:   { pill: "bg-amber-100 text-amber-700",       dot: "bg-amber-500",  label: "Low confidence", ring: "ring-amber-200/60" },
+  partial:        { pill: "bg-amber-100 text-amber-700",       dot: "bg-amber-500",  label: "Partial match",  ring: "ring-amber-200/60" },
+  unresolved:     { pill: "bg-red-100 text-red-700",           dot: "bg-red-500",    label: "Needs choice",   ring: "ring-red-200/60" },
+  unmapped:       { pill: "bg-zinc-100 text-zinc-600",         dot: "bg-zinc-400",   label: "Not sent",       ring: "ring-zinc-200/60" },
+  coercion_error: { pill: "bg-orange-100 text-orange-600",     dot: "bg-orange-500", label: "Fix Value",      ring: "ring-red-200/60" },
 };
 
 // =====================================================================
@@ -147,21 +147,21 @@ function FieldRow({ field, state, setState, compact }: any) {
 
   return (
     <div className={`field-row rounded-xl border bg-white transition ${isLocked ? "border-green-200" : "border-zinc-200"} hover:border-zinc-300`}>
-      <div className={`${compact ? "px-3 pt-2.5 pb-1.5" : "px-4 pt-3.5 pb-2"} flex items-start justify-between gap-4`}>
+      <div className={`${compact ? "px-4 pt-3" : "px-5 pt-4"} flex items-start justify-between gap-4`}>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[13.5px] font-medium text-zinc-900 truncate">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[14px] font-bold text-zinc-900 truncate">
               {field.displayName}
             </span>
             {field.required && (
-              <span className="inline-flex items-center rounded text-[10px] font-semibold text-red-600">REQUIRED</span>
+              <span className="inline-flex items-center rounded-full bg-red-100 text-red-600 px-2.5 py-0.5 text-[10px] font-medium">Required</span>
             )}
           </div>
         </div>
         <ResolutionPill resolution={effective} />
       </div>
 
-      <div className={compact ? "px-3 pb-2.5" : "px-4 pb-3"}>
+      <div className={`${compact ? "px-4 pb-3 pt-2" : "px-5 pb-5 pt-3"}`}>
         <FieldBody field={field} state={state} setState={setState} effective={effective} />
       </div>
     </div>
@@ -170,13 +170,14 @@ function FieldRow({ field, state, setState, compact }: any) {
 
 function FieldBody({ field, state, setState, effective }: any) {
   const [picking, setPicking] = useState(false);
+  const [pickedValue, setPickedValue] = useState<string | null>(null);
 
   // If we have an override, show the override summary with a Reset button
   if (state?.overrideValue != null && effective === "resolved" && field.resolution !== "resolved") {
     return (
-      <div className="flex items-center justify-between gap-2 rounded-md bg-green-50/60 border border-green-100 px-2.5 py-1.5">
-        <div className="text-[12.5px] text-green-900 truncate font-medium">
-          <Icon.Check className="size-3 inline mr-1 -mt-0.5" /> {state.overrideValue}
+      <div className="flex items-center justify-between gap-2 rounded-md bg-green-50/60 border border-green-100 px-3 py-2">
+        <div className="text-[13px] text-green-900 truncate font-medium">
+          <Icon.Check className="size-3.5 inline mr-1.5 -mt-0.5" /> {state.overrideValue}
         </div>
         <button
           onClick={() => setState({ overrideValue: null, locked: false, effectiveResolution: field.resolution })}
@@ -188,13 +189,17 @@ function FieldBody({ field, state, setState, effective }: any) {
     );
   }
 
-  // Common Layout for Original vs Final Value
-  const renderLayout = (input: any, final: React.ReactNode) => (
-    <div className="grid grid-cols-2 gap-3 items-center">
-      <div className="bg-zinc-50 border border-zinc-100 rounded-lg px-2.5 py-1.5 text-[12.5px] text-zinc-500 truncate font-medium">
-        {String(input || "—")}
+  // Layout for Original vs Fixed Value
+  const renderTwoColumns = (input: any, final: React.ReactNode) => (
+    <div className="grid grid-cols-2 gap-4 mt-1">
+      <div>
+        <p className="text-[13px] font-medium text-zinc-900 mb-2">Original Value</p>
+        <div className="bg-[#F1F3F5] border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-500">
+          {String(input || "—")}
+        </div>
       </div>
       <div className="min-w-0">
+        <p className="text-[13px] font-medium text-zinc-900 mb-2">Fixed Value</p>
         {final}
       </div>
     </div>
@@ -202,57 +207,104 @@ function FieldBody({ field, state, setState, effective }: any) {
 
   switch (field.resolution) {
     case "resolved":
-      return renderLayout(field.inputValue, <div className="text-[13px] font-bold text-zinc-900 truncate px-1">{String(field.resolvedValue)}</div>);
+      return <div className="text-[14px] text-zinc-800 mt-1">{String(field.resolvedValue)}</div>;
 
     case "ai_suggested":
     case "ai_uncertain": {
       const label = (field.knownValues || []).find((kv: any) => kv.id === field.suggestion)?.label || field.suggestion;
       if (picking) {
-        return (
-            <div className="space-y-2">
-                <input 
-                    className="w-full rounded-lg border border-zinc-900 bg-white px-3 py-1.5 text-[12.5px] focus:outline-none"
-                    placeholder="Search options..."
-                    onBlur={() => setPicking(false)}
-                />
+        return renderTwoColumns(field.inputValue, (
+            <div>
+                <div className="relative">
+                    <select 
+                        autoFocus
+                        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 appearance-none"
+                        value={pickedValue || ""}
+                        onChange={(e) => setPickedValue(e.target.value)}
+                    >
+                        <option value="" disabled>Select an option...</option>
+                        {(field.knownValues || []).map((kv: any) => (
+                            <option key={kv.id} value={kv.label}>{kv.label}</option>
+                        ))}
+                    </select>
+                    <Icon.Chevron className="absolute right-3 top-2.5 size-4 text-zinc-400 pointer-events-none" />
+                </div>
+                <div className="flex items-center justify-end gap-4 mt-3">
+                    <button onClick={() => { setPicking(false); setPickedValue(null); }} className="text-zinc-500 hover:text-zinc-700 text-[13px] font-semibold transition-colors">Cancel</button>
+                    {pickedValue && (
+                        <button onClick={() => {
+                            setState({ overrideValue: pickedValue, locked: true, effectiveResolution: "resolved" });
+                            setPicking(false);
+                            setPickedValue(null);
+                        }} className="bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors">
+                            <Icon.Check className="size-3.5" /> Accept
+                        </button>
+                    )}
+                </div>
             </div>
-        );
+        ));
       }
-      return (
-        <div className="space-y-2">
-            {renderLayout(field.inputValue, <div className="text-[13px] font-bold text-zinc-400 italic px-1">Needs review</div>)}
-            <div className="mt-2 bg-brand-50 border border-brand-200 rounded-lg p-2.5 flex items-start gap-2.5">
-                <div className="size-6 rounded-md bg-brand-300 flex items-center justify-center shrink-0">
-                    <Icon.Sparkle className="size-3.5 text-zinc-900" />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <div className="text-[12.5px] text-zinc-900 leading-tight">
-                        Did you mean <span className="font-bold">{label}</span>?
-                        <span className="ml-2 text-zinc-400 font-medium">{Math.round(field.aiConfidence * 100)}% conf.</span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-2">
-                        <button onClick={() => setState({ overrideValue: label, locked: true, effectiveResolution: "resolved" })} className="bg-zinc-900 text-white text-[11px] font-bold px-3 py-1.5 rounded-md shadow-sm">Accept</button>
-                        <button onClick={() => setPicking(true)} className="bg-white border border-zinc-200 text-zinc-700 text-[11px] font-bold px-3 py-1.5 rounded-md shadow-sm">Pick other</button>
-                    </div>
-                </div>
+      return renderTwoColumns(field.inputValue, (
+        <div>
+            <div className="flex items-center justify-between border border-zinc-200 rounded-lg px-3 py-2 text-[14px] bg-white">
+                <span className="text-zinc-500 italic">Possible match: <span className="font-bold text-zinc-900 not-italic">{label}</span></span>
+                <span className="text-[#718B03] font-medium flex items-center gap-1 text-[12px]">
+                    <Icon.Sparkle className="size-3.5" />
+                    {Math.round(field.aiConfidence * 100)}% Confidence
+                </span>
+            </div>
+            <div className="flex items-center justify-end gap-3 mt-3">
+                <button onClick={() => setPicking(true)} className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors">Pick another</button>
+                <button onClick={() => setState({ overrideValue: label, locked: true, effectiveResolution: "resolved" })} className="bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors">
+                    <Icon.Check className="size-3.5" /> Accept
+                </button>
             </div>
         </div>
-      );
+      ));
     }
 
     case "unresolved":
-    case "coercion_error":
-      return renderLayout(field.inputValue, 
-        <input 
-            autoFocus
-            className="w-full rounded-lg border border-zinc-900 bg-white px-2.5 py-1 text-[12.5px] focus:outline-none ring-2 ring-zinc-900/10 font-bold"
-            placeholder="Fix value..."
-            onChange={(e) => setState({ overrideValue: e.target.value, locked: !!e.target.value, effectiveResolution: e.target.value ? "resolved" : field.resolution })}
-        />
-      );
+    case "coercion_error": {
+      // Local state to hold the input before committing
+      const [manualVal, setManualVal] = useState(state?.overrideValue || "");
+
+      return renderTwoColumns(field.inputValue, (
+        <div>
+            <div className="relative">
+                <input 
+                    autoFocus
+                    value={manualVal}
+                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 text-zinc-900 placeholder:italic placeholder:text-zinc-500"
+                    placeholder={`Fix the value to continue: ${field.targetDataType === 'Date' ? 'dd-mm-yyy' : ''}`}
+                    onChange={(e) => setManualVal(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && manualVal.trim()) {
+                            setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
+                        }
+                    }}
+                />
+                {field.targetDataType === 'Date' && (
+                    <div className="absolute right-3 top-2.5 text-zinc-800 pointer-events-none">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                )}
+            </div>
+            {manualVal.trim() && (
+                <div className="flex items-center justify-end gap-4 mt-3">
+                    <button onClick={() => setManualVal("")} className="text-zinc-500 hover:text-zinc-700 text-[13px] font-semibold transition-colors">Cancel</button>
+                    <button onClick={() => {
+                        setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
+                    }} className="bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors">
+                        <Icon.Check className="size-3.5" /> Accept
+                    </button>
+                </div>
+            )}
+        </div>
+      ));
+    }
 
     default:
-      return renderLayout(field.inputValue, <div className="text-[12.5px] text-zinc-400 italic px-1">Unmapped</div>);
+      return <div className="text-[14px] text-zinc-500 italic mt-1">Unmapped</div>;
   }
 }
 
@@ -473,7 +525,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                 {/* Main Content Area */}
                 <div className="px-10 py-8 bg-[#fbfbfb] border-t border-zinc-100">
                     {view === "document" ? (
-                        <div className="max-w-2xl mx-auto space-y-2">
+                        <div className="w-full space-y-2">
                              {PREFLIGHT.sections.map((section: any) => (
                                 <div key={section.id}>
                                     <Eyebrow>{section.label}</Eyebrow>
@@ -510,7 +562,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                              ))}
                         </div>
                     ) : (
-                        <div className="space-y-4 max-w-4xl mx-auto">
+                        <div className="space-y-4 w-full">
                             <div className="rounded-xl border border-zinc-200 overflow-hidden shadow-xl bg-white">
                                 <table className="w-full text-left border-collapse">
                                     <thead className="bg-zinc-50 border-b border-zinc-200">

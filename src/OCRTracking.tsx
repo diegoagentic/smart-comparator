@@ -375,7 +375,17 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 </div>
                                                                 {['inconsistencies', 'in_progress', 'processed'].includes(doc.status) && (
                                                                     <div className="flex items-center">
-                                                                        {doc.status === 'inconsistencies' ? (
+                                                                        {(doc as any).assignee ? (
+                                                                            <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
+                                                                                <button 
+                                                                                    onClick={(e) => e.stopPropagation()}
+                                                                                    className="h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm hover:ring-2 ring-primary/20 transition-all" 
+                                                                                    title={(doc as any).assignee.name}
+                                                                                >
+                                                                                    <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
+                                                                                </button>
+                                                                            </AssignExpertPopover>
+                                                                        ) : (
                                                                             <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
                                                                                 <button 
                                                                                     onClick={(e) => e.stopPropagation()}
@@ -385,18 +395,6 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                                     <User className="h-4 w-4" />
                                                                                 </button>
                                                                             </AssignExpertPopover>
-                                                                        ) : (
-                                                                            (doc as any).assignee && (
-                                                                                <AssignExpertPopover onAssign={(member) => handleAssign(doc, member)}>
-                                                                                    <button 
-                                                                                        onClick={(e) => e.stopPropagation()}
-                                                                                        className="h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm hover:ring-2 ring-primary/20 transition-all" 
-                                                                                        title={(doc as any).assignee.name}
-                                                                                    >
-                                                                                        <img src={(doc as any).assignee.photo} alt={(doc as any).assignee.name} className="h-full w-full object-cover" />
-                                                                                    </button>
-                                                                                </AssignExpertPopover>
-                                                                            )
                                                                         )}
                                                                     </div>
                                                                 )}
