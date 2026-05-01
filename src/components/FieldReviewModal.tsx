@@ -100,11 +100,11 @@ export default function FieldReviewModal({ document, onResolve, onClose, initial
         <div className="flex flex-col h-full bg-white dark:bg-zinc-900 shrink-0 min-h-0 border-l border-zinc-200 dark:border-zinc-800">
             {/* Title Area */}
             <div className="bg-[#EBECEE] dark:bg-zinc-900 px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-                <h4 className="text-[14px] font-bold text-[#7A8C9E] dark:text-slate-400 uppercase tracking-wide">
-                    EXTRACTED FIELDS
+                <h4 className="text-[14px] font-bold text-[#7A8C9E] dark:text-slate-400 uppercase tracking-widest font-['Inter']">
+                    FIELD REVIEW
                 </h4>
-                <p className="text-[12px] text-[#9BA9BA] dark:text-zinc-500 mt-1">
-                    Validate extracted fields
+                <p className="text-[12px] text-[#9BA9BA] dark:text-zinc-500 mt-1 font-['Inter']">
+                    Validate field review
                 </p>
             </div>
 
