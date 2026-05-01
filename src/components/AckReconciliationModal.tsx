@@ -479,22 +479,19 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
 
                                         {/* Footer */}
                                         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                                            <span className="text-xs text-muted-foreground">
-                                                {Object.keys(allFixes).length} / {filteredAllDiscrepancies.length} resolved
-                                            </span>
+                                            <button onClick={onClose} className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
+                                                Cancel
+                                            </button>
                                             <div className="flex gap-3">
-                                                <button onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-xl transition-colors">
-                                                    Save as Draft
-                                                </button>
                                                 <button
                                                     onClick={() => {
                                                         onClose();
                                                         triggerToast('Discrepancies Resolved', `${Object.keys(allFixes).length} discrepancies resolved across all documents`, 'success');
                                                     }}
                                                     disabled={Object.keys(allFixes).length === 0}
-                                                    className="px-4 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
+                                                    className="px-6 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
                                                 >
-                                                    Resolve Discrepancies <ArrowRightIcon className="w-4 h-4" />
+                                                    Publish <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </div>
@@ -836,24 +833,24 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             })}
                                         </div>
 
-                                        {/* Smart Comparator: Save as Draft + Resolve (per transcript) */}
-                                        <div className="flex gap-3 mt-5">
+                                        {/* Smart Comparator: Cancel + Publish (per transcript) */}
+                                        <div className="flex items-center justify-between mt-5">
                                             <button
-                                                onClick={() => { triggerToast('Draft Saved', 'Discrepancy resolution saved as draft', 'info'); onClose(); }}
-                                                className="flex-1 py-3 rounded-xl text-sm font-bold bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center justify-center gap-2"
+                                                onClick={onClose}
+                                                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
                                             >
-                                                Save as Draft
+                                                Cancel
                                             </button>
                                             <button
                                                 onClick={() => setStep('confirm')}
                                                 disabled={!allDecided}
-                                                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                                                className={`px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                                                     allDecided
                                                         ? 'bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 dark:hover:bg-brand-600/50 text-zinc-900 shadow-sm'
                                                         : 'bg-muted text-muted-foreground cursor-not-allowed'
                                                 }`}
                                             >
-                                                Resolve All
+                                                Publish
                                                 <ArrowRightIcon className="w-4 h-4" />
                                             </button>
                                         </div>

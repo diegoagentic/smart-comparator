@@ -91,10 +91,82 @@ const PREFLIGHT: any = {
               { dtoPath: "shipping.shipTo.city",       displayName: "City",        targetDataType: "String", inputValue: "Miami",     resolution: "resolved", resolvedValue: "Miami" },
               { dtoPath: "shipping.shipTo.state",      displayName: "State",       targetDataType: "DropDown", inputValue: "XX", resolution: "unresolved", reason: "VALUE_NOT_IN_LIST",
                 knownValues: [
-                  { id: 1, label: "FL" }, { id: 2, label: "CA" }, { id: 3, label: "NY" },
-                  { id: 4, label: "TX" }, { id: 5, label: "WA" }, { id: 6, label: "IL" },
+                  { id: 1, label: "AL" }, { id: 2, label: "AK" }, { id: 3, label: "AZ" }, { id: 4, label: "AR" }, { id: 5, label: "CA" },
+                  { id: 6, label: "CO" }, { id: 7, label: "CT" }, { id: 8, label: "DE" }, { id: 9, label: "FL" }, { id: 10, label: "GA" },
+                  { id: 11, label: "HI" }, { id: 12, label: "ID" }, { id: 13, label: "IL" }, { id: 14, label: "IN" }, { id: 15, label: "IA" },
+                  { id: 16, label: "KS" }, { id: 17, label: "KY" }, { id: 18, label: "LA" }, { id: 19, label: "ME" }, { id: 20, label: "MD" },
+                  { id: 21, label: "MA" }, { id: 22, label: "MI" }, { id: 23, label: "MN" }, { id: 24, label: "MS" }, { id: 25, label: "MO" },
+                  { id: 26, label: "MT" }, { id: 27, label: "NE" }, { id: 28, label: "NV" }, { id: 29, label: "NH" }, { id: 30, label: "NJ" },
+                  { id: 31, label: "NM" }, { id: 32, label: "NY" }, { id: 33, label: "NC" }, { id: 34, label: "ND" }, { id: 35, label: "OH" },
+                  { id: 36, label: "OK" }, { id: 37, label: "OR" }, { id: 38, label: "PA" }, { id: 39, label: "RI" }, { id: 40, label: "SC" },
+                  { id: 41, label: "SD" }, { id: 42, label: "TN" }, { id: 43, label: "TX" }, { id: 44, label: "UT" }, { id: 45, label: "VT" },
+                  { id: 46, label: "VA" }, { id: 47, label: "WA" }, { id: 48, label: "WV" }, { id: 49, label: "WI" }, { id: 50, label: "WY" },
                 ] },
+              { dtoPath: "shipping.shipTo.zip",         displayName: "Postal Code", targetDataType: "String", inputValue: "33101", resolution: "resolved", resolvedValue: "33101" },
+              { dtoPath: "shipping.shipTo.country",     displayName: "Country",     targetDataType: "String", inputValue: "US",    resolution: "resolved", resolvedValue: "US" },
             ],
+          },
+          { dtoPath: "shipping.freightTerms",    displayName: "Freight Terms",    targetDataType: "String",  inputValue: "8001", resolution: "resolved", resolvedValue: "8001" },
+          { dtoPath: "shipping.installComplete", displayName: "Install Complete", targetDataType: "Boolean", inputValue: true,   resolution: "resolved", resolvedValue: "Yes" },
+          { dtoPath: "shipping.locationType",    displayName: "Location Type",   targetDataType: "String",  inputValue: "9011", resolution: "resolved", resolvedValue: "9011" },
+        ],
+      },
+      {
+        id: "financials",
+        label: "Financials",
+        fields: [
+          { dtoPath: "financials.totalAmount", displayName: "PO Total Amounts", targetDataType: "Currency", inputValue: "$12,489.95", resolution: "resolved", resolvedValue: "$12,489.95", required: true },
+          { dtoPath: "financials.totalAmount2", displayName: "PO Total Amounts", targetDataType: "Currency", inputValue: "$11,740.00", resolution: "resolved", resolvedValue: "$11,740.00" },
+          { dtoPath: "financials.freight",      displayName: "Freight 2",        targetDataType: "Currency", inputValue: "$249.95",   resolution: "resolved", resolvedValue: "$249.95" },
+          { dtoPath: "financials.salesTax",    displayName: "Sales Tax",        targetDataType: "Currency", inputValue: "n/a",       resolution: "coercion_error", reason: "INVALID_CURRENCY" },
+          { dtoPath: "financials.discount",     displayName: "Discount Amount",  targetDataType: "Currency", inputValue: "$500.00",   resolution: "resolved", resolvedValue: "$500.00" },
+        ],
+      },
+      {
+        id: "project",
+        label: "Project",
+        fields: [
+          { dtoPath: "project.endCustomerName", displayName: "End Customer Name", targetDataType: "String", inputValue: "Avanto HQ Refresh", resolution: "resolved", resolvedValue: "Avanto HQ Refresh" },
+          { dtoPath: "project.salesPerson",     displayName: "Sales Person",     targetDataType: "String", inputValue: "2001",              resolution: "resolved", resolvedValue: "2001" },
+          { dtoPath: "project.region",          displayName: "Region",           targetDataType: "String", inputValue: "311",               resolution: "resolved", resolvedValue: "311" },
+          { 
+            dtoPath: "project.processors",      displayName: "Processors",       targetDataType: "Collection", isCollection: true, resolution: "partial",
+            items: [
+              { original: "viviana ruiz", fixed: "Viviana Ruiz", confidence: 0.99, resolution: "resolved" },
+              { original: "m webb",       fixed: null,           confidence: null, resolution: "unresolved" },
+              { original: "priyah s",      fixed: "Priyah Shah",  confidence: 0.99, resolution: "resolved" },
+              { original: "ren laurent",   fixed: "Renée Laurent",confidence: 0.87, resolution: "ai_suggested" },
+              { original: "unknown",       fixed: null,           confidence: null, resolution: "unresolved" },
+            ]
+          },
+          { dtoPath: "project.furnitureRequired", displayName: "Furniture Required?", targetDataType: "Boolean", inputValue: true, resolution: "resolved", resolvedValue: "Yes" },
+          { dtoPath: "project.furnitureSubCategory", displayName: "Furniture Sub Category", targetDataType: "String", inputValue: "Seating, Desking", resolution: "resolved", resolvedValue: "Seating, Desking" },
+        ],
+      },
+      {
+        id: "notes",
+        label: "Notes",
+        fields: [
+          { dtoPath: "notes.main",        displayName: "Notes",               targetDataType: "String", inputValue: "Confirmed pricing w/vendor on 4/18", resolution: "resolved", resolvedValue: "Confirmed pricing w/vendor on 4/18" },
+          { dtoPath: "notes.additional",  displayName: "Additional Comments", targetDataType: "String", inputValue: "Rush for Q2 open house", resolution: "unmapped", reason: "NOT_SUPPORTED_IN_TARGET" },
+        ],
+      },
+      {
+        id: "extra",
+        label: "Extra Fields",
+        isExtraSection: true,
+        fields: [
+          { dtoPath: "extra.dealerCompany", displayName: "Dealer Company", targetDataType: "String", inputValue: "Avanto", resolution: "resolved", resolvedValue: "Avanto", required: true, isExtra: true },
+          { 
+            dtoPath: "extra.soldTo",        displayName: "Sold To",           targetDataType: "Object",   isObject: true, required: true, isExtra: true,
+            children: [
+              { dtoPath: "extra.soldTo.account", displayName: "Account",     targetDataType: "String", inputValue: "Avanto Sold",    resolution: "resolved", resolvedValue: "Avanto Sold" },
+              { dtoPath: "extra.soldTo.street",  displayName: "Street",      targetDataType: "String", inputValue: "100 Market Street", resolution: "resolved", resolvedValue: "100 Market Street" },
+              { dtoPath: "extra.soldTo.city",    displayName: "City",        targetDataType: "String", inputValue: "San Francisco",  resolution: "resolved", resolvedValue: "San Francisco" },
+              { dtoPath: "extra.soldTo.state",   displayName: "State",       targetDataType: "String", inputValue: "CA",             resolution: "resolved", resolvedValue: "CA" },
+              { dtoPath: "extra.soldTo.zip",     displayName: "Postal Code", targetDataType: "String", inputValue: "94103",          resolution: "resolved", resolvedValue: "94103" },
+              { dtoPath: "extra.soldTo.country", displayName: "Country",     targetDataType: "String", inputValue: "US",             resolution: "resolved", resolvedValue: "US" },
+            ]
           },
         ],
       },
@@ -112,9 +184,7 @@ const PREFLIGHT: any = {
   ],
 };
 
-const EXTRA_FIELDS = [
-    { id: "dealer-company", label: "Dealer Company", dataType: "String", value: "Avanto", included: true, required: true },
-];
+
 
 // =====================================================================
 // Sub-components
@@ -150,6 +220,11 @@ function FieldRow({ field, state, setState, compact }: any) {
       <div className={`${compact ? "px-4 pt-3" : "px-5 pt-4"} flex items-start justify-between gap-4`}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3 flex-wrap">
+            {field.isExtra && (
+               <div className="size-4 rounded bg-[#d6f22e] flex items-center justify-center text-zinc-900 shrink-0">
+                  <Icon.Check className="size-3" strokeWidth={3} />
+               </div>
+            )}
             <span className="text-[14px] font-bold text-zinc-900 truncate">
               {field.displayName}
             </span>
@@ -171,6 +246,12 @@ function FieldRow({ field, state, setState, compact }: any) {
 function FieldBody({ field, state, setState, effective }: any) {
   const [picking, setPicking] = useState(false);
   const [pickedValue, setPickedValue] = useState<string | null>(null);
+  const [manualVal, setManualVal] = useState(state?.overrideValue || "");
+
+  // Sync manualVal if parent state changes (e.g. Reset)
+  React.useEffect(() => {
+    setManualVal(state?.overrideValue || "");
+  }, [state?.overrideValue]);
 
   // If we have an override, show the override summary with a Reset button
   if (state?.overrideValue != null && effective === "resolved" && field.resolution !== "resolved") {
@@ -207,7 +288,22 @@ function FieldBody({ field, state, setState, effective }: any) {
 
   switch (field.resolution) {
     case "resolved":
-      return <div className="text-[14px] text-zinc-800 mt-1">{String(field.resolvedValue)}</div>;
+      return (
+        <div className="flex items-center gap-2 text-[14px] text-zinc-800 mt-1">
+          {field.targetDataType === 'Boolean' && (
+            <div className="size-4 rounded bg-[#d6f22e] flex items-center justify-center text-zinc-900">
+              <Icon.Check className="size-3" strokeWidth={3} />
+            </div>
+          )}
+          {field.isExtra ? (
+             <div className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900 mt-0.5">
+                {String(field.resolvedValue)}
+             </div>
+          ) : (
+             String(field.resolvedValue)
+          )}
+        </div>
+      );
 
     case "ai_suggested":
     case "ai_uncertain": {
@@ -265,47 +361,204 @@ function FieldBody({ field, state, setState, effective }: any) {
 
     case "unresolved":
     case "coercion_error": {
-      // Local state to hold the input before committing
-      const [manualVal, setManualVal] = useState(state?.overrideValue || "");
-
       return renderTwoColumns(field.inputValue, (
         <div>
             <div className="relative">
-                <input 
-                    autoFocus
-                    value={manualVal}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 text-zinc-900 placeholder:italic placeholder:text-zinc-500"
-                    placeholder={`Fix the value to continue: ${field.targetDataType === 'Date' ? 'dd-mm-yyy' : ''}`}
-                    onChange={(e) => setManualVal(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && manualVal.trim()) {
-                            setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
-                        }
-                    }}
-                />
-                {field.targetDataType === 'Date' && (
-                    <div className="absolute right-3 top-2.5 text-zinc-800 pointer-events-none">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
+                {field.targetDataType === 'DropDown' ? (
+                  <>
+                    <select 
+                        autoFocus
+                        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 appearance-none"
+                        value={manualVal}
+                        onChange={(e) => setManualVal(e.target.value)}
+                    >
+                        <option value="" disabled>Select an option...</option>
+                        {(field.knownValues || []).map((kv: any) => (
+                            <option key={kv.id} value={kv.label}>{kv.label}</option>
+                        ))}
+                    </select>
+                    <Icon.Chevron className="absolute right-3 top-2.5 size-4 text-zinc-400 pointer-events-none" />
+                  </>
+                ) : (
+                  <>
+                    <input 
+                        autoFocus
+                        value={manualVal}
+                        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 text-zinc-900 placeholder:italic placeholder:text-zinc-500"
+                        placeholder={field.targetDataType === 'Currency' || field.targetDataType === 'Number' ? 'Enter numeric value' : `Fix the value to continue: ${field.targetDataType === 'Date' ? 'dd-mm-yyy' : ''}`}
+                        onChange={(e) => setManualVal(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && manualVal.trim()) {
+                                setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
+                            }
+                        }}
+                    />
+                    {field.targetDataType === 'Date' && (
+                        <div className="absolute right-3 top-2.5 text-zinc-800 pointer-events-none">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                    )}
+                  </>
                 )}
             </div>
-            {manualVal.trim() && (
-                <div className="flex items-center justify-end gap-4 mt-3">
-                    <button onClick={() => setManualVal("")} className="text-zinc-500 hover:text-zinc-700 text-[13px] font-semibold transition-colors">Cancel</button>
-                    <button onClick={() => {
-                        setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
-                    }} className="bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors">
-                        <Icon.Check className="size-3.5" /> Accept
-                    </button>
-                </div>
-            )}
+            <div className="flex items-center justify-end gap-4 mt-3">
+                <button 
+                  onClick={() => { if (field.knownValues?.length) setPicking(true); else setManualVal(""); }}
+                  className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors"
+                >
+                  {field.knownValues?.length ? "Pick another" : "Cancel"}
+                </button>
+                <button 
+                    disabled={!manualVal.trim()}
+                    onClick={() => {
+                        if (manualVal.trim()) setState({ overrideValue: manualVal, locked: true, effectiveResolution: "resolved" });
+                    }} 
+                    className={`bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors ${!manualVal.trim() ? "opacity-40 cursor-not-allowed" : ""}`}
+                >
+                    <Icon.Check className="size-3.5" /> Accept
+                </button>
+            </div>
         </div>
       ));
     }
 
+    case "unmapped":
+      return (
+        <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-3 text-[12.5px] text-zinc-500 mt-2 flex gap-3 items-start">
+          <Icon.Ban className="size-4 text-zinc-400 shrink-0 mt-0.5" />
+          <div>This value won't be stored on the record. Input was "{field.inputValue}".</div>
+        </div>
+      );
+
     default:
       return <div className="text-[14px] text-zinc-500 italic mt-1">Unmapped</div>;
   }
+}
+
+// ---------------------------------------------------------------------
+// Collection Field Group (for multi-value fields like Processors)
+// ---------------------------------------------------------------------
+function CollectionItem({ item }: { item: any }) {
+  const isResolved = item.resolution === "resolved";
+  const isSuggested = item.resolution === "ai_suggested";
+  const isUnresolved = item.resolution === "unresolved";
+
+  const borderColor = isResolved ? "border-green-500" : isSuggested ? "border-indigo-500" : "border-amber-500";
+
+  return (
+    <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm flex">
+       <div className={`w-1 ${borderColor} shrink-0`} />
+       <div className="flex-1 p-4">
+          <div className="grid grid-cols-2 gap-8">
+             <div>
+                <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Original Value</p>
+                <div className="bg-zinc-100/80 border border-zinc-100 rounded-lg px-3 py-2.5 text-[14px] text-zinc-500 font-medium">
+                   {item.original}
+                </div>
+             </div>
+             <div>
+                <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Fixed Value</p>
+                {isResolved && (
+                   <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                         <span className="text-[12px] text-zinc-400 italic">Matched to:</span>
+                         <span className="text-[14px] font-bold text-zinc-900">{item.fixed}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-[11px] text-green-600 font-bold flex items-center gap-1">
+                            <Icon.Sparkle className="size-3" /> {Math.round(item.confidence * 100)}% Confidence
+                         </span>
+                         <button className="text-[12px] font-bold text-zinc-900 hover:underline">Change</button>
+                      </div>
+                   </div>
+                )}
+                {isUnresolved && (
+                   <div className="space-y-3">
+                      <div className="flex items-center justify-between border border-zinc-200 rounded-lg px-3 py-2 text-[14px] bg-white">
+                         <span className="text-zinc-400 italic">Possible match: <span className="font-bold text-zinc-900 not-italic">—</span></span>
+                         <span className="text-amber-500 font-bold flex items-center gap-1 text-[11px]">
+                            <Icon.Warn className="size-3.5" /> No match found
+                         </span>
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                         <button className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Drop Value</button>
+                         <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Pick from list</button>
+                      </div>
+                   </div>
+                )}
+                {isSuggested && (
+                   <div className="space-y-3">
+                      <div className="flex items-center justify-between border border-zinc-200 rounded-lg px-3 py-2 text-[14px] bg-white">
+                         <span className="text-zinc-400 italic">AI Suggestion: <span className="font-bold text-zinc-900 not-italic">{item.fixed}</span></span>
+                         <span className="text-indigo-500 font-bold flex items-center gap-1 text-[11px]">
+                            <Icon.Sparkle className="size-3.5" /> {Math.round(item.confidence * 100)}% Confidence
+                         </span>
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                         <button className="border border-red-200 text-red-600 hover:bg-red-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Reject</button>
+                         <button className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Change</button>
+                         <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold flex items-center gap-1.5 transition-colors">
+                            <Icon.Check className="size-3.5" /> Accept
+                         </button>
+                      </div>
+                   </div>
+                )}
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+}
+
+function CollectionFieldGroup({ field }: any) {
+  const [expanded, setExpanded] = useState(true);
+  const items = field.items || [];
+  
+  const summary = {
+    received: items.length,
+    ai: items.filter((i: any) => i.resolution === "ai_suggested").length,
+    review: items.filter((i: any) => i.resolution === "unresolved" || i.resolution === "ai_suggested").length
+  };
+
+  return (
+    <div className={`rounded-xl border transition-all ${expanded ? "border-amber-200 bg-amber-50/10" : "border-zinc-200 bg-white"}`}>
+      <div 
+        onClick={() => setExpanded(!expanded)}
+        className="px-5 py-4 flex items-center justify-between cursor-pointer"
+      >
+        <div>
+          <div className="text-[14px] font-bold text-zinc-900">{field.displayName}</div>
+          <div className="flex items-center gap-3 mt-1">
+             <span className="text-[11px] text-zinc-500 font-medium">{summary.received} values received</span>
+             <span className="text-zinc-300">•</span>
+             <span className="text-[11px] text-indigo-500 font-bold flex items-center gap-1">
+                <Icon.Sparkle className="size-3" /> {summary.ai} AI suggestion
+             </span>
+             <span className="text-zinc-300">•</span>
+             <span className="text-[11px] text-amber-600 font-bold">{summary.review} left to review</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+           <ResolutionPill resolution={field.resolution} />
+           <Icon.Chevron className={`size-5 text-zinc-400 transition-transform ${expanded ? "rotate-180" : ""}`} />
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="px-5 pb-5 space-y-3">
+           {items.map((item: any, idx: number) => (
+             <CollectionItem key={idx} item={item} />
+           ))}
+           <div className="flex items-center justify-between pt-2 border-t border-zinc-200/60 mt-4">
+              <button className="text-[13px] font-bold text-zinc-400 flex items-center gap-2 hover:text-zinc-600 transition-colors">
+                 <Icon.Plus className="size-4" /> Add value...
+              </button>
+              <span className="text-[11px] text-zinc-400 font-medium">{items.length} available</span>
+           </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------
@@ -314,24 +567,45 @@ function FieldBody({ field, state, setState, effective }: any) {
 function ObjectFieldGroup({ field, fieldState, setFS, keyPrefix }: any) {
   const children = field.children || [];
   return (
-    <div className="rounded-xl border border-zinc-200 bg-zinc-50/30 overflow-hidden mb-4">
+    <div className={`rounded-xl border border-zinc-200 overflow-hidden mb-4 ${field.isExtra ? "bg-white" : "bg-zinc-50/30"}`}>
       <div className="px-4 py-3 flex items-center gap-3 border-b border-zinc-100 bg-white">
-        <div className="flex items-center justify-center size-8 rounded-lg bg-zinc-100 text-zinc-600 shrink-0">
-          <Icon.Folder className="size-4" />
-        </div>
+        {field.isExtra ? (
+           <div className="size-4 rounded bg-[#d6f22e] flex items-center justify-center text-zinc-900 shrink-0">
+              <Icon.Check className="size-3" strokeWidth={3} />
+           </div>
+        ) : (
+           <div className="flex items-center justify-center size-8 rounded-lg bg-zinc-100 text-zinc-600 shrink-0">
+              <Icon.Folder className="size-4" />
+           </div>
+        )}
         <span className="text-[14px] font-bold text-zinc-900">{field.displayName}</span>
+        {field.required && (
+            <span className="inline-flex items-center rounded-full bg-red-100 text-red-600 px-2.5 py-0.5 text-[10px] font-medium ml-1">Required</span>
+        )}
         <span className="text-[11px] text-zinc-400 ml-auto">{children.length} fields</span>
       </div>
       <div className="p-3 space-y-2">
-         {children.map((child: any) => (
-            <FieldRow
-              key={child.dtoPath}
-              field={child}
-              state={fieldState[`${keyPrefix}:${child.dtoPath}`]}
-              setState={setFS(`${keyPrefix}:${child.dtoPath}`)}
-              compact
-            />
-         ))}
+         {children.map((child: any) => {
+            if (field.isExtra) {
+               return (
+                  <div key={child.dtoPath} className="flex items-center justify-between gap-4 py-1 px-1">
+                     <span className="text-[13px] font-medium text-zinc-700">{child.displayName}</span>
+                     <div className="w-[65%] bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900">
+                        {child.resolvedValue}
+                     </div>
+                  </div>
+               );
+            }
+            return (
+              <FieldRow
+                key={child.dtoPath}
+                field={child}
+                state={fieldState[`${keyPrefix}:${child.dtoPath}`]}
+                setState={setFS(`${keyPrefix}:${child.dtoPath}`)}
+                compact
+              />
+            );
+         })}
       </div>
     </div>
   );
@@ -400,6 +674,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
       PREFLIGHT.sections.forEach((s: any) => {
           s.fields.forEach((f: any) => {
               if (f.isObject) f.children.forEach((c: any) => out.push({...c, key: `h:${s.id}:${f.dtoPath}:${c.dtoPath}`}));
+              else if (f.isCollection) f.items.forEach((item: any, i: number) => out.push({...item, key: `h:${s.id}:${f.dtoPath}:${i}`}));
               else out.push({...f, key: `h:${s.id}:${f.dtoPath}`});
           });
       });
@@ -413,7 +688,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
         const r = (st && st.effectiveResolution) || f.resolution;
         if (r === "resolved") counts.resolved++;
         else if (r === "unresolved" || r === "coercion_error") counts.unresolved++;
-        else if (r === "ai_suggested" || r === "ai_uncertain") counts.aiUncertain++;
+        else if (r === "ai_suggested" || r === "ai_uncertain" || r === "partial") counts.aiUncertain++;
         else if (r === "unmapped") counts.unmapped++;
     });
     return { ...counts, valid: counts.unresolved === 0 && counts.aiUncertain === 0 };
@@ -529,9 +804,16 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                              {PREFLIGHT.sections.map((section: any) => (
                                 <div key={section.id}>
                                     <Eyebrow>{section.label}</Eyebrow>
+                                    {section.isExtraSection && (
+                                       <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 text-[12.5px] text-blue-600 mb-6 flex gap-3 items-center">
+                                          <Icon.Info className="size-5 text-blue-500 shrink-0" />
+                                          <div>Catalog fields outside the standard Purchase Order schema. Forwarded as-is without auto-matching — you own the value.</div>
+                                        </div>
+                                    )}
                                     <div className="grid grid-cols-1 gap-2.5">
                                         {section.fields.map((f: any) => {
                                             if (f.isObject) return <ObjectFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} keyPrefix={`h:${section.id}:${f.dtoPath}`} />;
+                                            if (f.isCollection) return <CollectionFieldGroup key={f.dtoPath} field={f} />;
                                             return (
                                                 <FieldRow
                                                     key={f.dtoPath}
@@ -542,22 +824,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                                             );
                                         })}
                                     </div>
-                                </div>
-                             ))}
-                             
-                             {/* Extra Fields */}
-                             <Eyebrow trailing={<span className="text-[11px] text-zinc-400 font-medium">Catalog-level passthrough</span>}>Extra fields</Eyebrow>
-                             <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-4 text-[12.5px] text-zinc-500 mb-6 flex gap-3 items-start">
-                                <Icon.Info className="size-5 text-indigo-500 shrink-0 mt-0.5" />
-                                <div>Fields outside the standard schema. Forwarded as-is without auto-matching.</div>
-                             </div>
-                             {EXTRA_FIELDS.map(x => (
-                                <div key={x.id} className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between shadow-sm">
-                                    <div className="flex items-center gap-3">
-                                        <div className="strata-check size-4 border-2 border-zinc-300 rounded checked:bg-zinc-900"></div>
-                                        <span className="text-[13.5px] font-bold text-zinc-900">{x.label}</span>
-                                    </div>
-                                    <div className="text-[13px] font-medium text-zinc-500">{x.value}</div>
+                                    <div className="h-10" />
                                 </div>
                              ))}
                         </div>
@@ -600,18 +867,14 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
               </div>
 
               <footer className="h-[88px] px-10 flex items-center justify-between border-t border-zinc-200 bg-[#FAFAFA] shrink-0">
-                <div className="flex items-center gap-8">
-                  <button onClick={onClose} className="text-[14px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors">Cancel</button>
-                  <div className="h-5 w-px bg-zinc-200" />
-                  <button className="text-[12px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors uppercase tracking-[0.15em]">Save Draft</button>
-                </div>
+                <button onClick={onClose} className="text-[14px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors">Cancel</button>
                 <div className="flex items-center gap-4">
                   <button
                     disabled={!summary.valid}
                     onClick={() => onConvert(document.id, 'po')}
                     className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 shadow-[#e2f373]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
                   >
-                    Publish to Orderbahn
+                    Publish
                     <Icon.Arrow className="size-4.5" />
                   </button>
                 </div>
