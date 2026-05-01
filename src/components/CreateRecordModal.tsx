@@ -28,8 +28,8 @@ const Icon = {
 // =====================================================================
 const TONE: Record<string, any> = {
   resolved:       { pill: "bg-[#E8F5E9] text-green-800",       dot: "bg-green-600",  label: "Ready",          ring: "ring-green-200/60" },
-  ai_suggested:   { pill: "bg-[#E2F373] text-[#507206]",       dot: "bg-[#718B03]",  label: "AI Match",       ring: "ring-brand-300/60" },
-  ai_uncertain:   { pill: "bg-amber-100 text-amber-700",       dot: "bg-amber-500",  label: "Low confidence", ring: "ring-amber-200/60" },
+  ai_suggested:   { pill: "bg-[#E6F993] text-[#507206]",       dot: "bg-[#718B03]",  label: "AI Match",       ring: "ring-brand-300/60" },
+  ai_uncertain:   { pill: "bg-amber-100 text-amber-700",       dot: "bg-amber-500",  label: "Review",         ring: "ring-amber-200/60" },
   partial:        { pill: "bg-amber-100 text-amber-700",       dot: "bg-amber-500",  label: "Partial match",  ring: "ring-amber-200/60" },
   unresolved:     { pill: "bg-red-100 text-red-700",           dot: "bg-red-500",    label: "Needs choice",   ring: "ring-red-200/60" },
   unmapped:       { pill: "bg-zinc-100 text-zinc-600",         dot: "bg-zinc-400",   label: "Not sent",       ring: "ring-zinc-200/60" },
@@ -173,16 +173,55 @@ const PREFLIGHT: any = {
   ],
   lineItems: [
     {
-      rowIndex: 0,
+      rowIndex: 1,
       fields: [
-        { dtoPath: "productNumber",      displayName: "Product Number",      targetDataType: "String",   inputValue: "SKU-1", resolution: "resolved", resolvedValue: "SKU-1", required: true },
-        { dtoPath: "productDescription", displayName: "Description",         targetDataType: "String",   inputValue: "Aeron \u2014 Size B, Graphite", resolution: "resolved", resolvedValue: "Aeron \u2014 Size B, Graphite" },
-        { dtoPath: "quantity",           displayName: "Qty",                 targetDataType: "Number",   inputValue: 2, resolution: "resolved", resolvedValue: 2, required: true },
-        { dtoPath: "productList",        displayName: "List",                targetDataType: "Currency", inputValue: 1295.00, resolution: "resolved", resolvedValue: "1295.00" },
-      ],
+        { dtoPath: "productNumber", displayName: "Product", inputValue: "SKU-1", resolution: "resolved", resolvedValue: "SKU-1" },
+        { dtoPath: "productDescription", displayName: "Description", inputValue: "Aeron — Size B, Graphite", resolution: "resolved", resolvedValue: "Aeron — Size B, Graphite" },
+        { dtoPath: "quantity", displayName: "Qty", inputValue: "2", resolution: "resolved", resolvedValue: "2" },
+        { dtoPath: "productList", displayName: "List", inputValue: "1295.00", resolution: "resolved", resolvedValue: "1295.00" },
+        { dtoPath: "catalogCode", displayName: "Catalog Code", inputValue: "widg-a", resolution: "resolved", resolvedValue: "widg-a" },
+      ]
     },
+    {
+      rowIndex: 2,
+      fields: [
+        { dtoPath: "productNumber", displayName: "Product", inputValue: "SKU-2", resolution: "resolved", resolvedValue: "SKU-2" },
+        { dtoPath: "productDescription", displayName: "Description", inputValue: "Eames Soft Pad, Low Back", resolution: "resolved", resolvedValue: "Eames Soft Pad, Low Back" },
+        { dtoPath: "quantity", displayName: "Qty", inputValue: "5", resolution: "resolved", resolvedValue: "5" },
+        { dtoPath: "productList", displayName: "List", inputValue: "2890.00", resolution: "resolved", resolvedValue: "2890.00" },
+        { 
+          dtoPath: "catalogCode", displayName: "Catalog Code", inputValue: "???", resolution: "ai_uncertain", 
+          reason: "MULTIPLE_MATCHES",
+          knownValues: [
+             { id: "a", label: "Widget A" },
+             { id: "b", label: "Widget B" },
+             { id: "c", label: "Widget C" },
+          ]
+        },
+      ]
+    },
+    {
+      rowIndex: 3,
+      fields: [
+        { dtoPath: "productNumber", displayName: "Product", inputValue: "SKU-3", resolution: "resolved", resolvedValue: "SKU-3" },
+        { dtoPath: "productDescription", displayName: "Description", inputValue: "Steelcase Leap v2", resolution: "resolved", resolvedValue: "Steelcase Leap v2" },
+        { dtoPath: "quantity", displayName: "Qty", inputValue: "1", resolution: "resolved", resolvedValue: "1" },
+        { dtoPath: "productList", displayName: "List", inputValue: "1100.00", resolution: "resolved", resolvedValue: "1100.00" },
+        { dtoPath: "catalogCode", displayName: "Catalog Code", inputValue: "widg-c", resolution: "resolved", resolvedValue: "widg-c" },
+      ]
+    }
   ],
 };
+const PROCESSOR_DIRECTORY = [
+  "Viviana Ruiz",
+  "Priyah Shah",
+  "Renée Laurent",
+  "Marcus Webb",
+  "Mark Webb",
+  "Miles Webster",
+  "Sarah Jenkins",
+  "Sam Smith",
+];
 
 
 
@@ -192,8 +231,9 @@ const PREFLIGHT: any = {
 function ResolutionPill({ resolution }: { resolution: string }) {
   const t = TONE[resolution] || TONE.unresolved;
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${t.pill}`}>
-      <span className={`inline-block size-1.5 rounded-full ${t.dot}`}></span>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold ${t.pill}`}>
+      {resolution === "resolved" && <Icon.Check className="size-3.5" />}
+      {(resolution === "ai_uncertain" || resolution === "partial" || resolution === "coercion_error") && <Icon.Warn className="size-3.5" />}
       {t.label}
     </span>
   );
@@ -296,11 +336,13 @@ function FieldBody({ field, state, setState, effective }: any) {
             </div>
           )}
           {field.isExtra ? (
-             <div className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900 mt-0.5">
-                {String(field.resolvedValue)}
-             </div>
+            <input 
+              className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900 focus:outline-none focus:border-zinc-400 transition-colors"
+              value={state?.overrideValue ?? field.resolvedValue}
+              onChange={(e) => setState({ overrideValue: e.target.value, effectiveResolution: "resolved", isDirty: true })}
+            />
           ) : (
-             String(field.resolvedValue)
+            String(field.resolvedValue)
           )}
         </div>
       );
@@ -383,9 +425,10 @@ function FieldBody({ field, state, setState, effective }: any) {
                   <>
                     <input 
                         autoFocus
+                        type={field.targetDataType === 'Date' ? 'date' : 'text'}
                         value={manualVal}
                         className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 text-zinc-900 placeholder:italic placeholder:text-zinc-500"
-                        placeholder={field.targetDataType === 'Currency' || field.targetDataType === 'Number' ? 'Enter numeric value' : `Fix the value to continue: ${field.targetDataType === 'Date' ? 'dd-mm-yyy' : ''}`}
+                        placeholder={field.targetDataType === 'Currency' || field.targetDataType === 'Number' ? 'Enter numeric value' : 'Fix the value to continue...'}
                         onChange={(e) => setManualVal(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && manualVal.trim()) {
@@ -393,11 +436,6 @@ function FieldBody({ field, state, setState, effective }: any) {
                             }
                         }}
                     />
-                    {field.targetDataType === 'Date' && (
-                        <div className="absolute right-3 top-2.5 text-zinc-800 pointer-events-none">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        </div>
-                    )}
                   </>
                 )}
             </div>
@@ -439,11 +477,19 @@ function FieldBody({ field, state, setState, effective }: any) {
 // Collection Field Group (for multi-value fields like Processors)
 // ---------------------------------------------------------------------
 function CollectionItem({ item }: { item: any }) {
-  const isResolved = item.resolution === "resolved";
-  const isSuggested = item.resolution === "ai_suggested";
-  const isUnresolved = item.resolution === "unresolved";
+  const [picking, setPicking] = useState(false);
+  const [dropped, setDropped] = useState(false);
+  const [pickedValue, setPickedValue] = useState("");
+  const [rejected, setRejected] = useState(false);
+  const [localChoice, setLocalChoice] = useState("");
 
-  const borderColor = isResolved ? "border-green-500" : isSuggested ? "border-indigo-500" : "border-amber-500";
+  const isResolved = !dropped && !rejected && (item.resolution === "resolved" || pickedValue);
+  const isSuggested = !dropped && !rejected && !pickedValue && item.resolution === "ai_suggested";
+  const isUnresolved = (rejected || item.resolution === "unresolved") && !dropped && !pickedValue && !picking;
+  const isDropped = dropped;
+  const isPicked = !!pickedValue && !picking;
+
+  const borderColor = isResolved ? "border-green-500" : isSuggested ? "border-indigo-500" : (isDropped ? "border-zinc-300" : "border-amber-500");
 
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm flex">
@@ -458,8 +504,74 @@ function CollectionItem({ item }: { item: any }) {
              </div>
              <div>
                 <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Fixed Value</p>
-                {isResolved && (
-                   <div className="flex items-center justify-between">
+                
+                {picking && (
+                   <div className="space-y-3">
+                      <div className="relative">
+                         <select 
+                            value={localChoice}
+                            onChange={(e) => setLocalChoice(e.target.value)}
+                            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-zinc-300 appearance-none"
+                         >
+                            <option value="" disabled>Select an option...</option>
+                            {/* Filter directory for matches or just show relevant ones */}
+                            {PROCESSOR_DIRECTORY.filter(name => {
+                               if (item.original.toLowerCase() === 'unknown') return true;
+                               const firstChar = item.original.charAt(0).toLowerCase();
+                               const lastName = item.original.split(' ').pop()?.toLowerCase();
+                               return name.toLowerCase().startsWith(firstChar) || (lastName && name.toLowerCase().includes(lastName));
+                            }).map(name => (
+                               <option key={name} value={name}>{name}</option>
+                            ))}
+                            {/* Always allow the capitalized version as an option, unless it's 'unknown' */}
+                            {item.original.toLowerCase() !== 'unknown' && (
+                               <option value={item.original.split(' ').map((s: string) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}>
+                                  {item.original.split(' ').map((s: string) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (Capitalized)
+                               </option>
+                            )}
+                         </select>
+                         <Icon.Chevron className="absolute right-3 top-2.5 size-4 text-zinc-400 pointer-events-none" />
+                      </div>
+                      <div className="flex items-center justify-end gap-3">
+                         <button onClick={() => setPicking(false)} className="text-zinc-500 hover:text-zinc-700 text-[13px] font-semibold">Cancel</button>
+                         <button 
+                            disabled={!localChoice}
+                            onClick={() => {
+                               setPickedValue(localChoice);
+                               setPicking(false);
+                               setDropped(false);
+                               setRejected(false);
+                            }} 
+                            className={`bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors ${!localChoice ? "opacity-40 cursor-not-allowed" : ""}`}
+                         >
+                            <Icon.Check className="size-3.5" /> Accept
+                         </button>
+                      </div>
+                   </div>
+                )}
+
+                {isPicked && (
+                   <div className="flex items-center justify-between h-10">
+                      <div className="flex items-center gap-2">
+                         <span className="text-[12px] text-zinc-400 italic">Matched to:</span>
+                         <span className="text-[14px] font-bold text-zinc-900">{pickedValue}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <button onClick={() => setPicking(true)} className="text-[12px] font-bold text-zinc-900 hover:underline">Change</button>
+                         <button onClick={() => setPickedValue("")} className="text-[12px] font-bold text-zinc-500 hover:underline">Undo</button>
+                      </div>
+                   </div>
+                )}
+
+                {isDropped && (
+                   <div className="flex items-center justify-between h-10">
+                      <span className="text-[13px] font-medium text-zinc-400 italic">Won't be saved</span>
+                      <button onClick={() => setDropped(false)} className="text-[12px] font-bold text-zinc-500 hover:underline">Undo</button>
+                   </div>
+                )}
+
+                {isResolved && !pickedValue && !picking && (
+                   <div className="flex items-center justify-between h-10">
                       <div className="flex items-center gap-2">
                          <span className="text-[12px] text-zinc-400 italic">Matched to:</span>
                          <span className="text-[14px] font-bold text-zinc-900">{item.fixed}</span>
@@ -468,10 +580,11 @@ function CollectionItem({ item }: { item: any }) {
                          <span className="text-[11px] text-green-600 font-bold flex items-center gap-1">
                             <Icon.Sparkle className="size-3" /> {Math.round(item.confidence * 100)}% Confidence
                          </span>
-                         <button className="text-[12px] font-bold text-zinc-900 hover:underline">Change</button>
+                         <button onClick={() => setPicking(true)} className="text-[12px] font-bold text-zinc-900 hover:underline">Change</button>
                       </div>
                    </div>
                 )}
+
                 {isUnresolved && (
                    <div className="space-y-3">
                       <div className="flex items-center justify-between border border-zinc-200 rounded-lg px-3 py-2 text-[14px] bg-white">
@@ -481,11 +594,12 @@ function CollectionItem({ item }: { item: any }) {
                          </span>
                       </div>
                       <div className="flex items-center justify-end gap-2">
-                         <button className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Drop Value</button>
-                         <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Pick from list</button>
+                         <button onClick={() => setDropped(true)} className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Drop Value</button>
+                         <button onClick={() => setPicking(true)} className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Pick from list</button>
                       </div>
                    </div>
                 )}
+
                 {isSuggested && (
                    <div className="space-y-3">
                       <div className="flex items-center justify-between border border-zinc-200 rounded-lg px-3 py-2 text-[14px] bg-white">
@@ -495,9 +609,9 @@ function CollectionItem({ item }: { item: any }) {
                          </span>
                       </div>
                       <div className="flex items-center justify-end gap-2">
-                         <button className="border border-red-200 text-red-600 hover:bg-red-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Reject</button>
-                         <button className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Change</button>
-                         <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold flex items-center gap-1.5 transition-colors">
+                         <button onClick={() => setRejected(true)} className="border border-red-200 text-red-600 hover:bg-red-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Reject</button>
+                         <button onClick={() => setPicking(true)} className="border border-zinc-200 text-zinc-600 hover:bg-zinc-50 px-4 py-1.5 rounded-md text-[12px] font-bold transition-colors">Change</button>
+                         <button onClick={() => setPickedValue(item.fixed)} className="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[12px] font-bold flex items-center gap-1.5 transition-colors">
                             <Icon.Check className="size-3.5" /> Accept
                          </button>
                       </div>
@@ -561,6 +675,97 @@ function CollectionFieldGroup({ field }: any) {
   );
 }
 
+function LineItemRow({ li }: { li: any }) {
+  const [expanded, setExpanded] = useState(li.rowIndex === 2);
+  const [localChoice, setLocalChoice] = useState("");
+  const getField = (path: string) => li.fields.find((f: any) => f.dtoPath === path);
+  
+  const statusField = li.fields.find((f: any) => f.resolution !== "resolved") || li.fields[0];
+  const resolution = statusField.resolution;
+
+  return (
+    <Fragment>
+      <tr 
+        onClick={() => setExpanded(!expanded)}
+        className={`hover:bg-zinc-50/50 transition-colors cursor-pointer ${expanded ? "bg-zinc-50/30" : ""}`}
+      >
+        <td className="px-6 py-5 text-zinc-400">
+           <div className="flex items-center gap-4">
+              <Icon.Chevron className={`size-4 transition-transform ${expanded ? "rotate-0" : "-rotate-90"}`} />
+              <span className="text-[14px] font-medium text-zinc-900">{li.rowIndex}</span>
+           </div>
+        </td>
+        <td className="px-6 py-5 text-[14px] font-bold text-indigo-600/80">{getField("productNumber")?.resolvedValue}</td>
+        <td className="px-6 py-5 text-[14px] font-bold text-zinc-900">{getField("productDescription")?.resolvedValue}</td>
+        <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-center">{getField("quantity")?.resolvedValue}</td>
+        <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 tabular-nums">
+           ${Number(getField("productList")?.resolvedValue).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+        </td>
+        <td className="px-6 py-5 text-[14px] font-medium text-zinc-500 italic">
+           {getField("catalogCode")?.resolution === "resolved" ? getField("catalogCode")?.resolvedValue : getField("catalogCode")?.inputValue}
+        </td>
+        <td className="px-6 py-5">
+           <ResolutionPill resolution={resolution} />
+        </td>
+      </tr>
+      {expanded && (
+        <tr>
+           <td colSpan={7} className="px-12 pb-8 pt-2 bg-zinc-50/30">
+              <div className="space-y-4">
+                 <p className="text-[13px] font-bold text-zinc-900">Select an option</p>
+                 <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                       <span className="text-[14px] font-bold text-zinc-900">Catalog Code</span>
+                       <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 text-orange-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                          <span className="size-1.5 rounded-full bg-orange-500" /> Needs Choice
+                       </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8">
+                       <div>
+                          <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Document Description</p>
+                          <div className="bg-zinc-100 border border-zinc-100 rounded-lg px-3 py-2.5 text-[14px] text-zinc-500 font-medium">
+                             {getField("catalogCode")?.inputValue}
+                          </div>
+                       </div>
+                       <div>
+                          <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest mb-2">OrderBahn Match</p>
+                          <div className="relative">
+                             <select 
+                                value={localChoice}
+                                onChange={(e) => setLocalChoice(e.target.value)}
+                                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-[14px] text-zinc-900 focus:outline-none focus:border-zinc-300 appearance-none"
+                             >
+                                <option value="" disabled>Choose an option</option>
+                                {getField("catalogCode")?.knownValues?.map((kv: any) => (
+                                   <option key={kv.id} value={kv.label}>{kv.label}</option>
+                                ))}
+                             </select>
+                             <Icon.Chevron className="absolute right-3 top-3.5 size-4 text-zinc-400 pointer-events-none" />
+                          </div>
+                       </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-4 mt-6">
+                        <button onClick={() => setLocalChoice("")} className="text-zinc-500 hover:text-zinc-700 text-[13px] font-semibold transition-colors">Cancel</button>
+                        <button 
+                            disabled={!localChoice}
+                            onClick={() => {
+                                // Logic to update state would go here
+                                setExpanded(false);
+                            }} 
+                            className={`bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors ${!localChoice ? "opacity-40 cursor-not-allowed" : ""}`}
+                        >
+                            <Icon.Check className="size-3.5" /> Accept
+                        </button>
+                    </div>
+                 </div>
+              </div>
+           </td>
+        </tr>
+      )}
+    </Fragment>
+  );
+}
+
 // ---------------------------------------------------------------------
 // Object Field Group (Recursive)
 // ---------------------------------------------------------------------
@@ -587,12 +792,15 @@ function ObjectFieldGroup({ field, fieldState, setFS, keyPrefix }: any) {
       <div className="p-3 space-y-2">
          {children.map((child: any) => {
             if (field.isExtra) {
+               const key = `${keyPrefix}:${child.dtoPath}`;
                return (
                   <div key={child.dtoPath} className="flex items-center justify-between gap-4 py-1 px-1">
                      <span className="text-[13px] font-medium text-zinc-700">{child.displayName}</span>
-                     <div className="w-[65%] bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900">
-                        {child.resolvedValue}
-                     </div>
+                     <input 
+                        className="w-[65%] bg-white border border-zinc-200 rounded-lg px-3 py-2 text-[14px] text-zinc-900 focus:outline-none focus:border-zinc-400 transition-colors"
+                        value={fieldState[key]?.overrideValue ?? child.resolvedValue}
+                        onChange={(e) => setFS(key)({ overrideValue: e.target.value, effectiveResolution: "resolved", isDirty: true })}
+                     />
                   </div>
                );
             }
@@ -759,15 +967,15 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="text-[18px] font-bold text-zinc-900">Preflight</span>
-                        <span className="text-[14px] text-zinc-400 font-medium">42/50 ready</span>
+                        <span className="text-[14px] text-zinc-400 font-medium">{summary.resolved}/{summary.total} ready</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="text-[14px] font-bold text-zinc-900">84%</span>
+                        <span className="text-[14px] font-bold text-zinc-900">{pct}%</span>
                         <span className="text-[12px] text-zinc-400 font-medium">ready</span>
                       </div>
                     </div>
                     <div className="h-2 w-full bg-zinc-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-green-600 rounded-full transition-all duration-500" style={{ width: '84%' }} />
+                      <div className="h-full bg-green-600 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
 
@@ -778,7 +986,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                         onClick={() => setView("document")}
                         className="flex items-center gap-3 group"
                       >
-                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "document" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>1</div>
+                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "document" ? "bg-[#E6F993] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>1</div>
                         <span className={`text-[16px] font-bold transition-colors ${view === "document" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Header Fields</span>
                       </button>
                       <Icon.Arrow className="size-5 text-zinc-300" />
@@ -786,11 +994,11 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                         onClick={() => setView("lineItems")}
                         className="flex items-center gap-3 group"
                       >
-                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "lineItems" ? "bg-[#e2f373] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>2</div>
+                        <div className={`size-8 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors ${view === "lineItems" ? "bg-[#E6F993] text-zinc-900" : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200"}`}>2</div>
                         <span className={`text-[16px] font-bold transition-colors ${view === "lineItems" ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-600"}`}>Line Items</span>
                       </button>
                     </div>
-                    <button className="flex items-center gap-2 bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all shadow-sm active:scale-95">
+                    <button className="flex items-center gap-2 bg-[#E6F993] hover:bg-[#d6f22e] text-zinc-900 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all shadow-sm active:scale-95">
                       <Icon.Refresh className="size-4" />
                       Refresh
                     </button>
@@ -807,7 +1015,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                                     {section.isExtraSection && (
                                        <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 text-[12.5px] text-blue-600 mb-6 flex gap-3 items-center">
                                           <Icon.Info className="size-5 text-blue-500 shrink-0" />
-                                          <div>Catalog fields outside the standard Purchase Order schema. Forwarded as-is without auto-matching — you own the value.</div>
+                                          <div>Catalog fields outside the standard Purchase Order schema. Forwarded as-is without auto-matching.</div>
                                         </div>
                                     )}
                                     <div className="grid grid-cols-1 gap-2.5">
@@ -834,33 +1042,23 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                                 <table className="w-full text-left border-collapse">
                                     <thead className="bg-zinc-50 border-b border-zinc-200">
                                         <tr>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">#</th>
                                             <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Product</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Description</th>
                                             <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-center">Qty</th>
-                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Unit Price</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">List</th>
+                                            <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Catalog Code</th>
                                             <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-zinc-100">
                                         {PREFLIGHT.lineItems.map((li: any) => (
-                                            <tr key={li.rowIndex} className="hover:bg-zinc-50/50 transition-colors cursor-pointer">
-                                                <td className="px-6 py-5">
-                                                    <div className="text-[14px] font-bold text-zinc-900">
-                                                        {li.fields.find((f: any) => f.dtoPath === "productNumber")?.inputValue}
-                                                    </div>
-                                                    <div className="text-[12px] text-zinc-500 font-medium mt-1">{li.fields.find((f: any) => f.dtoPath === "productDescription")?.inputValue}</div>
-                                                </td>
-                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-center">{li.fields.find((f: any) => f.dtoPath === "quantity")?.inputValue}</td>
-                                                <td className="px-6 py-5 text-[14px] font-bold text-zinc-900 text-right tabular-nums">
-                                                    ${Number(li.fields.find((f: any) => f.dtoPath === "productList")?.inputValue).toFixed(2)}
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm"><Icon.Check className="size-3.5" /> Ready</span>
-                                                </td>
-                                            </tr>
+                                            <LineItemRow key={li.rowIndex} li={li} />
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+                            <p className="text-[12px] text-zinc-400 italic px-2">Click any row to expand and resolve issues.</p>
                         </div>
                     )}
                 </div>
@@ -872,7 +1070,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                   <button
                     disabled={!summary.valid}
                     onClick={() => onConvert(document.id, 'po')}
-                    className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900 shadow-[#e2f373]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
+                    className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#E6F993] hover:bg-[#d6f22e] text-zinc-900 shadow-[#E6F993]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
                   >
                     Publish
                     <Icon.Arrow className="size-4.5" />

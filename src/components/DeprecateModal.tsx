@@ -91,7 +91,7 @@ export default function DeprecateModal({ isOpen, onClose, onConfirm, vendorName 
                             className={cn(
                                 "flex-1 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all shadow-sm active:scale-[0.98]",
                                 selectedReason
-                                    ? "bg-[#e2f373] hover:bg-[#d6f22e] text-zinc-900"
+                                    ? "bg-[#E6F993] hover:bg-[#d6f22e] text-zinc-900"
                                     : "bg-zinc-100 text-zinc-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-600"
                             )}
                         >
