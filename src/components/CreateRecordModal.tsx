@@ -476,7 +476,7 @@ function FieldBody({ field, state, setState, effective }: any) {
 // ---------------------------------------------------------------------
 // Collection Field Group (for multi-value fields like Processors)
 // ---------------------------------------------------------------------
-function CollectionItem({ item }: { item: any }) {
+function CollectionItem({ item, stateKey, setFS }: { item: any; stateKey?: string; setFS?: (patch: any) => void }) {
   const [picking, setPicking] = useState(false);
   const [dropped, setDropped] = useState(false);
   const [pickedValue, setPickedValue] = useState("");
@@ -490,6 +490,11 @@ function CollectionItem({ item }: { item: any }) {
   const isPicked = !!pickedValue && !picking;
 
   const borderColor = isResolved ? "border-green-500" : isSuggested ? "border-indigo-500" : (isDropped ? "border-zinc-300" : "border-amber-500");
+
+  const effectiveResolution = dropped ? 'resolved' : pickedValue ? 'resolved' : item.resolution === 'resolved' && !rejected ? 'resolved' : item.resolution === 'ai_suggested' && !rejected ? 'ai_suggested' : 'unresolved';
+  React.useEffect(() => {
+    if (stateKey && setFS) setFS({ effectiveResolution });
+  }, [effectiveResolution]);
 
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm flex">
@@ -624,7 +629,7 @@ function CollectionItem({ item }: { item: any }) {
   );
 }
 
-function CollectionFieldGroup({ field }: any) {
+function CollectionFieldGroup({ field, fieldState, setFS, sectionId }: any) {
   const [expanded, setExpanded] = useState(true);
   const items = field.items || [];
   
@@ -660,9 +665,10 @@ function CollectionFieldGroup({ field }: any) {
 
       {expanded && (
         <div className="px-5 pb-5 space-y-3">
-           {items.map((item: any, idx: number) => (
-             <CollectionItem key={idx} item={item} />
-           ))}
+           {items.map((item: any, idx: number) => {
+             const stateKey = `h:${sectionId}:${field.dtoPath}:${idx}`;
+             return <CollectionItem key={idx} item={item} stateKey={stateKey} setFS={setFS ? setFS(stateKey) : undefined} />;
+           })}
            <div className="flex items-center justify-between pt-2 border-t border-zinc-200/60 mt-4">
               <button className="text-[13px] font-bold text-zinc-400 flex items-center gap-2 hover:text-zinc-600 transition-colors">
                  <Icon.Plus className="size-4" /> Add value...
@@ -675,7 +681,7 @@ function CollectionFieldGroup({ field }: any) {
   );
 }
 
-function LineItemRow({ li }: { li: any }) {
+function LineItemRow({ li, setFS }: { li: any; setFS?: (key: string) => (patch: any) => void }) {
   const [expanded, setExpanded] = useState(li.rowIndex === 2);
   const [localChoice, setLocalChoice] = useState("");
   const getField = (path: string) => li.fields.find((f: any) => f.dtoPath === path);
@@ -749,7 +755,7 @@ function LineItemRow({ li }: { li: any }) {
                         <button 
                             disabled={!localChoice}
                             onClick={() => {
-                                // Logic to update state would go here
+                                setFS?.(`li:${li.rowIndex}:catalogCode`)({ effectiveResolution: 'resolved' });
                                 setExpanded(false);
                             }} 
                             className={`bg-[#0f8b18] hover:bg-green-800 text-white px-4 py-1.5 rounded-md text-[13px] font-semibold flex items-center gap-1.5 transition-colors ${!localChoice ? "opacity-40 cursor-not-allowed" : ""}`}
@@ -875,6 +881,7 @@ interface CreateRecordModalProps {
 export default function CreateRecordModal({ isOpen, onClose, document, onConvert }: CreateRecordModalProps) {
   const [fieldState, setFieldState] = useState<any>({});
   const [view, setView] = useState("document");
+  const [showPublishToast, setShowPublishToast] = useState(false);
   
   // Flatten preflight for calculations
   const flat = useMemo(() => {
@@ -884,6 +891,11 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
               if (f.isObject) f.children.forEach((c: any) => out.push({...c, key: `h:${s.id}:${f.dtoPath}:${c.dtoPath}`}));
               else if (f.isCollection) f.items.forEach((item: any, i: number) => out.push({...item, key: `h:${s.id}:${f.dtoPath}:${i}`}));
               else out.push({...f, key: `h:${s.id}:${f.dtoPath}`});
+          });
+      });
+      PREFLIGHT.lineItems.forEach((li: any) => {
+          li.fields.forEach((f: any) => {
+              out.push({...f, key: `li:${li.rowIndex}:${f.dtoPath}`});
           });
       });
       return out;
@@ -1021,7 +1033,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                                     <div className="grid grid-cols-1 gap-2.5">
                                         {section.fields.map((f: any) => {
                                             if (f.isObject) return <ObjectFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} keyPrefix={`h:${section.id}:${f.dtoPath}`} />;
-                                            if (f.isCollection) return <CollectionFieldGroup key={f.dtoPath} field={f} />;
+                                            if (f.isCollection) return <CollectionFieldGroup key={f.dtoPath} field={f} fieldState={fieldState} setFS={setFS} sectionId={section.id} />;
                                             return (
                                                 <FieldRow
                                                     key={f.dtoPath}
@@ -1053,7 +1065,7 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                                     </thead>
                                     <tbody className="divide-y divide-zinc-100">
                                         {PREFLIGHT.lineItems.map((li: any) => (
-                                            <LineItemRow key={li.rowIndex} li={li} />
+                                            <LineItemRow key={li.rowIndex} li={li} setFS={setFS} />
                                         ))}
                                     </tbody>
                                 </table>
@@ -1069,8 +1081,12 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
                 <div className="flex items-center gap-4">
                   <button
                     disabled={!summary.valid}
-                    onClick={() => onConvert(document.id, 'po')}
-                    className={`h-[54px] px-10 rounded-full font-bold text-[15px] flex items-center gap-3 transition-all active:scale-[0.97] shadow-xl ${summary.valid ? "bg-[#E6F993] hover:bg-[#d6f22e] text-zinc-900 shadow-[#E6F993]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
+                    onClick={() => {
+                      onConvert(document.id, 'po');
+                      setShowPublishToast(true);
+                      setTimeout(() => setShowPublishToast(false), 4000);
+                    }}
+                    className={`h-[42px] px-7 rounded-full font-bold text-[13px] flex items-center gap-2 transition-all active:scale-[0.97] shadow-lg ${summary.valid ? "bg-[#E6F993] hover:bg-[#d6f22e] text-zinc-900 shadow-[#E6F993]/30" : "bg-zinc-100 text-zinc-400 cursor-not-allowed shadow-none"}`}
                   >
                     Publish
                     <Icon.Arrow className="size-4.5" />
@@ -1082,6 +1098,24 @@ export default function CreateRecordModal({ isOpen, onClose, document, onConvert
           </TransitionChild>
         </div>
       </Dialog>
+
+      {/* Publish Success Toast */}
+      {showPublishToast && (
+        <div className="fixed bottom-8 right-8 z-[200] flex items-center gap-4 px-6 py-4 bg-[#ECFDF5] border-l-4 border-green-600 shadow-2xl rounded-sm animate-in slide-in-from-right fade-in duration-500">
+          <div className="h-6 w-6 rounded-full border-2 border-green-600 flex items-center justify-center shrink-0">
+            <Icon.Check className="size-4 text-green-600" strokeWidth={3} />
+          </div>
+          <p className="text-sm font-medium text-green-900 pr-8">
+            Record created successfully in OrderBahn.
+          </p>
+          <button
+            onClick={() => setShowPublishToast(false)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-green-800/60 hover:text-green-900 transition-colors"
+          >
+            <Icon.X className="size-4" />
+          </button>
+        </div>
+      )}
     </Transition>
   );
 }
