@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react'
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react'
-import { X, AlertTriangle, ChevronDown, ChevronUp, Check, Pencil, Sparkles, Info } from 'lucide-react'
+import { X, AlertTriangle, ChevronDown, ChevronUp, Check, Pencil, Sparkles, Info, ArrowRight } from 'lucide-react'
 
 interface ResolveInconsistencyModalProps {
     isOpen: boolean
@@ -236,23 +236,24 @@ export default function ResolveInconsistencyModal({ isOpen, onClose, document, o
                                 </div>
 
                                 {/* Footer — sticky */}
-                                <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-end gap-3">
+                                <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-between">
                                     <button
                                         onClick={onClose}
-                                        className="px-5 py-2.5 text-sm font-semibold border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                                        className="text-sm font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
                                     >
-                                        Save as Draft
+                                        Cancel
                                     </button>
                                     <button
                                         onClick={() => { onResolve?.(document?.id || ''); onClose(); }}
                                         disabled={!allResolved}
-                                        className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-colors ${
+                                        className={`px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all active:scale-[0.97] ${
                                             allResolved
-                                                ? 'bg-brand-300 dark:bg-brand-500 text-zinc-900 hover:bg-brand-400 dark:hover:bg-brand-600/50 shadow-sm'
-                                                : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
+                                                ? 'bg-brand-300 dark:bg-brand-500 text-zinc-900 hover:bg-brand-400 dark:hover:bg-brand-600 shadow-sm'
+                                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 cursor-not-allowed'
                                         }`}
                                     >
                                         Resolve Inconsistencies
+                                        <ArrowRight className="h-4 w-4" />
                                     </button>
                                 </div>
                             </DialogPanel>
