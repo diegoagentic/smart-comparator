@@ -51,9 +51,9 @@ export default function AssignExpertPopover({ onAssign, children, align = 'right
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                         >
-                            <PopoverPanel 
+                            <PopoverPanel
                                 anchor={align === 'right' ? "bottom end" : "bottom start"}
-                                className="z-[110] mt-2 w-[240px] bg-white dark:bg-zinc-900 rounded-[20px] shadow-2xl border border-zinc-100 dark:border-zinc-800 focus:outline-none overflow-hidden"
+                                className="z-[110] mt-2 w-[240px] bg-white dark:bg-zinc-900 rounded-[20px] shadow-2xl border border-zinc-100 dark:border-zinc-800 focus:outline-none overflow-hidden scrollbar-none"
                             >
                             <div className="p-4">
                                 {/* Assign to Me Section */}
