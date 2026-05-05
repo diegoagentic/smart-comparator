@@ -115,16 +115,18 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                                 <button
                                     key={tab.name}
                                     onClick={() => onNavigate(tab.page)}
-                                    className={`flex items-center gap-2 h-9 rounded-full transition-all duration-200 ${
+                                    className={`relative flex items-center justify-center h-9 px-3 rounded-full transition-all duration-300 group overflow-hidden ${
                                         isActive
-                                            ? 'bg-primary text-primary-foreground px-4'
-                                            : 'px-2.5 hover:bg-muted text-muted-foreground'
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'hover:bg-white/90 dark:hover:bg-zinc-800/90 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:shadow-sm'
                                     }`}
                                 >
-                                    <Icon className="w-4 h-4 shrink-0" />
-                                    {isActive && (
-                                        <span className="text-sm font-medium whitespace-nowrap">{tab.label}</span>
-                                    )}
+                                    <span className="relative z-10"><Icon className="w-5 h-5" /></span>
+                                    <span className={`ml-2 text-sm font-bold whitespace-nowrap transition-all duration-300 ease-in-out ${
+                                        isActive ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100'
+                                    }`}>
+                                        {tab.label}
+                                    </span>
                                 </button>
                             )
                         })}

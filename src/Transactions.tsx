@@ -220,10 +220,10 @@ const recentOrders = [
 ]
 
 const recentQuotes = [
-    { id: "QT-1025", customer: "Apex Furniture", project: "New HQ", amount: "$43,750", status: "Negotiating", date: "Jan 12, 2026", validUntil: "Feb 12, 2026", probability: "High", initials: "AF", statusColor: "bg-indigo-50 text-indigo-700", location: "Austin" },
-    { id: "QT-1024", customer: "BioLife Inc", project: "Lab Expansion", amount: "$540,000", status: "Draft", date: "Jan 10, 2026", validUntil: "Draft", probability: "N/A", initials: "BL", statusColor: "bg-zinc-100 text-zinc-700", location: "Boston" },
-    { id: "QT-1023", customer: "FinServe Corp", project: "Branch Rollout", amount: "$890,000", status: "Sent", date: "Jan 08, 2026", validUntil: "Feb 08, 2026", probability: "Medium", initials: "FS", statusColor: "bg-blue-50 text-blue-700", location: "New York" },
-    { id: "QT-1022", customer: "Redwood School", project: "Classroom Refresh", amount: "$150,000", status: "Approved", date: "Dec 28, 2025", validUntil: "Jan 28, 2026", probability: "Closed", initials: "RS", statusColor: "bg-green-50 text-green-700", location: "Portland" },
+    { id: "QT-1025", customer: "Apex Furniture", project: "New HQ", amount: "$43,750", status: "Negotiating", date: "Jan 12, 2026", validUntil: "Feb 12, 2026", probability: "High", initials: "AF", statusColor: "indigo", location: "Austin" },
+    { id: "QT-1024", customer: "BioLife Inc", project: "Lab Expansion", amount: "$540,000", status: "Draft", date: "Jan 10, 2026", validUntil: "Draft", probability: "N/A", initials: "BL", statusColor: "zinc", location: "Boston" },
+    { id: "QT-1023", customer: "FinServe Corp", project: "Branch Rollout", amount: "$890,000", status: "Sent", date: "Jan 08, 2026", validUntil: "Feb 08, 2026", probability: "Medium", initials: "FS", statusColor: "blue", location: "New York" },
+    { id: "QT-1022", customer: "Redwood School", project: "Classroom Refresh", amount: "$150,000", status: "Approved", date: "Dec 28, 2025", validUntil: "Jan 28, 2026", probability: "Closed", initials: "RS", statusColor: "green", location: "Portland" },
 ]
 
 const recentAcknowledgments = [
@@ -246,6 +246,8 @@ const colorStyles: Record<string, string> = {
     green: 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300 ring-1 ring-inset ring-green-600/20 dark:ring-green-400/30',
     pink: 'bg-pink-50 text-pink-700 dark:bg-pink-500/15 dark:text-pink-300 ring-1 ring-inset ring-pink-600/20 dark:ring-pink-400/30',
     indigo: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 ring-1 ring-inset ring-indigo-600/20 dark:ring-indigo-400/30',
+    zinc: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 ring-1 ring-inset ring-zinc-200 dark:ring-zinc-700',
+    brand: 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300 ring-1 ring-inset ring-brand-600/20 dark:ring-brand-400/30',
 }
 
 const solidColorStyles: Record<string, string> = {
@@ -1312,7 +1314,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                         </h3>
                                         <div className="hidden sm:block w-px h-6 bg-border mx-2"></div>
                                         {/* Tabs */}
-                                        <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit overflow-x-auto max-w-full">
+                                        <div className="flex gap-1 w-fit overflow-x-auto max-w-full">
                                             {[
                                                 { id: 'active', label: 'Active', count: counts.active },
                                                 { id: 'completed', label: 'Completed', count: counts.completed },
@@ -1323,10 +1325,10 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     key={tab.id}
                                                     onClick={() => setActiveTab(tab.id as any)}
                                                     className={cn(
-                                                        "px-3 py-1.5 text-sm font-medium rounded-md transition-all flex items-center gap-2 outline-none whitespace-nowrap",
+                                                        "px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-2 outline-none whitespace-nowrap",
                                                         activeTab === tab.id
-                                                            ? "bg-primary text-primary-foreground shadow-sm"
-                                                            : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
+                                                            ? "bg-primary text-primary-foreground shadow-sm font-semibold"
+                                                            : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white font-medium"
                                                     )}
                                                 >
                                                     {tab.id === 'metrics' && <ChartBarIcon className="w-4 h-4" />}
@@ -1336,7 +1338,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                             "text-xs px-1.5 py-0.5 rounded-full transition-colors",
                                                             activeTab === tab.id
                                                                 ? "bg-primary-foreground/10 text-primary-foreground"
-                                                                : "bg-background text-muted-foreground group-hover:bg-muted"
+                                                                : "text-muted-foreground"
                                                         )}>
                                                             {tab.count}
                                                         </span>
@@ -1375,23 +1377,22 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                         {/* Actions Group: View Mode + Create Button */}
                                         <div className="flex items-center gap-4 self-start xl:self-auto">
                                             {/* View Mode Toggle */}
-                                            <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
+                                            <div className="flex items-center border border-border rounded-lg overflow-hidden">
                                                 <button
                                                     onClick={() => setViewMode('list')}
                                                     className={cn(
-                                                        "p-1.5 rounded-md transition-all",
-                                                        viewMode === 'list' ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                                        "p-2 transition-all",
+                                                        viewMode === 'list' ? "bg-zinc-100 dark:bg-zinc-800 text-foreground" : "text-muted-foreground hover:bg-muted"
                                                     )}
                                                     title="List View"
                                                 >
                                                     <ListBulletIcon className="w-5 h-5" />
                                                 </button>
-                                                <div className="w-px h-4 bg-border mx-1"></div>
                                                 <button
                                                     onClick={() => setViewMode('pipeline')}
                                                     className={cn(
-                                                        "p-1.5 rounded-md transition-all",
-                                                        viewMode === 'pipeline' ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                                        "p-2 transition-all",
+                                                        viewMode === 'pipeline' ? "bg-zinc-100 dark:bg-zinc-800 text-foreground" : "text-muted-foreground hover:bg-muted"
                                                     )}
                                                     title="Pipeline View"
                                                 >
@@ -2449,14 +2450,14 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     <div className="flex items-center justify-between mb-4 px-2">
                                                         <h4 className="font-medium text-foreground flex items-center gap-2">
                                                             {stage}
-                                                            <span className="bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">{stageOrders.length}</span>
+                                                            <span className="text-muted-foreground text-xs px-1.5">{stageOrders.length}</span>
                                                         </h4>
                                                         <button className="text-muted-foreground hover:text-foreground">
                                                             <EllipsisHorizontalIcon className="w-5 h-5" />
                                                         </button>
                                                     </div>
 
-                                                    <div className="bg-muted/30 rounded-2xl p-3 h-full min-h-[500px] border border-border/50 space-y-3">
+                                                    <div className="bg-[#FAFAFA] dark:bg-zinc-800/40 rounded-[24px] p-3 h-full min-h-[500px] border border-[#D0D4D8] dark:border-zinc-700 space-y-3">
                                                         {/* Animated converted card from OCR */}
                                                         {newConvertedCard && (stage === 'Order Received' || stage === 'Pending') && (
                                                             <div

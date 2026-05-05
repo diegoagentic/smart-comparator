@@ -153,7 +153,7 @@ const confColor = (c: number) => {
 }
 
 // ─── Document Mock Preview ────────────────────────────────────
-function DocumentMockPreview({ fields, vendor, docName, docType }: { fields: FieldGroup[]; vendor: string; docName: string; docType: string }) {
+function DocumentMockPreview({ fields, vendor, docName, docType, onExport }: { fields: FieldGroup[]; vendor: string; docName: string; docType: string; onExport: () => void }) {
     const [zoom, setZoom] = useState(100)
     const allFields = fields.flatMap(g => g.fields)
 
@@ -217,6 +217,16 @@ function DocumentMockPreview({ fields, vendor, docName, docType }: { fields: Fie
                     <div className="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-700 text-center">
                         <p className="text-zinc-400 text-[10px]">Extracted by Smart Comparator OCR Engine</p>
                     </div>
+                </div>
+
+                {/* Export Action - Placed between footer and page bottom */}
+                <div className="mt-4 pb-12 px-6 flex justify-center">
+                    <button 
+                        onClick={onExport}
+                        className="w-full py-3 bg-[#E6F993] hover:bg-[#D9EB7F] text-zinc-900 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                    >
+                        Export Document
+                    </button>
                 </div>
             </div>
         </div>
@@ -287,7 +297,14 @@ function FieldGroupPanel({ group, defaultOpen = false }: { group: FieldGroup; de
 
 // ─── Main Modal ───────────────────────────────────────────────
 export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve, onMarkDeprecated }: DocumentPreviewModalProps) {
+    const [showExportToast, setShowExportToast] = useState(false)
+
     if (!document) return null
+
+    const handleExport = () => {
+        setShowExportToast(true)
+        setTimeout(() => setShowExportToast(false), 4000)
+    }
 
     const isAck = document.type === 'Acknowledgment'
     const fieldGroups = isAck ? ACK_FIELDS : PO_FIELDS
@@ -367,6 +384,7 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
                                             vendor={document.vendor}
                                             docName={document.name}
                                             docType={document.type}
+                                            onExport={handleExport}
                                         />
                                     </div>
 
@@ -384,6 +402,24 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
                     </div>
                 </div>
             </Dialog>
+
+            {/* Export Success Notification */}
+            {showExportToast && (
+                <div className="fixed bottom-8 right-8 z-[200] flex items-center gap-4 px-6 py-4 bg-[#ECFDF5] border-l-4 border-green-600 shadow-2xl rounded-sm animate-in slide-in-from-right fade-in duration-500">
+                    <div className="h-6 w-6 rounded-full border-2 border-green-600 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    </div>
+                    <p className="text-sm font-medium text-green-900 pr-8">
+                        Your PDF has been exported successfully.
+                    </p>
+                    <button 
+                        onClick={() => setShowExportToast(false)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-green-800/60 hover:text-green-900 transition-colors"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+            )}
         </Transition>
     )
 }

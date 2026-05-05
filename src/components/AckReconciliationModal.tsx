@@ -483,16 +483,13 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                 {Object.keys(allFixes).length} / {filteredAllInconsistencies.length} resolved
                                             </span>
                                             <div className="flex gap-3">
-                                                <button onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-xl transition-colors">
-                                                    Save as Draft
-                                                </button>
                                                 <button
                                                     onClick={() => {
                                                         onClose();
                                                         triggerToast('Inconsistencies Resolved', `${Object.keys(allFixes).length} inconsistencies resolved across all documents`, 'success');
                                                     }}
                                                     disabled={Object.keys(allFixes).length === 0}
-                                                    className="px-4 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
+                                                    className="px-6 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
                                                 >
                                                     Resolve Inconsistencies <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
@@ -836,8 +833,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             })}
                                         </div>
 
-                                        {/* Smart Comparator: Save as Draft + Resolve (per transcript) */}
-                                        <div className="flex gap-3 mt-5">
+                                        {/* Smart Comparator: Cancel + Publish (per transcript) */}
+                                        <div className="flex items-center justify-between mt-5">
                                             <button
                                                 onClick={() => { triggerToast('Draft Saved', 'Inconsistency resolution saved as draft', 'info'); onClose(); }}
                                                 className="flex-1 py-3 rounded-xl text-sm font-bold bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center justify-center gap-2"
@@ -847,13 +844,13 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             <button
                                                 onClick={() => setStep('confirm')}
                                                 disabled={!allDecided}
-                                                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                                                className={`px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                                                     allDecided
                                                         ? 'bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 dark:hover:bg-brand-600/50 text-zinc-900 shadow-sm'
                                                         : 'bg-muted text-muted-foreground cursor-not-allowed'
                                                 }`}
                                             >
-                                                Resolve All
+                                                Resolve Inconsistencies
                                                 <ArrowRightIcon className="w-4 h-4" />
                                             </button>
                                         </div>
