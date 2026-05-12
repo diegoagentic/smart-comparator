@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ScanEye, FileText, AlertTriangle, CheckCircle2, Clock, Upload, Download, Eye, MoreHorizontal, Sparkles, Search, Filter, LayoutGrid, List, ChevronRight, ChevronDown, ChevronUp, X, Loader2, User, Trash2, Undo2 } from 'lucide-react'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
+import { exportOcrPdf } from './utils/exportOcrPdf'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
 import ConvertDocumentModal from './components/ConvertDocumentModal'
@@ -58,6 +59,18 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
     const [deprecatedFilter, setDeprecatedFilter] = useState('All')
     const [timeFilter, setTimeFilter] = useState('All Time')
     const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false)
+    const [downloadingId, setDownloadingId] = useState<string | null>(null)
+
+    const handleDownload = async (e: React.MouseEvent, doc: typeof OCR_DOCUMENTS[0]) => {
+        e.stopPropagation()
+        if (downloadingId) return
+        setDownloadingId(doc.id)
+        try {
+            await exportOcrPdf({ id: doc.id, name: doc.name, vendor: doc.vendor, type: doc.type, fields: doc.fields, confidence: doc.confidence, status: doc.status })
+        } finally {
+            setDownloadingId(null)
+        }
+    }
 
     const handleResolve = (docId: string) => {
         setDocuments(prev => prev.map(d => d.id === docId ? { ...d, status: 'processed', inconsistencyCount: 0, confidence: 99 } : d))
@@ -487,16 +500,25 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                         </div>
                                                                         <div className="flex items-center gap-1">
                                                                             {doc.status !== 'identified' && (
-                                                                                <button
-                                                                                    onClick={(e) => {
-                                                                                        e.stopPropagation();
-                                                                                        setPreviewDoc(doc);
-                                                                                    }}
-                                                                                    className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all group relative"
-                                                                                    title="Preview Document"
-                                                                                >
-                                                                                    <DocumentTextIcon className="h-4 w-4" />
-                                                                                </button>
+                                                                                <>
+                                                                                    <button
+                                                                                        onClick={(e) => { e.stopPropagation(); setPreviewDoc(doc); }}
+                                                                                        className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all"
+                                                                                        title="Preview extracted fields"
+                                                                                    >
+                                                                                        <Eye className="h-4 w-4" />
+                                                                                    </button>
+                                                                                    <button
+                                                                                        onClick={(e) => handleDownload(e, doc)}
+                                                                                        disabled={downloadingId === doc.id}
+                                                                                        className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 disabled:opacity-50 transition-all"
+                                                                                        title="Download OCR report as PDF"
+                                                                                    >
+                                                                                        {downloadingId === doc.id
+                                                                                            ? <Loader2 className="h-4 w-4 animate-spin" />
+                                                                                            : <Download className="h-4 w-4" />}
+                                                                                    </button>
+                                                                                </>
                                                                             )}
                                                                             {['capturing', 'inconsistencies', 'in_progress', 'processed'].includes(doc.status) && (
                                                                                 <button
