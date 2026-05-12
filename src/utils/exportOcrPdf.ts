@@ -1,5 +1,3 @@
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 import logoLight from '../assets/logo-light-brand.png'
 
 // ─── Types ────────────────────────────────────────────────────
@@ -330,6 +328,7 @@ async function captureEl(html: string): Promise<HTMLCanvasElement> {
     document.body.appendChild(wrap)
     await new Promise(r => requestAnimationFrame(r))
     const el = wrap.firstElementChild as HTMLElement
+    const { default: html2canvas } = await import('html2canvas')
     const canvas = await html2canvas(el, {
         scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false,
     })
@@ -369,6 +368,7 @@ export async function exportOcrPdf(doc: OcrDocument): Promise<void> {
     )
     const totalPages = pageGroups.length
 
+    const { default: jsPDF } = await import('jspdf')
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' })
     const pdfW = pdf.internal.pageSize.getWidth()
 
