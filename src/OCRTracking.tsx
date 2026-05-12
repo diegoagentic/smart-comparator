@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { ScanEye, FileText, AlertTriangle, CheckCircle2, Upload, Eye, MoreHorizontal, Sparkles, Search, LayoutGrid, List, ChevronDown, ChevronUp, X, FilePlus2, Archive, Loader2, Flame, Trash2 } from 'lucide-react'
-import { DocumentTextIcon } from '@heroicons/react/24/outline'
+import { ScanEye, FileText, AlertTriangle, CheckCircle2, Upload, Eye, MoreHorizontal, Sparkles, Search, LayoutGrid, List, ChevronDown, ChevronUp, X, FilePlus2, Archive, Loader2, Flame, Trash2, Download } from 'lucide-react'
 import { exportOcrPdf } from './utils/exportOcrPdf'
 import Navbar from './components/Navbar'
 import Breadcrumbs from './components/Breadcrumbs'
@@ -531,17 +530,30 @@ export default function OCRTracking({ onLogout, onNavigate, onConvertDocument }:
                                                                 </div>
                                                                 <div className="flex items-center gap-1">
                                                                     {doc.status !== 'identified' && (
-                                                                        <button
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setPreviewDoc(doc);
-                                                                            }}
-                                                                            className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all"
-                                                                            title="Preview document and review extracted fields"
-                                                                            aria-label="Preview document"
-                                                                        >
-                                                                            <DocumentTextIcon className="h-4 w-4" />
-                                                                        </button>
+                                                                        <>
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setPreviewDoc(doc);
+                                                                                }}
+                                                                                className="p-1.5 rounded-md text-muted-foreground hover:text-ai hover:bg-ai/10 transition-all"
+                                                                                title="Preview document and review extracted fields"
+                                                                                aria-label="Preview document"
+                                                                            >
+                                                                                <Eye className="h-4 w-4" />
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={(e) => handleDownload(e, doc)}
+                                                                                disabled={downloadingId === doc.id}
+                                                                                className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 disabled:opacity-50 transition-all"
+                                                                                title="Download OCR report as PDF"
+                                                                                aria-label="Download PDF"
+                                                                            >
+                                                                                {downloadingId === doc.id
+                                                                                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                                                                                    : <Download className="h-4 w-4" />}
+                                                                            </button>
+                                                                        </>
                                                                     )}
                                                                     <button
                                                                         onClick={(e) => {
