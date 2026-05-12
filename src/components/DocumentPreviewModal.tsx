@@ -1,11 +1,12 @@
 import { useState, Fragment } from 'react'
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react'
 import {
-    X, FileText, Building2, Truck, Package, DollarSign,
-    CheckCircle2, AlertCircle, Sparkles, ZoomIn, ZoomOut,
-    Download, Loader2
+    X, FileText, Building2, Truck, Package, DollarSign, MapPin,
+    ChevronDown, ChevronRight, CheckCircle2, AlertCircle, Sparkles, ZoomIn, ZoomOut,
+    Archive, Download, Loader2
 } from 'lucide-react'
 import FieldReviewModal from './FieldReviewModal'
+import OrderbahnSyncBanner from './create-record/OrderbahnSyncBanner'
 import { exportOcrPdf } from '../utils/exportOcrPdf'
 
 // ─── Types ────────────────────────────────────────────────
@@ -21,9 +22,10 @@ interface DocumentPreviewModalProps {
         confidence: number | null
         status?: string
         inconsistencyCount?: number
-        discrepancyCount?: number
     } | null
     onResolve?: (id: string) => void
+    /** Opens the Deprecation modal in the parent. Hidden when doc is already deprecated. */
+    onMarkDeprecated?: (id: string) => void
 }
 
 interface ExtractedField {
@@ -168,10 +170,10 @@ function DocumentMockPreview({ fields, vendor, docName, docType, onExport, expor
                     <span className="text-xs font-semibold text-zinc-500 truncate max-w-[180px]">{docName}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
-                        <button onClick={() => setZoom(z => Math.max(80, z - 10))} className="p-1 rounded hover:bg-white dark:hover:bg-zinc-700 text-zinc-500 transition-colors"><ZoomOut className="h-3 w-3" /></button>
-                        <span className="text-[10px] font-mono text-zinc-400 w-8 text-center">{zoom}%</span>
-                        <button onClick={() => setZoom(z => Math.min(150, z + 10))} className="p-1 rounded hover:bg-white dark:hover:bg-zinc-700 text-zinc-500 transition-colors"><ZoomIn className="h-3 w-3" /></button>
+                    <div className="flex items-center gap-1">
+                        <button onClick={() => setZoom(z => Math.max(80, z - 10))} title="Zoom out" aria-label="Zoom out" className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomOut className="h-3.5 w-3.5" /></button>
+                        <span title="Current zoom level" className="text-[10px] font-mono text-zinc-400 w-8 text-center">{zoom}%</span>
+                        <button onClick={() => setZoom(z => Math.min(150, z + 10))} title="Zoom in" aria-label="Zoom in" className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500"><ZoomIn className="h-3.5 w-3.5" /></button>
                     </div>
                     <button
                         onClick={onExport}
@@ -269,7 +271,7 @@ function DocumentMockPreview({ fields, vendor, docName, docType, onExport, expor
 }
 
 // ─── Main Modal ───────────────────────────────────────────────
-export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve }: DocumentPreviewModalProps) {
+export default function DocumentPreviewModal({ isOpen, onClose, document, onResolve, onMarkDeprecated }: DocumentPreviewModalProps) {
     const [showExportToast, setShowExportToast] = useState(false)
     const [exporting, setExporting] = useState(false)
 
@@ -310,61 +312,77 @@ export default function DocumentPreviewModal({ isOpen, onClose, document, onReso
                             <TransitionChild as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
                                 <DialogPanel className="w-full max-w-6xl h-[85vh] transform overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 text-left shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800 flex flex-col">
 
-                                    {/* Header */}
-                                    <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-xl bg-ai/10 flex items-center justify-center">
-                                                <Sparkles className="h-5 w-5 text-ai" />
-                                            </div>
-                                            <div>
-                                                <DialogTitle as="h3" className="text-lg font-bold text-zinc-900 dark:text-white">
-                                                    Document Review
-                                                </DialogTitle>
-                                                <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                                    {document.vendor} — {document.name}
-                                                </p>
-                                            </div>
+                                {/* Header */}
+                                <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-xl bg-ai/10 flex items-center justify-center">
+                                            <Sparkles className="h-5 w-5 text-ai" />
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex items-center gap-3 text-xs">
-                                                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> {validCount} valid</span>
-                                                <span className="flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {totalCount - validCount} issues</span>
+                                        <div>
+                                            <DialogTitle as="h3" className="text-lg font-bold text-zinc-900 dark:text-white">
+                                                Document Review
+                                            </DialogTitle>
+                                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                                {document.vendor} — {document.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-3 text-xs">
+                                            <span title={`${validCount} fields extracted with high confidence`} className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> {validCount} valid</span>
+                                            <span title={`${totalCount - validCount} fields need review (low confidence, missing, or inconsistent)`} className="flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {totalCount - validCount} issues</span>
+                                        </div>
+                                        <div className="flex items-center gap-2" title="Document Progress">
+                                            <div className="w-20 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                                <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-20 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
-                                                </div>
-                                                <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{pct}%</span>
-                                            </div>
-                                            <button onClick={onClose} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-                                                <X className="h-5 w-5" />
+                                            <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{pct}%</span>
+                                        </div>
+                                        {onMarkDeprecated && document.status !== 'deprecated' && (
+                                            <button
+                                                onClick={() => onMarkDeprecated(document.id)}
+                                                title="Move this document to the archive (Deprecated tab)"
+                                                aria-label="Mark document as deprecated"
+                                                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-3 py-1.5 text-[12px] font-medium text-zinc-700 dark:text-zinc-200 transition-colors"
+                                            >
+                                                <Archive className="w-3.5 h-3.5" />
+                                                Mark as Deprecated
                                             </button>
-                                        </div>
+                                        )}
+                                        <button onClick={onClose} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Close">
+                                            <X className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Orderbahn sync banner */}
+                                <OrderbahnSyncBanner
+                                    changesCount={2 + (document.id.charCodeAt(document.id.length - 1) % 4)}
+                                />
+
+                                {/* Split Pane */}
+                                <div className="flex-1 grid grid-cols-5 min-h-0">
+                                    {/* Left: Document Preview (3/5) */}
+                                    <div className="col-span-3 border-r border-zinc-200 dark:border-zinc-800 flex flex-col min-h-0">
+                                        <DocumentMockPreview
+                                            fields={fieldGroups}
+                                            vendor={document.vendor}
+                                            docName={document.name}
+                                            docType={document.type}
+                                            onExport={handleExport}
+                                            exporting={exporting}
+                                        />
                                     </div>
 
-                                    {/* Split Pane */}
-                                    <div className="flex-1 grid grid-cols-5 min-h-0">
-                                        {/* Left: Document Preview (3/5) */}
-                                        <div className="col-span-3 border-r border-zinc-200 dark:border-zinc-800 flex flex-col min-h-0">
-                                            <DocumentMockPreview
-                                                fields={fieldGroups}
-                                                vendor={document.vendor}
-                                                docName={document.name}
-                                                docType={document.type}
-                                                onExport={handleExport}
-                                                exporting={exporting}
-                                            />
-                                        </div>
-
-                                        {/* Right: Field Review (2/5) */}
-                                        <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
-                                            <FieldReviewModal
-                                                document={{ id: document.id, name: document.name, vendor: document.vendor, inconsistencyCount: document.inconsistencyCount ?? 0 }}
-                                                onResolve={onResolve}
-                                                onClose={onClose}
-                                            />
-                                        </div>
+                                    {/* Right: Field Review (2/5) */}
+                                    <div className="col-span-2 flex flex-col min-h-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
+                                        <FieldReviewModal
+                                            document={{ id: document.id, name: document.name, vendor: document.vendor, inconsistencyCount: document.inconsistencyCount ?? 0 }}
+                                            onResolve={onResolve}
+                                            onClose={onClose}
+                                        />
                                     </div>
+                                </div>
                                 </DialogPanel>
                             </TransitionChild>
                         </div>

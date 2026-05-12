@@ -1,5 +1,5 @@
 import {
-    ChevronRightIcon, MagnifyingGlassIcon, FunnelIcon, ArrowDownTrayIcon,
+    ChevronRightIcon, MagnifyingGlassIcon, FunnelIcon, ArrowDownTrayIcon, ArrowUpTrayIcon,
     PlusIcon, CheckCircleIcon, DocumentTextIcon, CubeIcon,
     ExclamationTriangleIcon, ChevronDownIcon, ChevronUpIcon, EllipsisHorizontalIcon, SunIcon, MoonIcon,
     XMarkIcon, HomeIcon, Squares2X2Icon, ArrowTrendingUpIcon, ClipboardDocumentListIcon,
@@ -51,7 +51,7 @@ interface Message {
     type: 'system' | 'ai' | 'user' | 'action_processing' | 'action_success';
 }
 
-const DiscrepancyResolutionFlow = () => {
+const InconsistencyResolutionFlow = () => {
     const [status, setStatus] = useState<'initial' | 'requesting' | 'pending' | 'approved'>('initial')
     const [requestText, setRequestText] = useState('')
 
@@ -65,7 +65,7 @@ const DiscrepancyResolutionFlow = () => {
             <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium">
                     <ExclamationTriangleIcon className="w-5 h-5" />
-                    Found 3 discrepancies in recent shipments.
+                    Found 3 inconsistencies in recent shipments.
                 </div>
                 <ul className="list-disc pl-5 text-sm space-y-1 text-zinc-600 dark:text-zinc-300">
                     <li>Order #ORD-2054: Weight mismatch (Logs: 50kg vs Gateway: 48kg)</li>
@@ -158,7 +158,7 @@ const DiscrepancyResolutionFlow = () => {
     return null
 }
 
-const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
+const InconsistencyActionCard = ({ msg }: { msg: Message }) => {
     const [isRequesting, setIsRequesting] = useState(false)
     const [requestText, setRequestText] = useState('')
     const [status, setStatus] = useState<'initial' | 'pending' | 'approved'>('initial')
@@ -256,7 +256,7 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
                                         Attention Needed
                                     </p>
                                     <p className="text-sm text-zinc-900 dark:text-zinc-300 mt-1">
-                                        Discrepancy detected for <span className="font-semibold text-zinc-900 dark:text-white">SKU-OFF-2025-003</span>:
+                                        Inconsistency detected for <span className="font-semibold text-zinc-900 dark:text-white">SKU-OFF-2025-003</span>:
                                     </p>
                                     <div className="mt-2 flex items-center gap-4 text-xs font-medium">
                                         <div className="flex items-center gap-2">
@@ -915,7 +915,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                         cn(
                                             "py-4 text-sm font-medium border-b-2 outline-none transition-colors",
                                             selected
-                                                ? "border-zinc-500 text-zinc-900 dark:border-primary dark:text-foreground"
+                                                ? "border-foreground text-foreground"
                                                 : "border-transparent text-muted-foreground hover:text-foreground"
                                         )
                                     }
@@ -927,7 +927,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                         cn(
                                             "py-4 text-sm font-medium border-b-2 outline-none transition-colors",
                                             selected
-                                                ? "border-zinc-500 text-zinc-900 dark:border-primary dark:text-foreground"
+                                                ? "border-foreground text-foreground"
                                                 : "border-transparent text-muted-foreground hover:text-foreground"
                                         )
                                     }
@@ -935,6 +935,17 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                     Inputs
                                 </Tab>
                             </TabList>
+                            <div className="flex items-center gap-2">
+                                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                                    <FunnelIcon className="h-3.5 w-3.5" /> Filter
+                                </Button>
+                                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                                    <ArrowUpTrayIcon className="h-3.5 w-3.5" /> Export
+                                </Button>
+                                <Button size="sm" className="gap-1.5 text-xs h-8 bg-primary text-primary-foreground hover:bg-primary/90">
+                                    <PlusIcon className="h-3.5 w-3.5" /> Add New Item
+                                </Button>
+                            </div>
                         </div>
                         <TabPanels className="">
                             <TabPanel className="flex flex-col focus:outline-none">
@@ -1135,7 +1146,7 @@ export default function OrderDetail({ onBack, onLogout, onNavigateToWorkspace, o
                                                                     <div className="w-full">
                                                                         <div className="flex justify-between items-start">
                                                                             <div>
-                                                                                <h4 className="text-sm font-bold text-foreground">Database Discrepancy</h4>
+                                                                                <h4 className="text-sm font-bold text-foreground">Database Inconsistency</h4>
                                                                                 <p className="text-xs text-muted-foreground mt-1">Stock count mismatch detected.</p>
                                                                             </div>
                                                                             {!isManualFixMode && (

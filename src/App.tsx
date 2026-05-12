@@ -6,10 +6,11 @@ import Transactions from "./Transactions"
 import OrderDetail from "./OrderDetail"
 import AckDetail from "./AckDetail"
 import OCRTracking from "./OCRTracking"
+import DocumentConversion from "./DocumentConversion"
 import Navbar from "./components/Navbar"
 import SessionExpiryModal from "./components/SessionExpiryModal"
 
-type Page = 'transactions' | 'ocr' | 'order-detail' | 'ack-detail'
+type Page = 'transactions' | 'ocr' | 'order-detail' | 'ack-detail' | 'document-conversion'
 
 export interface ConvertedDocument {
   id: string
@@ -91,6 +92,14 @@ function App() {
             onConvertDocument={handleConvertFromOCR}
           />
         )
+      case 'document-conversion':
+        return (
+          <DocumentConversion
+            onLogout={handleLogout}
+            onNavigate={handleNavigate}
+            onNavigateToWorkspace={() => setCurrentPage('transactions')}
+          />
+        )
       default:
         return null
     }
@@ -99,10 +108,14 @@ function App() {
   return (
     <GenUIProvider>
       <div className="min-h-screen bg-background text-foreground">
-        {currentPage !== 'order-detail' && currentPage !== 'ack-detail' && (
+        {currentPage !== 'order-detail' && currentPage !== 'ack-detail' && currentPage !== 'document-conversion' && (
           <Navbar
             onLogout={handleLogout}
-            activeTab={currentPage === 'transactions' ? 'Transactions' : 'OCR'}
+            activeTab={
+              currentPage === 'transactions' ? 'Transactions' :
+              currentPage === 'ocr' ? 'OCR' :
+              currentPage === 'document-conversion' ? 'DocumentConversion' : 'Transactions'
+            }
             onNavigateToWorkspace={() => setCurrentPage('transactions')}
             onNavigate={handleNavigate}
           />

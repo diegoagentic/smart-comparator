@@ -17,7 +17,7 @@ import QuoteExtractionArtifact from './QuoteExtractionArtifact';
 import InventoryCheckArtifact from './InventoryCheckArtifact';
 import AnalysisReportArtifact from './AnalysisReportArtifact';
 import PricingConfigurationArtifact from './PricingConfigurationArtifact';
-import DiscrepancyResolverArtifact from './DiscrepancyResolverArtifact';
+import InconsistencyResolverArtifact from './DiscrepancyResolverArtifact';
 import OrderSimulationArtifact from './OrderSimulationArtifact';
 import QuoteApprovedArtifact from './QuoteApprovedArtifact';
 import OrderPlacedArtifact from './OrderPlacedArtifact';
@@ -30,7 +30,7 @@ const DefaultArtifact = ({ data }: { data: any }) => (
     </div>
 );
 
-const DiscrepancyResolverWrapper = ({ data }: { data: any }) => {
+const InconsistencyResolverWrapper = ({ data }: { data: any }) => {
     const { pushSystemArtifact } = useGenUI();
     // Using React.useState here so we don't have to redefine the global imports
     const [issues, setIssues] = React.useState<any[]>(data?.issues || []);
@@ -41,7 +41,7 @@ const DiscrepancyResolverWrapper = ({ data }: { data: any }) => {
             hasSent.current = true;
             const timeout = setTimeout(() => {
                 pushSystemArtifact(
-                    "Great, all discrepancies have been resolved. Now we can review the assets and configure pricing for this quote.",
+                    "Great, all inconsistencies have been resolved. Now we can review the assets and configure pricing for this quote.",
                     {
                         id: 'art_asset_review_' + Date.now(),
                         type: 'asset_review',
@@ -59,7 +59,7 @@ const DiscrepancyResolverWrapper = ({ data }: { data: any }) => {
     }
 
     return (
-        <DiscrepancyResolverArtifact
+        <InconsistencyResolverArtifact
             issues={issues}
             onResolve={(id) => setIssues(prev => prev.filter(i => i.id !== id))}
             onClose={() => { }}
@@ -78,8 +78,8 @@ export default function ArtifactContainer({ artifact }: { artifact: ArtifactData
         case 'pricing_config':
             content = <PricingConfigurationArtifact data={artifact.data} />;
             break;
-        case 'discrepancy_resolver':
-            content = <DiscrepancyResolverWrapper data={artifact.data} />;
+        case 'inconsistency_resolver':
+            content = <InconsistencyResolverWrapper data={artifact.data} />;
             break;
         case 'mode_selection':
             content = <ModeSelectionArtifact />;
@@ -124,10 +124,10 @@ export default function ArtifactContainer({ artifact }: { artifact: ArtifactData
                         source="upload"
                         onBack={() => {
                             pushSystemArtifact(
-                                "Going back to the discrepancy review step. You can re-examine and adjust the items before proceeding.",
+                                "Going back to the inconsistency review step. You can re-examine and adjust the items before proceeding.",
                                 {
-                                    id: 'art_discrepancy_back_' + Date.now(),
-                                    type: 'discrepancy_resolver',
+                                    id: 'art_inconsistency_back_' + Date.now(),
+                                    type: 'inconsistency_resolver',
                                     data: { issues: [] },
                                     source: 'Back from Asset Review'
                                 }

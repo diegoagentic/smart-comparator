@@ -5,7 +5,7 @@ export type MessageType = 'user' | 'system';
 
 export interface ArtifactData {
     id: string;
-    type: 'order_correction' | 'stock_matrix' | 'layout_proposal' | 'warranty_claim' | 'quote_proposal' | 'field_mapping_request' | 'erp_connect_modal' | 'erp_po_dashboard' | 'asset_review' | 'mode_selection' | 'quote_extraction' | 'erp_selector' | 'erp_system_selector' | 'text' | 'analysis_report' | 'discrepancy_resolver' | 'pricing_config' | 'order_simulation' | 'quote_approved' | 'order_placed' | 'inventory_check';
+    type: 'order_correction' | 'stock_matrix' | 'layout_proposal' | 'warranty_claim' | 'quote_proposal' | 'field_mapping_request' | 'erp_connect_modal' | 'erp_po_dashboard' | 'asset_review' | 'mode_selection' | 'quote_extraction' | 'erp_selector' | 'erp_system_selector' | 'text' | 'analysis_report' | 'inconsistency_resolver' | 'pricing_config' | 'order_simulation' | 'quote_approved' | 'order_placed' | 'inventory_check';
     title?: string;
     data?: any;
     source?: string; // e.g., "Urgent Actions", "Recent Activity"
@@ -70,7 +70,7 @@ export const GenUIProvider = ({ children, onNavigate }: { children: ReactNode, o
     };
 
     // Auto-reset messages to welcome when OPENING the stream
-    // This prevents old artifacts (e.g. DiscrepancyResolver from past flows) from showing
+    // This prevents old artifacts (e.g. InconsistencyResolver from past flows) from showing
     const toggleStream = () => {
         setStreamOpen(prev => {
             if (!prev) {
@@ -198,7 +198,7 @@ export const GenUIProvider = ({ children, onNavigate }: { children: ReactNode, o
                 }
 
                 // New Use Case: Analysis Complete -> Open Unified Dashboard
-                else if (lowerContent.includes('resolve issues') || lowerContent.includes('resolve discrepancies')) {
+                else if (lowerContent.includes('resolve issues') || lowerContent.includes('resolve inconsistencies')) {
                     responseText = "I've processed the line items and flagged 3 discontinued items. Please use the Asset Review matrix to resolve them before we finalize pricing.";
                     responseArtifact = {
                         id: 'art_asset_review_' + Date.now(),
@@ -512,13 +512,13 @@ export const GenUIProvider = ({ children, onNavigate }: { children: ReactNode, o
                         link: '/inventory/EC-2024-BLK'
                     };
                 }
-                // Dashboard: Discrepancy
-                else if (lowerContent.includes('shipping logs') || lowerContent.includes('discrepancy') || lowerContent.includes('resolve')) {
+                // Dashboard: Inconsistency
+                else if (lowerContent.includes('shipping logs') || lowerContent.includes('inconsistency') || lowerContent.includes('resolve')) {
                     responseText = "I analyzed the shipping logs for #OR-9823. The weight matches a partial shipment, not the full order.";
                     responseArtifact = {
                         id: 'art_correct_9823',
                         type: 'order_correction',
-                        title: 'Discrepancy Analysis #OR-9823',
+                        title: 'Inconsistency Analysis #OR-9823',
                         data: { orderId: '9823', originalItem: 'Bulk Shipment', issue: 'Weight Mismatch', suggestion: 'Flag as Partial Delivery' },
                         source: 'Recent Activity',
                         link: '/orders/OR-9823'
