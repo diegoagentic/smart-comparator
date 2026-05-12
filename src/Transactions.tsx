@@ -208,15 +208,15 @@ const trackingSteps = [
 ]
 
 const recentOrders = [
-    { id: "#ORD-2055", customer: "AutoManfacture Co.", client: "AutoManfacture Co.", project: "Office Renovation", amount: "$385,000", status: "Order Received", date: "Dec 20, 2025", initials: "AC", statusColor: "zinc", location: "New York" },
-    { id: "#ORD-2054", customer: "TechDealer Solutions", client: "TechDealer Solutions", project: "HQ Upgrade", amount: "$62,500", status: "In Production", date: "Nov 15, 2025", initials: "TS", statusColor: "brand", location: "London" },
-    { id: "#ORD-2053", customer: "Urban Living Inc.", client: "Urban Living Inc.", project: "Lobby Refresh", amount: "$112,000", status: "Ready to Ship", date: "Oct 30, 2025", initials: "UL", statusColor: "green", location: "Austin" },
-    { id: "#ORD-2052", customer: "Global Logistics", client: "Global Logistics", project: "Warehouse Expansion", amount: "$45,000", status: "Delivered", date: "Oct 15, 2025", initials: "GL", statusColor: "green", location: "Berlin" },
-    { id: "#ORD-2051", customer: "City Builders", client: "City Builders", project: "City Center", amount: "$120,000", status: "Order Received", date: "Jan 05, 2026", initials: "CB", statusColor: "zinc", location: "New York" },
-    { id: "#ORD-2050", customer: "Modern Homes", client: "Modern Homes", project: "Residential A", amount: "$85,000", status: "Acknowledgement", date: "Jan 02, 2026", initials: "MH", statusColor: "blue", location: "Austin" },
-    { id: "#ORD-2049", customer: "Coastal Props", client: "Coastal Props", project: "Beach House", amount: "$210,000", status: "In Production", date: "Dec 10, 2025", initials: "CP", statusColor: "indigo", location: "London" },
-    { id: "#ORD-2048", customer: "Valley Homes", client: "Valley Homes", project: "Mountain Retreat", amount: "$95,000", status: "Ready to Ship", date: "Nov 20, 2025", initials: "VH", statusColor: "blue", location: "Berlin" },
-    { id: "#ORD-2047", customer: "Elite Builders", client: "Elite Builders", project: "Sky V", amount: "$450,000", status: "In Transit", date: "Nov 05, 2025", initials: "EB", statusColor: "orange", location: "New York" },
+    { id: "#ORD-2055", customer: "AutoManufacture Co.", client: "AutoManufacture Co.", project: "Office Renovation", amount: "$385,000", status: "Order Received", date: "Dec 20, 2025", initials: "AC", statusColor: "bg-zinc-100 text-zinc-600 ring-zinc-500/20", location: "New York" },
+    { id: "#ORD-2054", customer: "TechDealer Solutions", client: "TechDealer Solutions", project: "HQ Upgrade", amount: "$62,500", status: "In Production", date: "Nov 15, 2025", initials: "TS", statusColor: "bg-yellow-50 text-yellow-700 ring-yellow-600/20", location: "London" },
+    { id: "#ORD-2053", customer: "Urban Living Inc.", client: "Urban Living Inc.", project: "Lobby Refresh", amount: "$112,000", status: "Ready to Ship", date: "Oct 30, 2025", initials: "UL", statusColor: "bg-green-50 text-green-700 ring-green-600/20", location: "Austin" },
+    { id: "#ORD-2052", customer: "Global Logistics", client: "Global Logistics", project: "Warehouse Expansion", amount: "$45,000", status: "Delivered", date: "Oct 15, 2025", initials: "GL", statusColor: "bg-zinc-100 text-zinc-500 ring-zinc-400/20", location: "Berlin" },
+    { id: "#ORD-2051", customer: "City Builders", client: "City Builders", project: "City Center", amount: "$120,000", status: "Order Received", date: "Jan 05, 2026", initials: "CB", statusColor: "bg-zinc-100 text-zinc-600 ring-zinc-500/20", location: "New York" },
+    { id: "#ORD-2050", customer: "Modern Homes", client: "Modern Homes", project: "Residential A", amount: "$85,000", status: "Acknowledgement", date: "Jan 02, 2026", initials: "MH", statusColor: "bg-violet-50 text-violet-700 ring-violet-600/20", location: "Austin" },
+    { id: "#ORD-2049", customer: "Coastal Props", client: "Coastal Props", project: "Beach House", amount: "$210,000", status: "In Production", date: "Dec 10, 2025", initials: "CP", statusColor: "bg-yellow-50 text-yellow-700 ring-yellow-600/20", location: "London" },
+    { id: "#ORD-2048", customer: "Valley Homes", client: "Valley Homes", project: "Mountain Retreat", amount: "$95,000", status: "Ready to Ship", date: "Nov 20, 2025", initials: "VH", statusColor: "bg-green-50 text-green-700 ring-green-600/20", location: "Berlin" },
+    { id: "#ORD-2047", customer: "Elite Builders", client: "Elite Builders", project: "Sky V", amount: "$450,000", status: "In Transit", date: "Nov 05, 2025", initials: "EB", statusColor: "bg-orange-50 text-orange-700 ring-orange-600/20", location: "New York" },
 ]
 
 const recentQuotes = [
@@ -227,9 +227,9 @@ const recentQuotes = [
 ]
 
 const recentAcknowledgments = [
-    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Reconciled", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", discrepancy: "None", tag: null, initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
-    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "Under Review", date: "Jan 13, 2026", expShipDate: "Pending", discrepancy: "Price Mismatch ($500)", tag: "Discrepancy" as const, initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
-    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Validated", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", discrepancy: "Backordered Items", tag: "Partial" as const, initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
+    { id: "Acknowledgement-8839", relatedPo: "PO-2026-001", vendor: "Herman Miller", status: "Reconciled", date: "Jan 14, 2026", expShipDate: "Feb 20, 2026", inconsistency: "None", tag: null, initials: "HM", statusColor: "bg-green-50 text-green-700", location: "Zeeland" },
+    { id: "Acknowledgement-8840", relatedPo: "PO-2026-002", vendor: "Steelcase", status: "Under Review", date: "Jan 13, 2026", expShipDate: "Pending", inconsistency: "Price Mismatch ($500)", tag: "Inconsistency" as const, initials: "SC", statusColor: "bg-red-50 text-red-700", location: "Grand Rapids" },
+    { id: "Acknowledgement-8841", relatedPo: "PO-2026-003", vendor: "Knoll", status: "Validated", date: "Jan 12, 2026", expShipDate: "Mar 01, 2026", inconsistency: "Backordered Items", tag: "Partial" as const, initials: "KN", statusColor: "bg-amber-50 text-amber-700", location: "East Greenville" },
 ]
 
 // Pipeline stages
@@ -328,28 +328,28 @@ const quotesSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
 const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
     Day: {
         pending_acks: { label: 'Pending Acks', value: '2', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+1', trendUp: true },
-        discrepancies: { label: 'Discrepancies', value: '1', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '0', trendUp: true },
+        inconsistencies: { label: 'Inconsistencies', value: '1', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '0', trendUp: true },
         confirmed: { label: 'Reconciled', value: '8', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+3', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '3.8w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.4w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '96%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Week: {
         pending_acks: { label: 'Pending Acks', value: '5', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-1', trendUp: false },
-        discrepancies: { label: 'Discrepancies', value: '2', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
+        inconsistencies: { label: 'Inconsistencies', value: '2', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
         confirmed: { label: 'Reconciled', value: '34', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+8', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.0w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '-0.2w', trendUp: true },
         on_time: { label: 'On Time Rate', value: '95%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+1%', trendUp: true },
     },
     Month: {
         pending_acks: { label: 'Pending Acks', value: '8', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '-2', trendUp: false },
-        discrepancies: { label: 'Discrepancies', value: '3', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
+        inconsistencies: { label: 'Inconsistencies', value: '3', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+1', trendUp: true },
         confirmed: { label: 'Reconciled', value: '156', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+42', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.2w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.1w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '94%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '+2%', trendUp: true },
     },
     Quarter: {
         pending_acks: { label: 'Pending Acks', value: '18', sub: 'Awaiting vendor', icon: <ClockIcon className="w-5 h-5" />, color: 'orange', trend: '+6', trendUp: true },
-        discrepancies: { label: 'Discrepancies', value: '9', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+4', trendUp: true },
+        inconsistencies: { label: 'Inconsistencies', value: '9', sub: 'Action required', icon: <ExclamationTriangleIcon className="w-5 h-5" />, color: 'red', trend: '+4', trendUp: true },
         confirmed: { label: 'Reconciled', value: '478', sub: 'On track', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, color: 'green', trend: '+112', trendUp: true },
         avg_lead: { label: 'Avg Lead Time', value: '4.5w', sub: 'Weeks to ship', icon: <CalendarIcon className="w-5 h-5" />, color: 'blue', trend: '+0.3w', trendUp: false },
         on_time: { label: 'On Time Rate', value: '91%', sub: 'Vendor perf.', icon: <ArrowTrendingUpIcon className="w-5 h-5" />, color: 'purple', trend: '-3%', trendUp: false },
@@ -357,7 +357,7 @@ const acksSummaryByPeriod: Record<TimePeriod, Record<string, SummaryItem>> = {
 };
 
 import AcknowledgementUploadModal from './components/AcknowledgementUploadModal'
-import ResolveDiscrepancyModal from './components/ResolveDiscrepancyModal'
+import ResolveInconsistencyModal from './components/ResolveDiscrepancyModal'
 
 interface ConvertedDoc {
     id: string;
@@ -921,58 +921,31 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                 </div>
 
                 {/* Lifecycle Tabs Navigation */}
-                <div className="flex items-center mb-6">
-                    <div className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-card/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                        <button
-                            style={{display:'none'}} onClick={() => {}}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-all",
-                                lifecycleTab === 'quotes'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <DocumentTextIcon className="w-4 h-4" />
-                            Quotes
-                        </button>
-                        <button
-                            onClick={() => setLifecycleTab('orders')}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-all",
-                                lifecycleTab === 'orders'
-                                    ? "bg-[#C3E433] dark:bg-[#C3E433] text-zinc-900 shadow-sm font-semibold"
-                                    : "text-muted-foreground hover:bg-[#C3E433] dark:hover:bg-[#C3E433]/50 hover:text-zinc-900 dark:hover:text-white font-medium"
-                            )}
-                        >
-                            <ShoppingCartIcon className="w-4 h-4" />
-                            Purchase Orders
-                        </button>
-                        <button
-                            onClick={() => setLifecycleTab('acknowledgments')}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-all",
-                                lifecycleTab === 'acknowledgments'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm font-semibold"
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white font-medium"
-                            )}
-                        >
-                            <ClipboardDocumentCheckIcon className="w-4 h-4" />
-                            Acknowledgements
-                        </button>
-                        <button
-                            style={{display:'none'}} onClick={() => {}}
-                            className={cn(
-                                "flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-all",
-                                lifecycleTab === 'projects'
-                                    ? "bg-brand-300 dark:bg-brand-500 text-zinc-900 shadow-sm"
-                                    : "text-muted-foreground hover:bg-brand-300 dark:hover:bg-brand-600/50 hover:text-zinc-900 dark:hover:text-white"
-                            )}
-                        >
-                            <ClipboardDocumentListIcon className="w-4 h-4" />
-                            Projects
-                        </button>
-                    </div>
+                <div className="flex items-center gap-2 mb-6">
+                    <button
+                        onClick={() => setLifecycleTab('orders')}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all",
+                            lifecycleTab === 'orders'
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:bg-muted"
+                        )}
+                    >
+                        <ShoppingCartIcon className="w-4 h-4" />
+                        Purchase Orders
+                    </button>
+                    <button
+                        onClick={() => setLifecycleTab('acknowledgments')}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all",
+                            lifecycleTab === 'acknowledgments'
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:bg-muted"
+                        )}
+                    >
+                        <ClipboardDocumentCheckIcon className="w-4 h-4" />
+                        Acknowledgements
+                    </button>
                 </div>
 
                 {/* Quotes Tab Content */}
@@ -1731,7 +1704,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     <div className="w-8 h-8 rounded-full bg-ai flex items-center justify-center text-white text-xs font-bold">AI</div>
                                                     <span className="text-xs font-bold text-foreground">
                                                         {ackKnollAlert
-                                                            ? 'Discrepancy Detected — Knoll ACK'
+                                                            ? 'Inconsistency Detected — Knoll ACK'
                                                             : `TrackingAgent Validating ACKs... (${ackValidatedCount}/9)`
                                                         }
                                                     </span>
@@ -2330,7 +2303,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                     <tr>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Vendor' : 'Details'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'PO & Location' : 'Project & Location'}</th>
-                                                        <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Discrepancy' : 'Amount'}</th>
+                                                        <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'acknowledgments' ? 'Inconsistency' : 'Amount'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{lifecycleTab === 'quotes' ? 'Valid Until' : 'Date'}</th>
                                                         <th className="p-4 text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Actions</th>
@@ -2358,7 +2331,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                 {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
                                                                             </button>
                                                                         )}
-                                                                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                                                                        <div className="h-8 w-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
                                                                             {order.initials}
                                                                         </div>
                                                                         <div>
@@ -2383,8 +2356,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                     </div>
                                                                 </td>
                                                                 <td className="p-4">
-                                                                    <span className={cn("font-semibold text-foreground", lifecycleTab === 'acknowledgments' && order.discrepancy !== 'None' ? 'text-red-500' : '')}>
-                                                                        {lifecycleTab === 'acknowledgments' ? order.discrepancy : order.amount}
+                                                                    <span className={cn("font-semibold text-foreground", lifecycleTab === 'acknowledgments' && order.inconsistency !== 'None' ? 'text-red-500' : '')}>
+                                                                        {lifecycleTab === 'acknowledgments' ? order.inconsistency : order.amount}
                                                                     </span>
                                                                 </td>
                                                                 <td className="p-4">
@@ -2414,13 +2387,13 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
                                                                                 if (lifecycleTab === 'acknowledgments') {
-                                                                                    setResolveAckDoc({ id: order.id, name: order.id, vendor: order.vendor || order.client, discrepancyCount: 3 });
+                                                                                    setResolveAckDoc({ id: order.id, name: order.id, vendor: order.vendor || order.client, inconsistencyCount: 3 });
                                                                                 } else {
                                                                                     setTrackingOrder(order);
                                                                                 }
                                                                             }}
                                                                             className="p-1.5 rounded-lg text-muted-foreground hover:text-blue-500 hover:bg-blue-50/50 transition-colors"
-                                                                            title={lifecycleTab === 'acknowledgments' ? 'Resolve Discrepancy' : 'Track Order'}
+                                                                            title={lifecycleTab === 'acknowledgments' ? 'Resolve Inconsistency' : 'Track Order'}
                                                                         >
                                                                             <MapPinIcon className="h-4 w-4" />
                                                                         </button>
@@ -2565,7 +2538,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                                     {selectedItems.has(order.id) && <CheckIcon className="h-3 w-3 text-primary-foreground" />}
                                                                                 </button>
                                                                             )}
-                                                                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
+                                                                            <div className="h-8 w-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold shadow-sm ring-2 ring-white dark:ring-zinc-900">
                                                                                 {order.initials}
                                                                             </div>
                                                                             <div className="space-y-0.5">
@@ -2605,16 +2578,16 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                     </div>
 
                                                                     <div className="space-y-2">
-                                                                        {/* ACK: discrepancy tag badge */}
+                                                                        {/* ACK: inconsistency tag badge */}
                                                                         {lifecycleTab === 'acknowledgments' && (order as any).tag && (
                                                                             <div className={cn(
                                                                                 "flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border",
-                                                                                (order as any).tag === 'Discrepancy'
+                                                                                (order as any).tag === 'Inconsistency'
                                                                                     ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20"
                                                                                     : "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20"
                                                                             )}>
                                                                                 <ExclamationTriangleIcon className="h-3.5 w-3.5" />
-                                                                                {(order as any).tag === 'Discrepancy' ? (order as any).discrepancy : (order as any).discrepancy}
+                                                                                {(order as any).tag === 'Inconsistency' ? (order as any).inconsistency : (order as any).inconsistency}
                                                                             </div>
                                                                         )}
 
@@ -2631,12 +2604,12 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                             <span className="text-foreground">{order.date}</span>
                                                                         </div>
 
-                                                                        {/* ACK with discrepancy: Resolve button */}
+                                                                        {/* ACK with inconsistency: Resolve button */}
                                                                         {lifecycleTab === 'acknowledgments' && (order as any).tag && (
                                                                             <button
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    setResolveAckDoc({ id: order.id, name: order.id, vendor: (order as any).vendor, discrepancyCount: 3 });
+                                                                                    setResolveAckDoc({ id: order.id, name: order.id, vendor: (order as any).vendor, inconsistencyCount: 3 });
                                                                                 }}
                                                                                 className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 dark:hover:bg-brand-600 rounded-lg transition-colors"
                                                                             >
@@ -2653,8 +2626,8 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                                                             {/* Status Badge */}
                                                                             <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border shadow-sm",
                                                                                 lifecycleTab === 'acknowledgments' && (order as any).tag
-                                                                                    ? (order as any).tag === 'Discrepancy' ? "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 ring-1 ring-inset ring-red-600/20" : "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20"
-                                                                                    : order.statusColor?.includes(' ') ? order.statusColor : (colorStyles[order.statusColor || 'zinc'] || "bg-muted text-muted-foreground border-border")
+                                                                                    ? (order as any).tag === 'Inconsistency' ? "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 ring-1 ring-inset ring-red-600/20" : "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20"
+                                                                                    : colorStyles[order.statusColor?.split('-')[1]?.replace('text', '').trim()] || "bg-muted text-muted-foreground border-border"
                                                                             )}>
                                                                                 {lifecycleTab === 'acknowledgments' && (order as any).tag ? (order as any).tag : order.status}
                                                                             </span>
@@ -2834,7 +2807,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
                                     >
                                         <span>
                                             {lifecycleTab === 'quotes' ? 'Quote Analysis' :
-                                                lifecycleTab === 'acknowledgments' ? 'Discrepancy Resolver' :
+                                                lifecycleTab === 'acknowledgments' ? 'Inconsistency Resolver' :
                                                     `Tracking Details - ${trackingOrder?.id}`}
                                         </span>
                                         <button
@@ -3108,7 +3081,7 @@ export default function Transactions({ onLogout, onNavigateToDetail, onNavigateT
 
             <CreateOrderModal isOpen={isCreateOrderOpen} onClose={() => setIsCreateOrderOpen(false)} />
             <AcknowledgementUploadModal isOpen={isAckModalOpen} onClose={() => setIsAckModalOpen(false)} />
-            <ResolveDiscrepancyModal isOpen={!!resolveAckDoc} onClose={() => setResolveAckDoc(null)} document={resolveAckDoc} />
+            <ResolveInconsistencyModal isOpen={!!resolveAckDoc} onClose={() => setResolveAckDoc(null)} document={resolveAckDoc} />
             <div />
             <div />
             

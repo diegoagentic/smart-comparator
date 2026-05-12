@@ -169,7 +169,7 @@ export default function AckImportFlow({ onImportComplete, onCancel }: AckImportF
                                 <p className="text-muted-foreground animate-pulse">
                                     {progress < 30 ? 'Extracting vendor data and order references...' :
                                      progress < 60 ? 'Matching line items against PO records...' :
-                                     progress < 90 ? 'Detecting discrepancies and exceptions...' :
+                                     progress < 90 ? 'Detecting inconsistencies and exceptions...' :
                                      'Finalizing analysis...'}
                                 </p>
                             </div>

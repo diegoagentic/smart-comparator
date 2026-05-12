@@ -3,10 +3,16 @@ import { CheckCircleIcon, ExclamationCircleIcon, XMarkIcon, InformationCircleIco
 
 export type ToastType = 'success' | 'error' | 'info';
 
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface ToastData {
   id: string;
   type: ToastType;
   message: string;
+  action?: ToastAction;
 }
 
 interface AuthToastProps {
@@ -60,8 +66,22 @@ function AuthToast({ toast, onDismiss }: AuthToastProps) {
     >
       <Icon className={`w-5 h-5 shrink-0 mt-0.5 ${config.iconColor}`} />
       <p className={`text-sm font-medium flex-1 ${config.textColor}`}>{toast.message}</p>
+      {toast.action && (
+        <button
+          onClick={() => {
+            toast.action!.onClick();
+            setIsVisible(false);
+            setTimeout(() => onDismiss(toast.id), 300);
+          }}
+          className={`shrink-0 text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded-md hover:bg-foreground/5 transition-colors ${config.textColor}`}
+        >
+          {toast.action.label}
+        </button>
+      )}
       <button
         onClick={() => { setIsVisible(false); setTimeout(() => onDismiss(toast.id), 300); }}
+        title="Dismiss"
+        aria-label="Dismiss"
         className={`shrink-0 ${config.iconColor} hover:opacity-70 transition-opacity`}
       >
         <XMarkIcon className="w-4 h-4" />
@@ -94,9 +114,9 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
 export function useToast() {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
-  const addToast = (type: ToastType, message: string) => {
+  const addToast = (type: ToastType, message: string, action?: ToastAction) => {
     const id = Date.now().toString();
-    setToasts((prev) => [...prev, { id, type, message }]);
+    setToasts((prev) => [...prev, { id, type, message, action }]);
   };
 
   const dismissToast = (id: string) => {

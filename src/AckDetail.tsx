@@ -41,7 +41,7 @@ interface Message {
     type: 'system' | 'ai' | 'user' | 'action_processing' | 'action_success';
 }
 
-const DiscrepancyResolutionFlow = () => {
+const InconsistencyResolutionFlow = () => {
     const { currentStep, nextStep } = ({ isDemoActive: false, currentStep: null, isSidebarCollapsed: false } as any)
     const [status, setStatus] = useState<'initial' | 'requesting' | 'pending' | 'approved' | 'sending' | 'sent'>('initial')
     const [requestText, setRequestText] = useState('')
@@ -73,14 +73,14 @@ const DiscrepancyResolutionFlow = () => {
             <div data-demo-target="expert-ack-fix" className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium tracking-tight">
                     <SparklesIcon className="w-5 h-5 text-primary" />
-                    Found 2 discrepancies against PO #ORD-2055.
+                    Found 2 inconsistencies against PO #ORD-2055.
                 </div>
 
                 {/* AI Recommendation Banner */}
                 <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-start gap-3">
                     <SparklesIcon className="w-5 h-5 text-indigo-500 mt-0.5 shrink-0" />
                     <div className="flex-1">
-                        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300 mb-1">AI Analysis Complete — DiscrepancyResolverAgent pre-analyzed both exceptions</p>
+                        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300 mb-1">AI Analysis Complete — InconsistencyResolverAgent pre-analyzed both exceptions</p>
                         <div className="flex gap-4 mt-2">
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[10px] text-indigo-600 dark:text-indigo-400">Exception 1:</span>
@@ -294,7 +294,7 @@ const DiscrepancyResolutionFlow = () => {
     return null
 }
 
-const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
+const InconsistencyActionCard = ({ msg }: { msg: Message }) => {
     const [isRequesting, setIsRequesting] = useState(false)
     const [requestText, setRequestText] = useState('')
     const [status, setStatus] = useState<'initial' | 'pending' | 'approved'>('initial')
@@ -392,7 +392,7 @@ const DiscrepancyActionCard = ({ msg }: { msg: Message }) => {
                                         Attention Needed
                                     </p>
                                     <p className="text-sm text-zinc-900 dark:text-zinc-300 mt-1">
-                                        Discrepancy detected for <span className="font-semibold text-zinc-900 dark:text-white">SKU-OFF-2025-003</span>:
+                                        Inconsistency detected for <span className="font-semibold text-zinc-900 dark:text-white">SKU-OFF-2025-003</span>:
                                     </p>
                                     <div className="mt-2 flex items-center gap-4 text-xs font-medium">
                                         <div className="flex items-center gap-2">
@@ -684,7 +684,7 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-full bg-ai flex items-center justify-center text-white text-xs font-bold">AI</div>
                                 <span className="text-xs font-bold text-red-700 dark:text-red-400">
-                                    TrackingAgent — Price Discrepancy Detected on Knoll ACK
+                                    TrackingAgent — Price Inconsistency Detected on Knoll ACK
                                 </span>
                             </div>
                             <span className="text-xs font-medium text-ai">AI</span>
@@ -699,7 +699,7 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                                     </div>
                                     <div>
                                         <h3 className="text-sm font-bold text-foreground">ACK Validation Report</h3>
-                                        <p className="text-[10px] text-muted-foreground mt-0.5">12 POs tracked · 9 ACKs validated · 1 discrepancy</p>
+                                        <p className="text-[10px] text-muted-foreground mt-0.5">12 POs tracked · 9 ACKs validated · 1 inconsistency</p>
                                     </div>
                                 </div>
                                 <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400">
@@ -714,7 +714,7 @@ export default function AckDetail({ onBack, onLogout, onNavigateToWorkspace, onN
                                         { label: 'PO monitoring active', detail: '12 active purchase orders tracked across 4 manufacturers', ok: true },
                                         { label: '9 ACKs validated', detail: 'Qty, price, delivery dates matched against PO terms', ok: true },
                                         { label: '3 ACKs pending', detail: 'Aging alerts generated — supplier follow-up queued', ok: true },
-                                        { label: 'Knoll ACK discrepancy', detail: '+4% price increase on task chairs vs contracted rate', ok: false },
+                                        { label: 'Knoll ACK inconsistency', detail: '+4% price increase on task chairs vs contracted rate', ok: false },
                                     ].map((step, i) => (
                                         <div key={i} className={cn(
                                             "flex items-center gap-3 px-3 py-2.5 rounded-lg border",
