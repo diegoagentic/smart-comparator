@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from 'strata-design-system'
 import { useTenant } from '../TenantContext'
-import { ScanEye, FileText, Moon, Sun, LogOut, ChevronDown, Building2, Check } from 'lucide-react'
+import { ScanEye, Banknote, FileOutput, Bell, Moon, Sun, LogOut, ChevronDown, Building2, Check } from 'lucide-react'
 import logoLightBrand from '../assets/logo-light-brand.png'
 import logoDarkBrand from '../assets/logo-dark-brand.png'
 
-type NavTab = 'Transactions' | 'OCR'
+type NavTab = 'Transactions' | 'OCR' | 'DocumentConversion'
 
 interface NavbarProps {
     onLogout: () => void;
@@ -33,9 +33,10 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [isTenantOpen])
 
-    const tabs: { name: string; page: string; icon: any }[] = [
-        { name: 'OCR', page: 'ocr', icon: ScanEye },
-        { name: 'Transactions', page: 'transactions', icon: FileText },
+    const tabs: { name: string; label: string; page: string; icon: any }[] = [
+        { name: 'OCR', label: 'OCR', page: 'ocr', icon: ScanEye },
+        { name: 'Transactions', label: 'Transactions', page: 'transactions', icon: Banknote },
+        { name: 'DocumentConversion', label: 'Document Conversion', page: 'document-conversion', icon: FileOutput },
     ]
 
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Sara Chen'
@@ -124,7 +125,7 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
                                     <span className={`ml-2 text-sm font-bold whitespace-nowrap transition-all duration-300 ease-in-out ${
                                         isActive ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100'
                                     }`}>
-                                        {tab.name}
+                                        {tab.label}
                                     </span>
                                 </button>
                             )
@@ -133,6 +134,14 @@ export default function Navbar({ onLogout, activeTab = 'Transactions', onNavigat
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-1 shrink-0">
+                        {/* Bell */}
+                        <button
+                            className="flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+                            title="Notifications"
+                        >
+                            <Bell className="w-4 h-4" />
+                        </button>
+
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
