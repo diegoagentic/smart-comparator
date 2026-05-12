@@ -158,8 +158,8 @@ const pairStatusBadge = (status: AckPair['status']) => {
 
 // ── Component ──────────────────────────────────────────────────
 
-// ── Aggregated discrepancies ──────────────────────────────────
-interface AggregatedDiscrepancy {
+// ── Aggregated inconsistencies ──────────────────────────────────
+interface AggregatedInconsistency {
     pairId: string;
     poId: string;
     vendor: string;
@@ -168,9 +168,9 @@ interface AggregatedDiscrepancy {
     globalIdx: number;
 }
 
-const ALL_DISCREPANCIES: AggregatedDiscrepancy[] = (() => {
+const ALL_INCONSISTENCIES: AggregatedInconsistency[] = (() => {
     let idx = 0;
-    const result: AggregatedDiscrepancy[] = [];
+    const result: AggregatedInconsistency[] = [];
     const pairs: Array<{ pair: AckPair; data: ComparisonField[] }> = [
         { pair: ACK_PAIRS[0], data: RECONCILIATION_COMPARISON_1 },
         { pair: ACK_PAIRS[2], data: RECONCILIATION_COMPARISON_2 },
@@ -192,15 +192,15 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
     const [selectedPair, setSelectedPair] = useState<AckPair | null>(ACK_PAIRS[0]);
     const [scanProgress, setScanProgress] = useState(0);
     const [scanComplete, setScanComplete] = useState(false);
-    const [discrepancyFixes, setDiscrepancyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
+    const [inconsistencyFixes, setInconsistencyFixes] = useState<Record<number, 'accept' | 'reject'>>({});
 
-    // All Discrepancies view
+    // All Inconsistencies view
     const [viewMode, setViewMode] = useState<'pair' | 'all'>('pair');
     const [allFilter, setAllFilter] = useState<{ severity: string; category: string; search: string }>({ severity: 'all', category: 'all', search: '' });
     const [allFixes, setAllFixes] = useState<Record<number, 'accept' | 'reject'>>({});
 
-    const filteredAllDiscrepancies = useMemo(() => {
-        return ALL_DISCREPANCIES.filter(d => {
+    const filteredAllInconsistencies = useMemo(() => {
+        return ALL_INCONSISTENCIES.filter(d => {
             if (allFilter.severity !== 'all' && d.field.severity !== allFilter.severity) return false;
             if (allFilter.category !== 'all' && d.field.category !== allFilter.category) return false;
             if (allFilter.search && !d.field.field.toLowerCase().includes(allFilter.search.toLowerCase()) && !d.vendor.toLowerCase().includes(allFilter.search.toLowerCase())) return false;
@@ -208,16 +208,16 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
         });
     }, [allFilter]);
 
-    // Group discrepancies by document pair
-    const groupedDiscrepancies = useMemo(() => {
-        const groups: Record<string, { pairId: string; poId: string; vendor: string; docType: string; items: typeof ALL_DISCREPANCIES }> = {};
-        for (const d of filteredAllDiscrepancies) {
+    // Group inconsistencies by document pair
+    const groupedInconsistencies = useMemo(() => {
+        const groups: Record<string, { pairId: string; poId: string; vendor: string; docType: string; items: typeof ALL_INCONSISTENCIES }> = {};
+        for (const d of filteredAllInconsistencies) {
             const key = d.pairId;
             if (!groups[key]) groups[key] = { pairId: d.pairId, poId: d.poId, vendor: d.vendor, docType: d.docType, items: [] };
             groups[key].items.push(d);
         }
         return Object.values(groups);
-    }, [filteredAllDiscrepancies]);
+    }, [filteredAllInconsistencies]);
 
     const eligibleStatuses: AckPair['status'][] = ['Pending Review', 'Matched'];
 
@@ -237,7 +237,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                 setSelectedPair(ACK_PAIRS[0]);
                 setScanProgress(0);
                 setScanComplete(false);
-                setDiscrepancyFixes({});
+                setInconsistencyFixes({});
                 setViewMode('pair');
                 setAllFilter({ severity: 'all', category: 'all', search: '' });
                 setAllFixes({});
@@ -265,7 +265,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
         return () => clearInterval(interval);
     }, [step]);
 
-    // Auto-advance: clean pairs → confirm, discrepancy pairs → review
+    // Auto-advance: clean pairs → confirm, inconsistency pairs → review
     useEffect(() => {
         if (step === 'compare' && scanComplete) {
             if (isCleanPair) {
@@ -279,14 +279,14 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
     }, [step, scanComplete, isCleanPair]);
 
     // Derived data
-    const discrepancies = useMemo(() =>
+    const inconsistencies = useMemo(() =>
         activeComparison.filter(f => f.status !== 'match'),
         [activeComparison]
     );
 
     const matchedCount = activeComparison.filter(f => f.status === 'match').length;
-    const allDecided = discrepancies.every((_, i) => discrepancyFixes[i] !== undefined);
-    const acceptedCount = Object.values(discrepancyFixes).filter(v => v === 'accept').length;
+    const allDecided = inconsistencies.every((_, i) => inconsistencyFixes[i] !== undefined);
+    const acceptedCount = Object.values(inconsistencyFixes).filter(v => v === 'accept').length;
 
     const handleComplete = () => {
         onClose();
@@ -320,17 +320,17 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-background text-left shadow-2xl transition-all border border-border w-full sm:max-w-4xl">
-                                {/* ──── All Discrepancies View ──── */}
+                                {/* ──── All Inconsistencies View ──── */}
                                 {(
                                     <div className="p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
                                                 <Dialog.Title as="h3" className="text-xl font-brand font-bold text-foreground mb-1 flex items-center gap-2.5">
                                                     <ExclamationTriangleIcon className="w-6 h-6 text-amber-500" />
-                                                    All Discrepancies
+                                                    All Inconsistencies
                                                 </Dialog.Title>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {filteredAllDiscrepancies.length} discrepancies across {new Set(ALL_DISCREPANCIES.map(d => d.pairId)).size} documents
+                                                    {filteredAllInconsistencies.length} inconsistencies across {new Set(ALL_INCONSISTENCIES.map(d => d.pairId)).size} documents
                                                 </p>
                                             </div>
                                             <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
@@ -370,9 +370,9 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             </select>
                                         </div>
 
-                                        {/* Discrepancy List — Grouped by Document */}
+                                        {/* Inconsistency List — Grouped by Document */}
                                         <div className="space-y-5 max-h-[450px] overflow-y-auto scrollbar-minimal pr-1">
-                                            {groupedDiscrepancies.map(group => {
+                                            {groupedInconsistencies.map(group => {
                                                 const resolvedInGroup = group.items.filter(d => allFixes[d.globalIdx]).length;
                                                 return (
                                                     <div key={group.pairId} className="border border-border rounded-2xl overflow-hidden">
@@ -479,26 +479,26 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
 
                                         {/* Footer */}
                                         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                                            <button onClick={onClose} className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
-                                                Cancel
-                                            </button>
+                                            <span className="text-xs text-muted-foreground">
+                                                {Object.keys(allFixes).length} / {filteredAllInconsistencies.length} resolved
+                                            </span>
                                             <div className="flex gap-3">
                                                 <button
                                                     onClick={() => {
                                                         onClose();
-                                                        triggerToast('Discrepancies Resolved', `${Object.keys(allFixes).length} discrepancies resolved across all documents`, 'success');
+                                                        triggerToast('Inconsistencies Resolved', `${Object.keys(allFixes).length} inconsistencies resolved across all documents`, 'success');
                                                     }}
                                                     disabled={Object.keys(allFixes).length === 0}
                                                     className="px-6 py-2.5 text-sm font-bold text-zinc-900 bg-brand-300 dark:bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors flex items-center gap-2"
                                                 >
-                                                    Publish <ArrowRightIcon className="w-4 h-4" />
+                                                    Resolve Inconsistencies <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                 )}
 
-                                {/* ──── Pair-by-Pair Views (hidden — All Discrepancies only) ──── */}
+                                {/* ──── Pair-by-Pair Views (hidden — All Inconsistencies only) ──── */}
                                 {false && <>
                                 {/* ──── Step 1: Select PO/ACK Pair ──── */}
                                 {step === 'select' && (
@@ -616,7 +616,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                     {scanComplete
                                                         ? isCleanPair
                                                             ? ` — All ${matchedCount} fields matched. PO and ACK are fully aligned.`
-                                                            : ` — Scan complete. ${matchedCount}/${activeComparison.length} fields matched, ${discrepancies.length} discrepancies found.`
+                                                            : ` — Scan complete. ${matchedCount}/${activeComparison.length} fields matched, ${inconsistencies.length} inconsistencies found.`
                                                         : ` — Cross-referencing ${selectedPair?.poId} against ${selectedPair?.id} from ${selectedPair?.vendor}...`
                                                     }
                                                 </span>
@@ -648,10 +648,10 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                         {matchedCount} Matched
                                                     </span>
                                                     <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400">
-                                                        {discrepancies.filter(d => d.status === 'mismatch').length} Mismatch
+                                                        {inconsistencies.filter(d => d.status === 'mismatch').length} Mismatch
                                                     </span>
                                                     <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">
-                                                        {discrepancies.filter(d => d.status === 'partial').length} Partial
+                                                        {inconsistencies.filter(d => d.status === 'partial').length} Partial
                                                     </span>
                                                 </div>
 
@@ -686,7 +686,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                     onClick={() => setStep('review')}
                                                     className="w-full mt-5 py-3 rounded-xl text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all flex items-center justify-center gap-2"
                                                 >
-                                                    Review Discrepancies ({discrepancies.length})
+                                                    Review Inconsistencies ({inconsistencies.length})
                                                     <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -694,7 +694,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                     </div>
                                 )}
 
-                                {/* ──── Step 3: Review Discrepancies ──── */}
+                                {/* ──── Step 3: Review Inconsistencies ──── */}
                                 {step === 'review' && (
                                     <div className="p-6 sm:p-8">
                                         <div className="flex justify-between items-start mb-5">
@@ -703,8 +703,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                     <ArrowLeftIcon className="w-4 h-4" />
                                                 </button>
                                                 <div>
-                                                    <h3 className="text-lg font-brand font-bold text-foreground">Review Discrepancies</h3>
-                                                    <p className="text-[11px] text-muted-foreground">{discrepancies.length} items require your decision — {selectedPair?.poId} ↔ {selectedPair?.id}</p>
+                                                    <h3 className="text-lg font-brand font-bold text-foreground">Review Inconsistencies</h3>
+                                                    <p className="text-[11px] text-muted-foreground">{inconsistencies.length} items require your decision — {selectedPair?.poId} ↔ {selectedPair?.id}</p>
                                                 </div>
                                             </div>
                                             <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Close">
@@ -719,8 +719,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                 <span className="text-[10px] text-green-600 dark:text-green-300 block font-medium">Matched</span>
                                             </div>
                                             <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800 text-center">
-                                                <span className="text-lg font-bold text-red-700 dark:text-red-400">{discrepancies.length}</span>
-                                                <span className="text-[10px] text-red-600 dark:text-red-300 block font-medium">Discrepancies</span>
+                                                <span className="text-lg font-bold text-red-700 dark:text-red-400">{inconsistencies.length}</span>
+                                                <span className="text-[10px] text-red-600 dark:text-red-300 block font-medium">Inconsistencies</span>
                                             </div>
                                             <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-800 text-center">
                                                 <span className="text-lg font-bold text-indigo-700 dark:text-indigo-400">{acceptedCount}</span>
@@ -728,16 +728,16 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             </div>
                                             <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-800 text-center">
                                                 <span className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                                                    {discrepancies.length > 0 ? Math.round(discrepancies.reduce((sum, d) => sum + (d.confidence || 90), 0) / discrepancies.length) : 0}%
+                                                    {inconsistencies.length > 0 ? Math.round(inconsistencies.reduce((sum, d) => sum + (d.confidence || 90), 0) / inconsistencies.length) : 0}%
                                                 </span>
                                                 <span className="text-[10px] text-blue-600 dark:text-blue-300 block font-medium">Avg Confidence</span>
                                             </div>
                                         </div>
 
-                                        {/* Discrepancy Cards */}
+                                        {/* Inconsistency Cards */}
                                         <div className="space-y-3 max-h-[60vh] overflow-y-auto scrollbar-minimal pr-1">
-                                            {discrepancies.map((disc, i) => {
-                                                const fixed = discrepancyFixes[i];
+                                            {inconsistencies.map((disc, i) => {
+                                                const fixed = inconsistencyFixes[i];
                                                 return (
                                                     <div
                                                         key={i}
@@ -797,14 +797,14 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                         {fixed === undefined && (
                                                             <div className="flex items-center gap-2">
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => ({ ...prev, [i]: 'accept' }))}
+                                                                    onClick={() => setInconsistencyFixes(prev => ({ ...prev, [i]: 'accept' }))}
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-green-600 hover:bg-green-700 text-white transition-colors"
                                                                 >
                                                                     <CheckCircleIcon className="w-3.5 h-3.5" />
                                                                     Accept ACK
                                                                 </button>
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => ({ ...prev, [i]: 'reject' }))}
+                                                                    onClick={() => setInconsistencyFixes(prev => ({ ...prev, [i]: 'reject' }))}
                                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-muted hover:bg-muted/80 text-muted-foreground transition-colors"
                                                                 >
                                                                     Keep PO
@@ -817,7 +817,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                                     {fixed === 'accept' ? 'ACK value accepted' : 'PO spec kept'}
                                                                 </span>
                                                                 <button
-                                                                    onClick={() => setDiscrepancyFixes(prev => {
+                                                                    onClick={() => setInconsistencyFixes(prev => {
                                                                         const next = { ...prev };
                                                                         delete next[i];
                                                                         return next;
@@ -836,10 +836,10 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                         {/* Smart Comparator: Cancel + Publish (per transcript) */}
                                         <div className="flex items-center justify-between mt-5">
                                             <button
-                                                onClick={onClose}
-                                                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
+                                                onClick={() => { triggerToast('Draft Saved', 'Inconsistency resolution saved as draft', 'info'); onClose(); }}
+                                                className="flex-1 py-3 rounded-xl text-sm font-bold bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center justify-center gap-2"
                                             >
-                                                Cancel
+                                                Save as Draft
                                             </button>
                                             <button
                                                 onClick={() => setStep('confirm')}
@@ -850,7 +850,7 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                                         : 'bg-muted text-muted-foreground cursor-not-allowed'
                                                 }`}
                                             >
-                                                Publish
+                                                Resolve Inconsistencies
                                                 <ArrowRightIcon className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -922,8 +922,8 @@ export default function AckReconciliationModal({ isOpen, onClose, triggerToast }
                                             <SparklesIcon className="w-4 h-4 text-indigo-500 dark:text-indigo-400 mt-0.5 shrink-0" />
                                             <span className="text-[11px] text-indigo-700 dark:text-indigo-300">
                                                 {isCleanPair
-                                                    ? `All ${matchedCount} fields validated — PO and ACK fully aligned. No discrepancies detected. Status updated in eManage ecosystem.`
-                                                    : `${discrepancies.length} discrepancies resolved. ${acceptedCount} ACK values accepted, ${discrepancies.length - acceptedCount} PO values kept. Changes saved to Strata. Pushing to OrderBahn....`
+                                                    ? `All ${matchedCount} fields validated — PO and ACK fully aligned. No inconsistencies detected. Status updated in eManage ecosystem.`
+                                                    : `${inconsistencies.length} inconsistencies resolved. ${acceptedCount} ACK values accepted, ${inconsistencies.length - acceptedCount} PO values kept. Changes saved to Strata. Pushing to OrderBahn....`
                                                 }
                                             </span>
                                         </div>

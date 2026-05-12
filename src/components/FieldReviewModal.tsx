@@ -5,14 +5,16 @@ import {
 } from 'lucide-react'
 
 interface FieldReviewModalProps {
+    isOpen?: boolean
     document: {
         id: string
         name: string
         vendor: string
-        inconsistencyCount: number
+        inconsistencyCount?: number
     } | null
     onResolve?: (docId: string) => void
     onClose: () => void
+    initialFields?: ReviewField[]
 }
 
 interface ReviewField {
